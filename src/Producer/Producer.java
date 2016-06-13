@@ -1,14 +1,10 @@
 package Producer;
 
 public class Producer {
+	Key key;
 
-	public static void main(String[] args) {
-		GUIProducerErzeugen a = new GUIProducerErzeugen();
-
-	}
-
-	public Producer() {
-
+	public Producer(Key key) {
+		this.key = key;
 	}
 
 }

@@ -11,9 +11,15 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 
 public class GUIProducerErzeugen extends JFrame implements ComponentListener, ActionListener {
-	JButton erzeugeProducer;
+	JButton erzeugeProducerButton;
+	ProducerErzeugen producerErzeugen;
 
-	public GUIProducerErzeugen() {
+	public static void main(String[] args) {
+		GUIProducerErzeugen gui = new GUIProducerErzeugen(new ProducerErzeugen());
+	}
+
+	public GUIProducerErzeugen(ProducerErzeugen p) {
+		producerErzeugen = p;
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setSize(250, 75);
 		this.setTitle("Erzeugen von Produzenten");
@@ -24,16 +30,18 @@ public class GUIProducerErzeugen extends JFrame implements ComponentListener, Ac
 		this.setLayout(new BorderLayout());
 		this.addComponentListener(this);
 
-		erzeugeProducer = new JButton("Erzeuge einen neuen Produzenten");
-		this.add(erzeugeProducer, BorderLayout.CENTER);
+		erzeugeProducerButton = new JButton("Erzeuge einen neuen Produzenten");
+		this.add(erzeugeProducerButton, BorderLayout.CENTER);
+		erzeugeProducerButton.setSize(220, 70);
 
 		this.setVisible(true);
 	}
 
+	// Springt nicht hierrein
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		if (arg0.equals(erzeugeProducer)) {
-
+		if (arg0.equals(erzeugeProducerButton)) {
+			producerErzeugen.setErzeugeProducer(true);
 		}
 
 	}
