@@ -2,9 +2,14 @@ package Producer;
 
 public class Producer {
 	Key key;
+	GUIProducer gui;
+	String name;
 
-	public Producer() {
+	public Producer(String n) {
+		System.out.println("Bin im Konstruktor von Producer");
 		this.key = new Key();
+		this.name = n;
+		gui = new GUIProducer(name);
 	}
 
 	static class Key {

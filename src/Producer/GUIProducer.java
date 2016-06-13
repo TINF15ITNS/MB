@@ -13,7 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-class GUIProduzent extends JFrame implements ComponentListener, ActionListener {
+class GUIProducer extends JFrame implements ComponentListener, ActionListener {
 	private static final long serialVersionUID = 1L;
 	/**
 	 * Wird ein neues Fenster erzeugt und es existiert schon eins, dann soll es ein wenig unter der Default-Location erzeugt werden. Dazu wird diese
@@ -45,7 +45,7 @@ class GUIProduzent extends JFrame implements ComponentListener, ActionListener {
 	 * @param name
 	 *            Erwartet den Namen des Produzenten
 	 */
-	public GUIProduzent(String name) {
+	public GUIProducer(String name) {
 		// Fenster erzeugen
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setSize(400, 400);
