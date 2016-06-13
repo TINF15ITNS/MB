@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 class GUIProduzent extends JFrame implements ComponentListener, ActionListener {
+	private static final long serialVersionUID = 1L;
 	/**
 	 * Wird ein neues Fenster erzeugt und es existiert schon eins, dann soll es ein wenig unter der Default-Location erzeugt werden. Dazu wird diese
 	 * Klassenvariable benötigt

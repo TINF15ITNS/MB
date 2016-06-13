@@ -11,6 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 
 public class GUIProducerErzeugen extends JFrame implements ComponentListener, ActionListener {
+	private static final long serialVersionUID = 1L;
 	JButton erzeugeProducerButton;
 	ProducerErzeugen producerErzeugen;
 
