@@ -3,13 +3,10 @@ package Producer;
 import java.util.HashMap;
 
 public class ProducerErzeugen {
-	/*
-	 * Variable wird durch den User über einen Button auf true gesetzt, wenn ein neuer Producer erzeugt werden soll. private boolean erzeugeProducer = false;
-	 */
 	private HashMap<Producer.Key, Producer> mengeProducer;
 
-	// nachher Sichtbarkeit private, da nur von der eigenen main-Methode einmal ein Pbjekt der Klasse erzeugt werden soll
-	public ProducerErzeugen() {
+	// nur von der eigenen main-Methode soll einmal ein Objekt der Klasse erzeugt werden
+	private ProducerErzeugen() {
 		mengeProducer = new HashMap<Producer.Key, Producer>();
 	}
 
