@@ -2,6 +2,8 @@ package MessageServer;
 
 import java.util.HashMap;
 
+import Producer.Producer;
+
 public class MessageServer {
 
 	HashMap<Integer, Object> hashMapProducer, hashMapConsumer;
@@ -12,9 +14,13 @@ public class MessageServer {
 	}
 
 	public MessageServer() {
-		hashMapProducer = new HashMap<Integer, Object>();
+		HashMap<Key, Producer> mengeProducer;
 		hashMapConsumer = new HashMap<Integer, Object>();
 
+	}
+
+	public void register(Producer prod) {
+		prod.setKey(new Key());
 	}
 
 }
