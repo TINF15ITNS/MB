@@ -1,43 +1,50 @@
 package MessageServer;
 
-import java.beans.XMLDecoder;
-import java.beans.XMLEncoder;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+;
 
 public class Message {
 	private static final long serialVersionUID = 1L;
 	private String payload;
-	private MessageType type;
+	private final MessageType type;
 
 	public Message(MessageType type, String payload) {
 		this.type = type;
+		this.setPayload(payload);
+	}
+
+	/**
+	 * @return the payload
+	 */
+	public String getPayload() {
+		return payload;
+	}
+
+	/**
+	 * @param payload
+	 *            the payload to set
+	 */
+	public void setPayload(String payload) {
 		this.payload = payload;
 	}
 
-	public File serialize() {
-		/*
-		 * String rueckgabe = type + ":" + payload; return rueckgabe.getBytes();
-		 */
-		File file = new File("MessageXML");
-		try (XMLEncoder enc = new XMLEncoder(new FileOutputStream(file));) {
-			enc.writeObject(this);
-		} catch (FileNotFoundException e) {
-			return null;
-		}
-		return file;
+	/**
+	 * @return the type
+	 */
+	public MessageType getType() {
+		return type;
 	}
 
-	public Message deserialize() {
-		File file = new File("MessageXML");
-		Message m;
-		try (XMLDecoder enc = new XMLDecoder(new FileInputStream(file));) {
-			m = (Message) enc.readObject();
-		} catch (FileNotFoundException e) {
-			return null;
-		}
-		return m;
-	}
+	// Hier ist das wohl an der falschen Stelle
+	// und auch scheiﬂe gemacht
+	/*
+	 * public File serialize() {
+	 * 
+	 * File file = new File("MessageXML"); try (XMLEncoder enc = new XMLEncoder(new FileOutputStream(file));) { enc.writeObject(this); } catch
+	 * (FileNotFoundException e) { return null; } return file; }
+	 */
+
+	/*
+	 * public Message deserialize() { File file = new File("MessageXML"); Message m; try (XMLDecoder enc = new XMLDecoder(new FileInputStream(file));) { m =
+	 * (Message) enc.readObject(); } catch (FileNotFoundException e) { return null; } return m; }
+	 */
 }
