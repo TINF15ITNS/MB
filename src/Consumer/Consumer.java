@@ -10,7 +10,7 @@ import java.util.Scanner;
 import MessageServer.Message;
 import MessageServer.MessageType;
 
-public class Consumer {
+public class Consumer implements ConsumerIF {
 	private Scanner scanner;
 	private String name;
 	private final int consumerID;
@@ -44,6 +44,7 @@ public class Consumer {
 
 	}
 
+	@Override
 	public void startAction() {
 		boolean exit = true;
 		while (exit) {
@@ -57,14 +58,16 @@ public class Consumer {
 				registerOnProducers();
 				break;
 			case "exit":
+				exit = false;
 				break;
 			default:
 			}
 		}
 	}
 
+	@Override
 	public void registerOnProducers() {
-		Socket server = connectionToServer();
+		Socket server = getConnectionToServer();
 		getOfferofProducers(server);
 		System.out.println("Sie können sich für die folgenden Produzenten einschreiben: ");
 		for (int i = 0; i < producers.length; i++) {
@@ -80,7 +83,7 @@ public class Consumer {
 
 		// ...
 
-		Message m = new Message(MessageType.RegisterOnProducer, hilf2);
+		Message m = new Message(MessageType.RegisterOnProducer, this.consumerID, hilf2);
 		Message answer = sendandGetMessage(m, server);
 		switch (answer.getPayload()) {
 		case "ok":
@@ -103,23 +106,25 @@ public class Consumer {
 
 	}
 
-	public void getOfferofProducers(Socket server) {
+	private void getOfferofProducers(Socket server) {
 		// bei Client anfragen nach producer, ist payload null
 		// Antwort Message ist im Payload die ganzen ProducerNamen mit ; getrennt
 		// hab ich jetzt mal so definiert
-		Message m = new Message(MessageType.getProducer, null);
+		Message m = new Message(MessageType.getProducer, this.consumerID, null);
 		Message answer = sendandGetMessage(m, server);
 
 		producers = answer.getPayload().split(";");
 	}
 
+	@Override
 	public int registerOnServer() {
 		// ich hab jetzt eine Methode erstellt, die ein Socket zurückliefert, welches mit dem Server kommuniziert. Das alles in ner eigenen Methode, da für das
 		// Einschreiben auf Produzenten, ne eigener Socket benötigt wird (später, wenn der Konsument registriert wurde und der Anwender sich auf neuen
-		// einschreiben will)
-		Socket server = connectionToServer();
+		// einschreiben will, ist zum Beispiel ein Socket zur Registrierung nicht mehr da) (oder sollte man eher ein SOcket im Konstruktor erschaffen und erst
+		// beim Beenden des Consumers schleißen ?????????????????????????????
+		Socket server = getConnectionToServer();
 		// das zu verschicken Message-Objekt wird angelegt
-		Message m = new Message(MessageType.RegisterOnServer, this.name);
+		Message m = new Message(MessageType.RegisterOnServer, this.consumerID, this.name);
 		// antwort verarbeiten
 		Message answer = sendandGetMessage(m, server);
 		int hilf = (int) new Integer(answer.getPayload());
@@ -135,7 +140,18 @@ public class Consumer {
 		return hilf;
 	}
 
-	private Socket connectionToServer() {
+	@Override
+	public void deregister() {
+		// sendet ne UDP Nachricht an den Server
+
+	}
+
+	@Override
+	public void getMessage() {
+		// lauscht auf UDP Multicastnachrichten vom Server
+	}
+
+	private Socket getConnectionToServer() {
 		Socket s = null;
 		try {
 			s = new Socket("localhost", portServer);
@@ -156,13 +172,13 @@ public class Consumer {
 		Message answer = null;
 		try {
 			enc = new XMLEncoder(server.getOutputStream());
-
 			enc.writeObject(m);
 
-			// erhalte Antwort falls erwartet wird
 			dec = new XMLDecoder(server.getInputStream());
 			answer = (Message) dec.readObject();
+
 		} catch (IOException e) {
+			System.out.println("Fehler beim En- un Decodieren");
 			e.printStackTrace();
 		} finally {
 			if (enc != null)
