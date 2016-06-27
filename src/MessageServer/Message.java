@@ -3,12 +3,13 @@ package MessageServer;
 ;
 
 public class Message {
-	private static final long serialVersionUID = 1L;
 	private final String payload;
+	private final int consignorID;
 	private final MessageType type;
 
-	public Message(MessageType type, String payload) {
+	public Message(MessageType type, int consignorID, String payload) {
 		this.type = type;
+		this.consignorID = consignorID;
 		this.payload = payload;
 	}
 
@@ -29,6 +30,13 @@ public class Message {
 	 */
 	public MessageType getType() {
 		return type;
+	}
+
+	/**
+	 * @return the consignorID
+	 */
+	public int getConsignorID() {
+		return consignorID;
 	}
 
 	// Hier ist das wohl an der falschen Stelle
