@@ -6,7 +6,7 @@ import java.util.Scanner;
 public class MessageServer {
 
 	public final int portMessageServer;
-	HashMap<Integer, Object> hashMapProducer, hashMapConsumer;
+	HashMap<Integer, Customer> hashMapProducer, hashMapConsumer;
 	Scanner scanner;
 
 	public static void main(String[] args) {
@@ -33,25 +33,26 @@ public class MessageServer {
 	 */
 	public void getMessages() {
 		// diese Methode hält den einen Port offen, wo auf nachrichten der konsumenten und Produzenten gehört wird
-		// Casted deise dann nachN message und schaut dann was sie damit machen soll und ruft die jeweilige Methode auf
+		// Casted diese dann nach message und schaut dann was sie damit machen soll und ruft die jeweilige Methode auf
+
+		// hier ist dann nen ServerSocket, dass nen neuen thread startet, wenn eine Anfrage kommt.
+		// wie Skript Folie 37 E
 	}
 
 	/**
 	 * In this Method the MessageServer offers the available Producers
 	 */
 	public void offerProducer() {
-		// hier ist dann nen ServerSocket, dass nen neuen thread startet, wenn eine Anfrage kommt. In diesem thread wird dann wird dann ne TCP verbindung
-		// aufgebaut, um dem Konsumenten die verschiedenen zur verfügung stehenden Produzenten anzubieten
-		// wie Skript Folie 37 E
+
 	}
 
 	/**
 	 * This Method accepts the register-Messages and saves the Producer and Consuments.
 	 */
 	public void register() {
-		// gleiche Spiel
-		// nen ServerSocket wartet auf Anfrage, dass sich ein Produzent oder Konsument registrieren möchte
-		// Speichert den Konsument, falls er nen einduetigen Namen hat in der hashMap
+		// kommt ne registrierungsanfrage, dann wird hier ne id erzeugt und als Message zurückgesendet
+		// und es wird ein ConsumerMS Objekt erzeugt ( siehe Interface Customer) und in der HashMap gespeichert
+		// Key Value ist die id
 	}
 
 	/**
@@ -61,7 +62,9 @@ public class MessageServer {
 
 	}
 
+	/**
+	 * 
+	 */
 	public void deregister() {
-		// wartet auf Deregistrierunganträge
 	}
 }
