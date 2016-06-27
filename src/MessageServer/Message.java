@@ -1,7 +1,5 @@
 package MessageServer;
 
-;
-
 public class Message {
 	private final String payload;
 	private final int consignorID;
@@ -19,11 +17,6 @@ public class Message {
 	public String getPayload() {
 		return payload;
 	}
-
-	/**
-	 * @param payload
-	 *            the payload to set
-	 */
 
 	/**
 	 * @return the type

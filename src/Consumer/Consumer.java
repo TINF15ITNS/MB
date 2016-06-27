@@ -5,7 +5,9 @@ import java.beans.XMLEncoder;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 import MessageServer.Message;
 import MessageServer.MessageType;
@@ -14,7 +16,7 @@ public class Consumer implements ConsumerIF {
 	private Scanner scanner;
 	private String name;
 	private final int consumerID;
-	private String[] producers;
+	private Set<String> producers;
 	private final int portServer;
 
 	public static void main(String[] args) {
@@ -40,6 +42,7 @@ public class Consumer implements ConsumerIF {
 		// nun werden die Grundeinstellungen erledigt
 		consumerID = registerOnServer();
 
+		producers = new HashSet<>();
 		registerOnProducers();
 
 	}
@@ -69,21 +72,41 @@ public class Consumer implements ConsumerIF {
 	public void registerOnProducers() {
 		Socket server = getConnectionToServer();
 		getOfferofProducers(server);
-		System.out.println("Sie können sich für die folgenden Produzenten einschreiben: ");
-		for (int i = 0; i < producers.length; i++) {
-			System.out.print(producers[i] + ", ");
-		}
-		System.out.print("\nGeben Sie den Namen, der betreffenden Produzenten, für die Sie sich einschreiben wollen, mit einem \", \" getrennt ein: ");
-		String[] hilf = scanner.nextLine().split(",");
-		String hilf2 = "";
-		for (int i = 0; i < hilf.length; i++) {
-			hilf2 += hilf[i] + ";";
-		}
-		// überprufen, dass richtig eingegeben
+		System.out.println("Sie können sich für die folgenden Produzenten einschreiben: \n" + producers.toString());
 
-		// ...
+		System.out.print("\nGeben Sie den Namen, der betreffenden Produzenten, für die Sie sich einschreiben wollen, mit einem \",\" getrennt ein: ");
+		String[] input = scanner.nextLine().split(",");
 
-		Message m = new Message(MessageType.RegisterOnProducer, this.consumerID, hilf2);
+		// Durch die Eingabe des User entsteht bei Mehrfachauswahl hinter dem Komma eine Leerzeile, die nicht zum Namen des Producers gehört
+		// Folgender Code entfernt diese Leerzeile
+		for (int i = 0; i < input.length; i++) {
+			char[] c = input[i].toCharArray();
+			if (c[0] == ' ') {
+				char[] c2 = new char[c.length - 1];
+				java.lang.System.arraycopy(c, 1, c2, 0, c.length - 1);
+				input[i] = new String(c2);
+			}
+		}
+		String payload = "";
+
+		// überprufen, dass richtig eingegeben wurde
+		for (int i = 0; i < input.length; i++) {
+			// i = 1
+			if (!producers.contains(input[i])) {
+				System.out.println("Der Produzent " + input[i] + " existiert nicht ... ");
+
+				String[] input2 = new String[input.length - 1];
+				java.lang.System.arraycopy(input, 0, input2, 0, i);
+				java.lang.System.arraycopy(input, i + 1, input2, i, input.length - i - 1);
+				input = input2;
+			}
+		}
+
+		for (int i = 0; i < input.length; i++) {
+			payload += input[i] + ";";
+		}
+
+		Message m = new Message(MessageType.RegisterOnProducer, this.consumerID, payload);
 		Message answer = sendandGetMessage(m, server);
 		switch (answer.getPayload()) {
 		case "ok":
@@ -112,8 +135,10 @@ public class Consumer implements ConsumerIF {
 		// hab ich jetzt mal so definiert
 		Message m = new Message(MessageType.getProducer, this.consumerID, null);
 		Message answer = sendandGetMessage(m, server);
-
-		producers = answer.getPayload().split(";");
+		String[] help = answer.getPayload().split(";");
+		for (int i = 0; i < help.length; i++) {
+			producers.add(help[i]);
+		}
 	}
 
 	@Override
