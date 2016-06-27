@@ -4,12 +4,12 @@ package MessageServer;
 
 public class Message {
 	private static final long serialVersionUID = 1L;
-	private String payload;
+	private final String payload;
 	private final MessageType type;
 
 	public Message(MessageType type, String payload) {
 		this.type = type;
-		this.setPayload(payload);
+		this.payload = payload;
 	}
 
 	/**
@@ -23,9 +23,6 @@ public class Message {
 	 * @param payload
 	 *            the payload to set
 	 */
-	public void setPayload(String payload) {
-		this.payload = payload;
-	}
 
 	/**
 	 * @return the type
