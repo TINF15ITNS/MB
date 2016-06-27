@@ -11,28 +11,33 @@ import MessageServer.Message;
 import MessageServer.MessageType;
 
 public class Consumer {
-	Scanner scanner;
+	private Scanner scanner;
 	private String name;
 	private final int consumerID;
-	String[] producers;
-	public final int portServer;
+	private String[] producers;
+	private final int portServer;
 
 	public static void main(String[] args) {
+		// Erzeuge ein Consumer
 		Consumer prod = new Consumer();
+
+		// mit dieser Methode startet man die Möglichkeit für den Anwender, iwas zu machen ...
+		// bitte erst mal in den Konstruktor schauen
 		prod.startAction();
 
 	}
 
 	public Consumer() {
-		// Prozess der Erzeugung des Konsumenten
+		// Prozess der Erzeugung des Konsumenten !!!
 		scanner = new Scanner(System.in);
 		System.out.print("Name des Konsumenten: ");
 		name = scanner.nextLine();
 
-		System.out.println("Bevor Sie Push-Nachrichten für den Konsumenten " + name + " erhalten können, müssen Sie sich erst beim Server registrieren");
+		System.out.print(
+				"Um Nachrichten erhalten zu können, muss dieses Programm :) mit dem Server kommunizieren können. Geben Sie hierfür bitte den Port des Servers an: ");
 		portServer = scanner.nextInt();
-		// socket zur Kommunikation mit dem messageServer bei der Registrierung
 
+		// nun werden die Grundeinstellungen erledigt
 		consumerID = registerOnServer();
 
 		registerOnProducers();
@@ -109,11 +114,13 @@ public class Consumer {
 	}
 
 	public int registerOnServer() {
+		// ich hab jetzt eine Methode erstellt, die ein Socket zurückliefert, welches mit dem Server kommuniziert. Das alles in ner eigenen Methode, da für das
+		// Einschreiben auf Produzenten, ne eigener Socket benötigt wird (später, wenn der Konsument registriert wurde und der Anwender sich auf neuen
+		// einschreiben will)
 		Socket server = connectionToServer();
 		// das zu verschicken Message-Objekt wird angelegt
 		Message m = new Message(MessageType.RegisterOnServer, this.name);
 		// antwort verarbeiten
-
 		Message answer = sendandGetMessage(m, server);
 		int hilf = (int) new Integer(answer.getPayload());
 
@@ -130,7 +137,6 @@ public class Consumer {
 
 	private Socket connectionToServer() {
 		Socket s = null;
-
 		try {
 			s = new Socket("localhost", portServer);
 		} catch (UnknownHostException e) {
@@ -147,7 +153,7 @@ public class Consumer {
 
 		XMLEncoder enc = null;
 		XMLDecoder dec = null;
-
+		Message answer = null;
 		try {
 			enc = new XMLEncoder(server.getOutputStream());
 
@@ -155,6 +161,7 @@ public class Consumer {
 
 			// erhalte Antwort falls erwartet wird
 			dec = new XMLDecoder(server.getInputStream());
+			answer = (Message) dec.readObject();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -163,7 +170,7 @@ public class Consumer {
 			if (dec != null)
 				dec.close();
 		}
-		Message answer = (Message) dec.readObject();
+
 		return answer;
 	}
 
