@@ -1,5 +1,8 @@
 package MessageServer;
 
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+
 public class Message {
 	private final String payload;
 	private final int consignorID;
@@ -9,6 +12,13 @@ public class Message {
 		this.type = type;
 		this.consignorID = consignorID;
 		this.payload = payload;
+	}
+
+	public DatagramPacket getMessageAsDatagrammPacket(InetAddress iadr, int port) {
+		String message = this.toString();
+		DatagramPacket dp = new DatagramPacket(new byte[message.getBytes().length], message.getBytes().length, iadr, port);
+		dp.setData(message.getBytes());
+		return dp;
 	}
 
 	/**
@@ -32,17 +42,10 @@ public class Message {
 		return consignorID;
 	}
 
-	// Hier ist das wohl an der falschen Stelle
-	// und auch scheiﬂe gemacht
-	/*
-	 * public File serialize() {
-	 * 
-	 * File file = new File("MessageXML"); try (XMLEncoder enc = new XMLEncoder(new FileOutputStream(file));) { enc.writeObject(this); } catch
-	 * (FileNotFoundException e) { return null; } return file; }
-	 */
+	@Override
+	public String toString() {
+		return new String(type + ";" + consignorID + ";" + payload);
 
-	/*
-	 * public Message deserialize() { File file = new File("MessageXML"); Message m; try (XMLDecoder enc = new XMLDecoder(new FileInputStream(file));) { m =
-	 * (Message) enc.readObject(); } catch (FileNotFoundException e) { return null; } return m; }
-	 */
+	}
+
 }
