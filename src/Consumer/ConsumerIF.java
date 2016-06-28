@@ -25,8 +25,8 @@ public interface ConsumerIF {
 	public void deregister();
 
 	/**
-	 * This method handles with the Message of the Producers and shows them to the User
+	 * registers the consumer in the multicastgroup to get Messages
 	 */
-	public void getMessage();
+	public void registerOnMulticastGroup();
 
 }

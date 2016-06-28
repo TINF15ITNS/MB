@@ -3,9 +3,11 @@ package Consumer;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.IOException;
+import java.io.PipedReader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.MulticastSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
@@ -22,6 +24,8 @@ public class Consumer implements ConsumerIF {
 	private final int consumerID;
 	private Set<String> producers;
 	private final int portServer;
+	private final InetAddress mulicastAddress;
+	private PipedReader pr;
 
 	public static void main(String[] args) {
 		// Erzeuge ein Consumer
@@ -42,6 +46,17 @@ public class Consumer implements ConsumerIF {
 		System.out.print(
 				"Um Nachrichten erhalten zu können, muss dieses Programm :) mit dem Server kommunizieren können. Geben Sie hierfür bitte den Port des Servers an: ");
 		portServer = scanner.nextInt();
+		System.out.print("Zudem geben Sie bitte an über welche Multicast-Adresse der Server die Nachrichten verschickt: ");
+
+		// auf Korrektheit prüfen !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		InetAddress iadr = null;
+		try {
+			iadr = InetAddress.getByName(scanner.nextLine());
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		mulicastAddress = iadr;
 
 		// nun werden die Grundeinstellungen erledigt
 		consumerID = registerOnServer();
@@ -49,12 +64,26 @@ public class Consumer implements ConsumerIF {
 		producers = new HashSet<>();
 		registerOnProducers();
 
+		registerOnMulticastGroup();
+
 	}
+
+	// verdammt das mit den pipes funktioniert so nciht, wie ich mir das vorgestellt habe
+	/*
+	 * private void getNewMessages() { BufferedReader br = new BufferedReader(pr); String[] newMessages = null; try { if (br.ready()) { newMessages =
+	 * br.readLine().split(";"); } System.out.println(Sie haben neue Nachrichten); for (int i = 0; i < newMessages.length; i++) {
+	 * 
+	 * } } catch (IOException e) { System.out.println("IOFehler beim lesen aus der Pipe"); e.printStackTrace(); }
+	 * 
+	 * 
+	 * }
+	 */
 
 	@Override
 	public void startAction() {
 		boolean exit = true;
 		while (exit) {
+
 			System.out.println("Was möchten Sie tun?: ");
 			// ...
 			System.out.println("Wenn Sie sich für einen neuen Produzenten einschreiben wollen, geben Sie die Option \"p\" ein ");
@@ -66,6 +95,7 @@ public class Consumer implements ConsumerIF {
 				break;
 			case "exit":
 				exit = false;
+				deregister();
 				break;
 			default:
 			}
@@ -172,18 +202,21 @@ public class Consumer implements ConsumerIF {
 	@Override
 	public void deregister() {
 		Message m = new Message(MessageType.Deregister, this.consumerID, null);
-		InetAddress iadr = null;
+
+		InetAddress iadrServer = null;
 		try {
-			iadr = InetAddress.getByName("localhost");
+			iadrServer = InetAddress.getByName("localhost");
 		} catch (UnknownHostException e) {
 			// diese Fall wird hier nicht eintreten, da localhost wohl kaum unbekannt sein kann ...
 		}
-		DatagramPacket dp = m.getMessageAsDatagrammPacket(iadr, portServer);
+		DatagramPacket dp = Message.getMessageAsDatagrammPacket(m, iadrServer, portServer);
 
 		DatagramSocket udpSocket;
 		try {
+			// hier könnte man den UDP-Socket aufn nen lokalen port binden
 			udpSocket = new DatagramSocket();
-
+			// empfängt nun nur Nachrichten vom Server nciht von anderen möglicherweise vorhandenen UDP-Sockets
+			udpSocket.connect(iadrServer, portServer);
 			udpSocket.setSoTimeout(5000);
 
 			udpSocket.send(dp);
@@ -194,12 +227,30 @@ public class Consumer implements ConsumerIF {
 			System.out.println("IO-Fehler beim Senden des Datagram-Packets");
 			e.printStackTrace();
 		}
-
 	}
 
 	@Override
-	public void getMessage() {
-		// lauscht auf UDP Multicastnachrichten vom Server
+	public void registerOnMulticastGroup() {
+		MulticastSocket udpSocket = null;
+		try {
+			udpSocket = new MulticastSocket();
+
+			udpSocket.joinGroup(mulicastAddress);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+
+		}
+		// !!!!!!!!!!!!!!!!!!!!!!!!!
+		// Wird nicht geclost
+		// aber ich weißauch nicht wie und wo
+
+		pr = new PipedReader();
+
+		// Thread t = new Thread(new GetMessage(udpSocket, pr));
+		Thread t = new Thread(new GetMessage(udpSocket));
+		t.start();
+
 	}
 
 	private Socket getTCPConnectionToServer() {
@@ -248,4 +299,38 @@ public class Consumer implements ConsumerIF {
 		return name;
 	}
 
+	class GetMessage implements Runnable {
+		MulticastSocket udps;
+		// hier auch nochmal:
+		// Das mit den pipes funktioniert leider so nicht, wie ichmir das vorgestellt habe ... deswegen die unschöne variante
+		// PipedWriter pw;
+
+		// public GetMessage(MulticastSocket udps, PipedReader pr){
+		public GetMessage(MulticastSocket udps) {
+			this.udps = udps;
+			/*
+			 * pw = new PipedWriter(); try { pw.connect(pr); } catch (IOException e) { System.out.println("IOFehler beim verbinden der beiden Pipes"); }
+			 */
+		}
+
+		@Override
+		public void run() {
+			DatagramPacket dp = null;// `??????
+			try {
+				udps.receive(dp);
+				Message m = Message.getMessageFromDatagramPacket(dp);
+				// schreibt noch nen ; dahinter, damit ich oben sehen kann, ob mehrere Messages kamen
+				// pw.write(m.getPayload() + ";");
+				System.out.println("Sie haben eine neue Push-Mitteilung:");
+				// !!!!!!!!!!!!!!!!!!!!!!!!
+				// in der Message Message soll im payload als erster teil der Name des Absenders stehen und danach die Nachricht
+				// !!!!!!!!!!!!!!!!!!!!!!!!!
+				String[] newMessage = m.getPayload().split(";");
+				System.out.println(newMessage[0] + " meldet: \n" + newMessage[1]);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
 }
