@@ -3,7 +3,11 @@ package Consumer;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.HashSet;
 import java.util.Scanner;
@@ -70,7 +74,7 @@ public class Consumer implements ConsumerIF {
 
 	@Override
 	public void registerOnProducers() {
-		Socket server = getConnectionToServer();
+		Socket server = getTCPConnectionToServer();
 		getOfferofProducers(server);
 		System.out.println("Sie können sich für die folgenden Produzenten einschreiben: \n" + producers.toString());
 
@@ -147,7 +151,7 @@ public class Consumer implements ConsumerIF {
 		// Einschreiben auf Produzenten, ne eigener Socket benötigt wird (später, wenn der Konsument registriert wurde und der Anwender sich auf neuen
 		// einschreiben will, ist zum Beispiel ein Socket zur Registrierung nicht mehr da) (oder sollte man eher ein SOcket im Konstruktor erschaffen und erst
 		// beim Beenden des Consumers schleißen ?????????????????????????????
-		Socket server = getConnectionToServer();
+		Socket server = getTCPConnectionToServer();
 		// das zu verschicken Message-Objekt wird angelegt
 		Message m = new Message(MessageType.RegisterOnServer, this.consumerID, this.name);
 		// antwort verarbeiten
@@ -167,7 +171,29 @@ public class Consumer implements ConsumerIF {
 
 	@Override
 	public void deregister() {
-		// sendet ne UDP Nachricht an den Server
+		Message m = new Message(MessageType.Deregister, this.consumerID, null);
+		InetAddress iadr = null;
+		try {
+			iadr = InetAddress.getByName("localhost");
+		} catch (UnknownHostException e) {
+			// diese Fall wird hier nicht eintreten, da localhost wohl kaum unbekannt sein kann ...
+		}
+		DatagramPacket dp = m.getMessageAsDatagrammPacket(iadr, portServer);
+
+		DatagramSocket udpSocket;
+		try {
+			udpSocket = new DatagramSocket();
+
+			udpSocket.setSoTimeout(5000);
+
+			udpSocket.send(dp);
+		} catch (SocketException e) {
+			System.out.println("Der UDP-Socket konnte nicht erzeugt werden ...");
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.out.println("IO-Fehler beim Senden des Datagram-Packets");
+			e.printStackTrace();
+		}
 
 	}
 
@@ -176,7 +202,7 @@ public class Consumer implements ConsumerIF {
 		// lauscht auf UDP Multicastnachrichten vom Server
 	}
 
-	private Socket getConnectionToServer() {
+	private Socket getTCPConnectionToServer() {
 		Socket s = null;
 		try {
 			s = new Socket("localhost", portServer);
