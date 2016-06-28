@@ -4,8 +4,17 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 
 public class Message {
+	/**
+	 * payload of this message
+	 */
 	private final String payload;
+	/**
+	 * id of the Producer or Consumer who sent this message
+	 */
 	private final int consignorID;
+	/**
+	 * type of the message to indicate how to handle with this message
+	 */
 	private final MessageType type;
 
 	public Message(MessageType type, int consignorID, String payload) {
@@ -14,9 +23,19 @@ public class Message {
 		this.payload = payload;
 	}
 
+	/**
+	 * wraps the message to a DatagramPacket
+	 * 
+	 * @param iadr
+	 *            the InetAddress of the recipient
+	 * @param port
+	 *            port of the recipient
+	 * @return a DatagramPacket
+	 */
 	public DatagramPacket getMessageAsDatagrammPacket(InetAddress iadr, int port) {
 		String message = this.toString();
-		DatagramPacket dp = new DatagramPacket(new byte[message.getBytes().length], message.getBytes().length, iadr, port);
+		int length = message.getBytes().length;
+		DatagramPacket dp = new DatagramPacket(new byte[length], length, iadr, port);
 		dp.setData(message.getBytes());
 		return dp;
 	}
