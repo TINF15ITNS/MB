@@ -1,9 +1,15 @@
 package MessageServer;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 
-public class Message {
+public class Message implements Serializable {
 	/**
 	 * payload of this message
 	 */
@@ -32,12 +38,55 @@ public class Message {
 	 *            port of the recipient
 	 * @return a DatagramPacket
 	 */
-	public DatagramPacket getMessageAsDatagrammPacket(InetAddress iadr, int port) {
-		String message = this.toString();
-		int length = message.getBytes().length;
-		DatagramPacket dp = new DatagramPacket(new byte[length], length, iadr, port);
-		dp.setData(message.getBytes());
+	public static DatagramPacket getMessageAsDatagrammPacket(Message m, InetAddress iadr, int port) {
+		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		ObjectOutputStream objOut = null;
+		try {
+			objOut = new ObjectOutputStream(bout);
+			objOut.writeObject(m);
+			objOut.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		byte[] buf = bout.toByteArray();
+
+		DatagramPacket dp = new DatagramPacket(buf, buf.length, iadr, port);
+		dp.setData(buf);
 		return dp;
+	}
+
+	/**
+	 * wraps the data out of the DatagramPacket to a Message-Object
+	 * 
+	 * @param dp
+	 *            the DatagramPacket
+	 * @return message-object
+	 */
+	public static Message getMessageFromDatagramPacket(DatagramPacket dp) {
+		byte[] buf = dp.getData();
+		ByteArrayInputStream bin = new ByteArrayInputStream(buf); // von Datagram
+		ObjectInputStream objIn = null;
+		Message m = null;
+		try {
+			objIn = new ObjectInputStream(bin);
+			m = (Message) objIn.readObject();
+		} catch (ClassNotFoundException e) {
+			System.out.println("Beim Lesen des Objektes ist ein fehler aufgetreten");
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.out.println("IOFehler beim ermitteln der Message ausm DatagramPacket");
+			e.printStackTrace();
+		} finally {
+			if (objIn != null)
+				try {
+					objIn.close();
+				} catch (IOException e) {
+					System.out.println("Fehler beim closen vonm ObjectInputStream");
+					e.printStackTrace();
+				}
+		}
+		return m;
 	}
 
 	/**
@@ -59,12 +108,6 @@ public class Message {
 	 */
 	public int getConsignorID() {
 		return consignorID;
-	}
-
-	@Override
-	public String toString() {
-		return new String(type + ";" + consignorID + ";" + payload);
-
 	}
 
 }
