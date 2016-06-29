@@ -13,15 +13,6 @@ Also wenn der MessageServer implementiert wird, bitte nach den entsprechenden Me
 
 
 
-
-
-
-
-
 #Offene Fragen: 
-
-* soll der Server bei der UDP-Kommunikation Antworten senden bzw erhalten? Also der Konsument sendet ne Deregistrierungmessage an den Server und wartet dann auf ne Antwort? Oder einfach nur einmal ne Message?
-* ich hab die Messages jetzt mit diesem XML-En/Decoder versendet. Aber eigentlich ists völlig wurscht, ob wir das auch als Objekt versenden und Serializable benutzen ...	weiß net, ob dass vlt sogar schöner wäre, da wir für UDP die Message ja net per XML-Format (oder doch?) verschicken können, sondern das auch serialisieren
-Denn: Für UDP Nachrichten müssen DatagramPackets erstellt werden und die brauchen nen byte-Array als Data und um das zu erhalten nutzt man ein ByteArrayOutputStream und der serialisiert das Objekt ... Dann ist alles einheitlich
 
 * man kann sowohl TCP als auch UDP Sockets an einen bestimmten lokalen Port binden (DatagramSocket udpSocket = new DatagramSocket( localPort ) ; und Socket s s.bind();) ... macht das Sinn ?
