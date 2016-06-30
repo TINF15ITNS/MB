@@ -19,52 +19,24 @@ import MessageServer.Message;
 import MessageServer.MessageType;
 
 public class Consumer implements ConsumerIF {
-	private Scanner scanner;
 	private String name;
-	private final int consumerID;
+	private int consumerID;
 	private Set<String> producers;
-	private final int portServer;
-	private final InetAddress mulicastAddress;
+	private InetAddress ssadr;
+	private int portServer;
+	private InetAddress multicastAddress;
 	private PipedReader pr;
+	private Scanner scanner;
 
 	public static void main(String[] args) {
-		// Erzeuge ein Consumer
-		Consumer prod = new Consumer();
-
-		// mit dieser Methode startet man die Möglichkeit für den Anwender, iwas zu machen ...
-		// bitte erst mal in den Konstruktor schauen
-		prod.startAction();
 
 	}
 
-	public Consumer() {
-		// Prozess der Erzeugung des Konsumenten !!!
+	public Consumer(String name, InetAddress ssadr, int portServer) {
+		this.ssadr = ssadr;
+		this.portServer = portServer;
 		scanner = new Scanner(System.in);
-		System.out.print("Name des Konsumenten: ");
-		name = scanner.nextLine();
-
-		System.out.print(
-				"Um Nachrichten erhalten zu können, muss dieses Programm :) mit dem Server kommunizieren können. Geben Sie hierfür bitte den Port des Servers an: ");
-		portServer = scanner.nextInt();
-		System.out.print("Zudem geben Sie bitte an über welche Multicast-Adresse der Server die Nachrichten verschickt: ");
-
-		// auf Korrektheit prüfen !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		InetAddress iadr = null;
-		try {
-			iadr = InetAddress.getByName(scanner.nextLine());
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		mulicastAddress = iadr;
-
-		// nun werden die Grundeinstellungen erledigt
-		consumerID = registerOnServer();
-
 		producers = new HashSet<>();
-		registerOnProducers();
-
-		registerOnMulticastGroup();
 
 	}
 
@@ -176,17 +148,24 @@ public class Consumer implements ConsumerIF {
 	}
 
 	@Override
-	public int registerOnServer() {
+	public void registerOnServer() {
 		// ich hab jetzt eine Methode erstellt, die ein Socket zurückliefert, welches mit dem Server kommuniziert. Das alles in ner eigenen Methode, da für das
 		// Einschreiben auf Produzenten, ne eigener Socket benötigt wird (später, wenn der Konsument registriert wurde und der Anwender sich auf neuen
 		// einschreiben will, ist zum Beispiel ein Socket zur Registrierung nicht mehr da) (oder sollte man eher ein SOcket im Konstruktor erschaffen und erst
-		// beim Beenden des Consumers schleißen ?????????????????????????????
+		// beim Beenden des Consumers schleißen ?????????????????????????????)
 		Socket server = getTCPConnectionToServer();
 		// das zu verschicken Message-Objekt wird angelegt
-		Message m = new Message(MessageType.RegisterOnServer, this.consumerID, this.name);
+		Message m = new Message(MessageType.RegisterOnServer, 0, this.name);
 		// antwort verarbeiten
 		Message answer = sendandGetMessage(m, server);
-		int hilf = (int) new Integer(answer.getPayload());
+		String[] answerPayload = answer.getPayload().split(";");
+		consumerID = (int) new Integer(answerPayload[0]);
+		try {
+			multicastAddress = InetAddress.getByName(answerPayload[1]);
+		} catch (UnknownHostException e1) {
+			System.out.println("Die zurückgeleiferte Multicastadresse stimmt nicht");
+			e1.printStackTrace();
+		}
 
 		if (server != null) {
 			try {
@@ -196,7 +175,6 @@ public class Consumer implements ConsumerIF {
 				e.printStackTrace();
 			}
 		}
-		return hilf;
 	}
 
 	@Override
@@ -235,9 +213,9 @@ public class Consumer implements ConsumerIF {
 		try {
 			udpSocket = new MulticastSocket();
 
-			udpSocket.joinGroup(mulicastAddress);
+			udpSocket.joinGroup(multicastAddress);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			System.out.println("IOFehler beim Registrieren in der Multicastgruppe");
 			e.printStackTrace();
 
 		}
@@ -256,12 +234,12 @@ public class Consumer implements ConsumerIF {
 	private Socket getTCPConnectionToServer() {
 		Socket s = null;
 		try {
-			s = new Socket("localhost", portServer);
+			s = new Socket(ssadr, portServer);
 		} catch (UnknownHostException e) {
-			System.out.println("Die Serveradresse stimmtn nicht");
+			System.out.println("Die Serveradresse stimmt nicht");
 			e.printStackTrace();
 		} catch (IOException e) {
-			System.out.println("IO-Probleme...");
+			System.out.println("IO-Fehler bei Socketerstellung zum Server");
 			e.printStackTrace();
 		}
 		return s;
@@ -328,7 +306,7 @@ public class Consumer implements ConsumerIF {
 				String[] newMessage = m.getPayload().split(";");
 				System.out.println(newMessage[0] + " meldet: \n" + newMessage[1]);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				System.out.println("Fehler beim bearbeiten der erhaltenen UDP-Message");
 				e.printStackTrace();
 			}
 		}

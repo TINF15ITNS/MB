@@ -11,6 +11,10 @@ import java.net.InetAddress;
 
 public class Message implements Serializable {
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	/**
 	 * payload of this message
 	 */
 	private final String payload;

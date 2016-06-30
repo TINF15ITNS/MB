@@ -13,11 +13,9 @@ public interface ConsumerIF {
 	public void registerOnProducers();
 
 	/**
-	 * This Method registers the Consumer on the Server
-	 * 
-	 * @return the ID of the registered Consumer
+	 * This Method registers the Consumer on the Server. In further consequence the attributes conumerID and multicastAddress are set by this method
 	 */
-	public int registerOnServer();
+	public void registerOnServer();
 
 	/**
 	 * This method deregisters the consumer from the server.
