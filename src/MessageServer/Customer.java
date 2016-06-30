@@ -7,6 +7,7 @@ public interface Customer {
 
 }
 
+// das sind die Objekte die in der HashMap gespeichert werden sollen, die die Informationen über Produzenten und Konsumenten halten
 class ConsumerMS implements Customer {
 	String name;
 	InetAddress address;

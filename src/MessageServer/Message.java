@@ -14,22 +14,30 @@ public class Message implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
 	/**
 	 * payload of this message
 	 */
-	private final String payload;
-	/**
-	 * id of the Producer or Consumer who sent this message
+	/*
+	 * private final String payload;
 	 */
-	private final int consignorID;
+	private final Payload payload;
+	/*
+	 * 
+	 * id of the Producer or Consumer who sent this message
+	 * 
+	 * private final int consignorID;
+	 */
 	/**
 	 * type of the message to indicate how to handle with this message
 	 */
 	private final MessageType type;
 
-	public Message(MessageType type, int consignorID, String payload) {
+	/*
+	 * public Message(MessageType type, int consignorID, String payload) { this.type = type; this.consignorID = consignorID; this.payload = payload; }
+	 */
+	public Message(MessageType type, Payload payload) {
 		this.type = type;
-		this.consignorID = consignorID;
 		this.payload = payload;
 	}
 
@@ -96,7 +104,7 @@ public class Message implements Serializable {
 	/**
 	 * @return the payload
 	 */
-	public String getPayload() {
+	public Payload getPayload() {
 		return payload;
 	}
 
@@ -105,13 +113,6 @@ public class Message implements Serializable {
 	 */
 	public MessageType getType() {
 		return type;
-	}
-
-	/**
-	 * @return the consignorID
-	 */
-	public int getConsignorID() {
-		return consignorID;
 	}
 
 }
