@@ -113,30 +113,23 @@ public class Consumer implements ConsumerIF {
 		Message m = new Message(MessageType.RegisterOnProducer, payload);
 
 		Message answer = sendandGetMessage(m, server);
-		// unsichere Downcast .., lässt sich da was mit Generics machen???
-		// oder auf den Typ switchen ?
-		PayloadForMessageTypeRegisterOnProducer answerPayload = (PayloadForMessageTypeRegisterOnProducer) answer.getPayload();
-		String[] answerProducers = answerPayload.getProducers();
-		if (answerProducers != null) {
-			System.out.print("Der Einschreibevorgang war für die/den folgenden Producer nicht erfolgreich: ");
-			for (int i = 0; i < answerProducers.length; i++) {
-				System.out.print(answerProducers[i]);
+		if (answer.getType() == MessageType.RegisterOnProducer) {
+			PayloadForMessageTypeRegisterOnProducer answerPayload = (PayloadForMessageTypeRegisterOnProducer) answer.getPayload();
+			String[] answerProducers = answerPayload.getProducers();
+			if (answerProducers != null) {
+				System.out.print("Der Einschreibevorgang war für die/den folgenden Producer nicht erfolgreich: ");
+				for (int i = 0; i < answerProducers.length; i++) {
+					System.out.print(answerProducers[i]);
+				}
+				System.out.print("\n");
+			} else {
+				System.out.println("Der Einschreibevorgang war erfolgreich! Sie werden bei Push-Nachrichten Ihrer abonnierten Produzenten informiert...");
+
 			}
-			System.out.print("\n");
 		} else {
-			System.out.println("Der Einschreibevorgang war erfolgreich! Sie werden bei Push-Nachrichten Ihrer abonnierten Produzenten informiert...");
-
+			throw new RuntimeException("payload der message stimmt nicht");
 		}
-
-		if (server != null) {
-			try {
-				server.close();
-			} catch (IOException e) {
-				System.out.println("Socket lässt sich nicht schließen");
-				e.printStackTrace();
-			}
-		}
-
+		closeSocket(server);
 	}
 
 	private String[] getOfferofProducers(Socket server) {
@@ -145,9 +138,12 @@ public class Consumer implements ConsumerIF {
 		Message m = new Message(MessageType.getProducer, payload);
 
 		Message answer = sendandGetMessage(m, server);
-		PayloadForMessageTypegetProducer answerPayload = (PayloadForMessageTypegetProducer) answer.getPayload();
-		return answerPayload.getProducers();
-
+		if (answer.getType() == MessageType.getProducer) {
+			PayloadForMessageTypegetProducer answerPayload = (PayloadForMessageTypegetProducer) answer.getPayload();
+			return answerPayload.getProducers();
+		} else {
+			throw new RuntimeException("payload der message stimmt nicht");
+		}
 	}
 
 	@Override
@@ -161,18 +157,16 @@ public class Consumer implements ConsumerIF {
 		Message m = new Message(MessageType.RegisterOnServer, payload);
 		// antwort verarbeiten
 		Message answer = sendandGetMessage(m, server);
-		PayloadForMessageTypeRegisterOnServer answerPayload = (PayloadForMessageTypeRegisterOnServer) answer.getPayload();
-		consumerID = answerPayload.getId();
-		multicastAddress = answerPayload.getMulticastAddress();
 
-		if (server != null) {
-			try {
-				server.close();
-			} catch (IOException e) {
-				System.out.println("Socket lässt sich nicht schließen");
-				e.printStackTrace();
-			}
+		if (answer.getType() == MessageType.RegisterOnServer) {
+			PayloadForMessageTypeRegisterOnServer answerPayload = (PayloadForMessageTypeRegisterOnServer) answer.getPayload();
+			consumerID = answerPayload.getId();
+			multicastAddress = answerPayload.getMulticastAddress();
+		} else {
+			throw new RuntimeException("payload der message stimmt nicht");
 		}
+		closeSocket(server);
+
 	}
 
 	@Override
@@ -182,10 +176,16 @@ public class Consumer implements ConsumerIF {
 
 		Socket server = getTCPConnectionToServer();
 		Message answer = sendandGetMessage(m, server);
-		PayloadForMessageTypeDeregister answerPayload = (PayloadForMessageTypeDeregister) answer.getPayload();
-		if (answerPayload.getConsignorID() != 0) {
-			System.out.println("Fehler: Irgendetwas ist beim Abmelden falsch gelaufen");
+		if (answer.getType() == MessageType.Deregister) {
+			PayloadForMessageTypeDeregister answerPayload = (PayloadForMessageTypeDeregister) answer.getPayload();
+			if (answerPayload.getConsignorID() != 0) {
+				System.out.println("Fehler: Irgendetwas ist beim Abmelden falsch gelaufen");
+			}
+		} else {
+			throw new RuntimeException("payload der message stimmt nicht");
 		}
+
+		closeSocket(server);
 	}
 
 	@Override
@@ -204,7 +204,6 @@ public class Consumer implements ConsumerIF {
 		// Wird nicht geclost
 		// aber ich weißauch nicht wie und wo
 
-		// Thread t = new Thread(new GetMessage(udpSocket, pr));
 		Thread t = new Thread(new GetMessage(udpSocket));
 		t.start();
 
@@ -222,6 +221,17 @@ public class Consumer implements ConsumerIF {
 			e.printStackTrace();
 		}
 		return s;
+	}
+
+	private void closeSocket(Socket s) {
+		if (s != null) {
+			try {
+				s.close();
+			} catch (IOException e) {
+				System.out.println("Socket lässt sich nicht schließen");
+				e.printStackTrace();
+			}
+		}
 	}
 
 	private Message sendandGetMessage(Message m, Socket server) {
@@ -270,16 +280,20 @@ public class Consumer implements ConsumerIF {
 			DatagramPacket dp = null;// `??????
 			try {
 				udps.receive(dp);
-				Message m = Message.getMessageFromDatagramPacket(dp);
+				Message rsp = Message.getMessageFromDatagramPacket(dp);
 				// schreibt noch nen ; dahinter, damit ich oben sehen kann, ob mehrere Messages kamen
 				// pw.write(m.getPayload() + ";");
 				System.out.println("Sie haben eine neue Push-Mitteilung:");
 				// er schreibt ja jetzt einfach raus ...
 				// vlt funktioniert dies nicht, weil im hauptthread er gerade auf ne Eingabe wartet ... vlt muss man dann hier den hauptthread einschläfern und
 				// nach der Ausgabe wieder aufwecken?!
-				PayloadForMessageTypeMessage answerPayload = (PayloadForMessageTypeMessage) m.getPayload();
+				if (rsp.getType() == MessageType.Message) {
+					PayloadForMessageTypeMessage answerPayload = (PayloadForMessageTypeMessage) rsp.getPayload();
 
-				System.out.println(answerPayload.getConsignorName() + " meldet: \n" + answerPayload.getText());
+					System.out.println(answerPayload.getConsignorName() + " meldet: \n" + answerPayload.getText());
+				} else {
+					throw new RuntimeException("Falscher Payload in GetMessage");
+				}
 			} catch (IOException e) {
 				System.out.println("Fehler beim bearbeiten der erhaltenen UDP-Message");
 				e.printStackTrace();
