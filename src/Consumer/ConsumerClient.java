@@ -1,5 +1,6 @@
 package Consumer;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -27,25 +28,32 @@ public class ConsumerClient {
 		do {
 			if (!correctInetAddress) {
 				correctInetAddress = true;
-				System.out.println("Geben Sie bitte die Adresse des Servers an (-> localhost): ");
+				System.out.print("Geben Sie bitte die Adresse des Servers an (-> localhost): ");
 				String serverAddress = scanner.nextLine();
 				try {
 					iadr = InetAddress.getByName(serverAddress);
+					if (!iadr.isReachable(50)) {
+						System.out.println("Der Server ist unter der Adresse: " + serverAddress + " nicht erreichbar");
+						correctInetAddress = false;
+					}
 				} catch (UnknownHostException e) {
 					System.out.println("Der Server ist unter der Adresse: " + serverAddress + " nicht erreichbar");
 					correctInetAddress = false;
 					continue;
+				} catch (IOException e) {
+					System.out.println("IOFehler beim Testen, ob die InetAddresse stimmt");
+					e.printStackTrace();
 				}
 			}
 			correctServerSocketAddress = true;
-			System.out.println("Geben Sie bitte den port, auf welchem der Server erreichbar ist, an: ");
+			System.out.print("Geben Sie bitte den Port, auf welchem der Server erreichbar ist, an: ");
 			portServer = scanner.nextInt();
 			SocketAddress socketadr = new InetSocketAddress(iadr, portServer);
 			try (Socket testConnectionSocket = new Socket()) {
 				testConnectionSocket.connect(socketadr, 100);
 			} catch (Exception e) {
 				correctServerSocketAddress = false;
-				System.out.println("Die Serveradresse stimmt, aber über den angegebenen Port kann keine verbindung hergestellt werden ...");
+				System.out.println("Die Serveradresse stimmt, aber über den angegebenen Port kann keine Verbindung hergestellt werden ...");
 				continue;
 			}
 		} while (!correctServerSocketAddress);

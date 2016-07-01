@@ -16,7 +16,7 @@ Typ 2: RegisterOnProducer:
     payload: Namen der Produzenten mit einem ";" getrennt
   Nachricht __von__ Server:
     consignorID: _noch zu definieren (vlt ne serverspezifische ID?)_
-    payload: "ok" und "cannotRegisterOnProducers" falls es warum auch immer nicht geklappt hat
+    payload: Namen der Produzenten mit einem ";" getrennt, auf welche man sich nicht einschreiben konnte 
 
 Typ 3: Deregister: 
   Nachricht __an__ Server: 

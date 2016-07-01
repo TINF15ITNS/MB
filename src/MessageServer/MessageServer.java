@@ -5,6 +5,9 @@ import java.util.Scanner;
 
 public class MessageServer {
 
+	// nicht das gleihe Objekt zurücksenden! Wird iwie die gleiche Referenz zurückgesendet, dann erkennt das der Client und nimmt das alte Objekt warum auch
+	// immer und nicht das neuen mit den veränderten Variablenwerten ... Quelle Internet
+
 	public final int portMessageServer;
 	HashMap<Integer, Customer> hashMapProducer, hashMapConsumer;
 	Scanner scanner;
@@ -20,7 +23,7 @@ public class MessageServer {
 
 		scanner = new Scanner(System.in);
 		System.out.println("Willkommen beim Installationsvorgang Ihres MessageServers:");
-		System.out.print("Geben Sie bitte den Port an, über welchen sich Konsumenten und Produzenten den MessageServer erreichen können ");
+		System.out.print("Geben Sie bitte den Port an, über welchen Konsumenten und Produzenten den MessageServer erreichen können ");
 		portMessageServer = scanner.nextInt();
 
 		System.out.println("\n\n\nIhr MessageServer wurde erfolgreich installiert\nSie erreichen den MessageServer unter folgendem Port: " + portMessageServer);
