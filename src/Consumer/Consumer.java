@@ -4,8 +4,6 @@ import java.io.*;
 import java.net.*;
 import java.util.Scanner;
 import Message.*;
-import Message.Deprecated.PayloadDeregister;
-import Message.Deprecated.PayloadRegisterOnServer;
 
 public class Consumer {
 	private static int serverPort = 55555;
@@ -25,8 +23,8 @@ public class Consumer {
 	 * Checks if it is possible to establish a TCP connection using the
 	 * "serverPort"
 	 * 
-	 * @param adress
-	 *            The address of the server to be checked
+	 * @param adress The address of the server to be checked
+	 * @param timeout Timout of the connection
 	 * @return if the connection was successful
 	 */
 	private boolean testConnection(InetAddress adress, int timeout) {
@@ -78,7 +76,7 @@ public class Consumer {
 
 	/**
 	 * 
-	 * @return the ID privided by the server.
+	 * @return the ID provided by the server.
 	 */
 	public String registerOnServer() {
 		// ich hab jetzt eine Methode erstellt, die ein Socket zur�ckliefert,
@@ -92,13 +90,13 @@ public class Consumer {
 		// erschaffen und erst
 		// beim Beenden des Consumers schlei�en ?????????????????????????????)
 		Socket server = getTCPConnectionToServer();
-		PayloadRegisterOnServer payload = new PayloadRegisterOnServer(0, null);
+		PayloadRegisterConsumer payload = new PayloadRegisterConsumer(0, null);
 		Message m = new Message(MessageType.RegisterOnServer, payload);
 		// antwort verarbeiten
 		Message answer = sendandGetMessage(m, server);
 
 		if (answer.getType() == MessageType.RegisterOnServer) {
-			PayloadRegisterOnServer answerPayload = (PayloadRegisterOnServer) answer.getPayload();
+			PayloadRegisterConsumer answerPayload = (PayloadRegisterConsumer) answer.getPayload();
 			consumerID = answerPayload.getId();
 			multicastAddress = answerPayload.getMulticastAddress();
 		} else {
@@ -110,13 +108,13 @@ public class Consumer {
 
 	public boolean deregisterFromServer() {
 
-		PayloadDeregister payload = new PayloadDeregister(consumerID);
+		PayloadDeregisterConsumer payload = new PayloadDeregisterConsumer(consumerID);
 		Message m = new Message(MessageType.Deregister, payload);
 
 		Socket server = getTCPConnectionToServer();
 		Message answer = sendandGetMessage(m, server);
 		if (answer.getType() == MessageType.Deregister) {
-			PayloadDeregister answerPayload = (PayloadDeregister) answer.getPayload();
+			PayloadDeregisterConsumer answerPayload = (PayloadDeregisterConsumer) answer.getPayload();
 			if (answerPayload.getConsignorID() != 0) {
 				System.out.println("Fehler: Irgendetwas ist beim Abmelden falsch gelaufen");
 			}
@@ -182,9 +180,6 @@ public class Consumer {
 
 	class GetMessage implements Runnable {
 		MulticastSocket udps;
-		// hier auch nochmal:
-		// Das mit den pipes funktioniert leider so nicht, wie ichmir das
-		// vorgestellt habe ... deswegen die unsch�ne variante
 
 		public GetMessage(MulticastSocket udps) {
 			this.udps = udps;

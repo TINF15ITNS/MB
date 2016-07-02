@@ -1,10 +1,8 @@
-package Message.Deprecated;
+package Message;
 
 import java.io.Serializable;
 
-import Message.Payload;
-@Deprecated
-public class PayloadDeregister implements Payload, Serializable {
+public class PayloadDeregisterConsumer implements Payload, Serializable {
 
 	/**
 	 * 
@@ -17,7 +15,7 @@ public class PayloadDeregister implements Payload, Serializable {
 	 */
 	private final int consignorID;
 
-	public PayloadDeregister(int consignorID) {
+	public PayloadDeregisterConsumer(int consignorID) {
 		this.consignorID = consignorID;
 	}
 
