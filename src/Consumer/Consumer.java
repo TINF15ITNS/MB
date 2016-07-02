@@ -12,10 +12,6 @@ public class Consumer implements ConsumerIF {
 	private InetAddress multicastAddress;
 	private Scanner scanner;
 
-	public static void main(String[] args) {
-
-	}
-
 	public Consumer(InetAddress address, int serverPort) {
 		this.serverAddress = address;
 		this.serverPort = serverPort;
