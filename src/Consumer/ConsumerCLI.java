@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.*;
 import java.util.Scanner;
 
-public class ConsumerClient {
+public class ConsumerCLI {
 	private static int serverPort = 55555; //The port of the MessageServer (should be fixed)
 
 	public static void main(String[] args) {
