@@ -109,6 +109,10 @@ public class Test {
 			 * } catch (Exception e) {
 			 * System.out.println("Verbindung unterbrochen."); }
 			 */
+			
+			
+			
+			ss.close();
 		}
 
 	}
