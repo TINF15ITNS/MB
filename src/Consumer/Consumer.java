@@ -45,12 +45,11 @@ public class Consumer {
 	 * @return a list of producers this consumer is subscribed to
 	 */
 	public String[] getSubscriptions() {
-		try {
-			Message response = this.sendandGetMessage(new Message(MessageType.getSubscriptions, new PayloadSubscriptions(null)), serverAddress);
+
+			Message response = this.sendAndGetMessage(
+					new Message(MessageType.getSubscriptions, new PayloadSubscriptions(null)), serverAddress);
 			return ((PayloadSubscriptions) response.getPayload()).getSubscriptions();
-		} catch (IOException e) {
-			return null;
-		}
+
 	}
 
 	/**
@@ -223,42 +222,36 @@ public class Consumer {
 
 	}
 
-	private Message sendandGetMessage(Message m, InetAddress a) throws IOException {
-		Socket server = new Socket(a, serverPort);
-		Message answer = null;
-		ObjectOutputStream out = null;
-		ObjectInputStream in = null;
+	/**
+	 * 
+	 * @param message
+	 *            The message to be filled with content
+	 * @param address
+	 *            The address of the server
+	 * @return The filled message. If the operation was not successful null.
+	 * @throws ClassNotFoundException 
+	 */
+	private Message sendAndGetMessage(Message message, InetAddress address) {
+		Socket server;
 		try {
+			server = new Socket(address, serverPort);
+
+			Message answer = null;
+			ObjectOutputStream out = null;
+			ObjectInputStream in = null;
+
 			out = new ObjectOutputStream(server.getOutputStream());
-			out.writeObject(m);
 			in = new ObjectInputStream(server.getInputStream());
+			out.writeObject(message);
 			answer = (Message) in.readObject();
-		} catch (ClassNotFoundException e) {
-			System.out.println("Fehler beim Lesen des Objektes");
-			e.printStackTrace();
-		} catch (IOException e) {
-			System.out.println("IOFehler beim Senden und Empfangen der Messages");
-			e.printStackTrace();
-		} finally {
-			if (out != null) {
-				try {
-					out.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+
+			in.close();
+			out.close();
+			server.close();
+			return answer;
+		} catch (Exception e) {
+			return null;
 		}
-		server.close();
-		return answer;
 	}
 
 	class GetMessage implements Runnable {

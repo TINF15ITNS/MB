@@ -1,15 +1,8 @@
 package Consumer;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-
-import Message.Message;
-import Message.MessageType;
-import Message.PayloadRegisterOnServer;
+import java.io.*;
+import java.net.*;
+import Message.*;
 
 public class Test {
 
@@ -21,6 +14,8 @@ public class Test {
 
 		ss = new ServerSocket(55555);
 		while (true) {
+			
+			/* Beispiel Liste Subscriptions:
 			try {
 				System.out.println("Warte auf Anfrage eines Clients");
 				client = ss.accept();
@@ -33,13 +28,14 @@ public class Test {
 
 				System.out.println("Lese jetzt die Nachricht");
 				Message m = (Message) in.readObject();
-				Message answer = new Message(MessageType.RegisterConsumer,
-						new PayloadRegisterOnServer(1234, InetAddress.getByName("228.5.6.7")));
+				Message answer = new Message(MessageType.getSubscriptions,
+						new PayloadSubscriptions(new String[] {"Sport","Kultur"}));
 				System.out.println("Schreibe jetzt die nachricht");
 				out.writeObject(answer);
 			} catch (Exception e) {
 				System.out.println("Verbindung unterbrochen.");
 			}
+			*/
 
 		}
 
