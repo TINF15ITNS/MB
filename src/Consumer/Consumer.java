@@ -23,8 +23,10 @@ public class Consumer {
 	 * Checks if it is possible to establish a TCP connection using the
 	 * "serverPort"
 	 * 
-	 * @param adress The address of the server to be checked
-	 * @param timeout Timout of the connection
+	 * @param adress
+	 *            The address of the server to be checked
+	 * @param timeout
+	 *            Timout of the connection
 	 * @return if the connection was successful
 	 */
 	private boolean testConnection(InetAddress adress, int timeout) {
@@ -46,9 +48,8 @@ public class Consumer {
 	 */
 	public String[] getSubscriptions() {
 
-			Message response = this.sendAndGetMessage(
-					new Message(MessageType.getSubscriptions, null), serverAddress);
-			return ((PayloadGetSubscriptions) response.getPayload()).getSubscriptions();
+		Message response = this.sendAndGetMessage(new Message(MessageType.getSubscriptions, null), serverAddress);
+		return ((PayloadGetSubscriptions) response.getPayload()).getSubscriptions();
 
 	}
 
@@ -59,51 +60,34 @@ public class Consumer {
 	 * @return
 	 */
 	public boolean subscribeToProducers(String[] producers) {
-		this.sendAndGetMessage(
-				new Message(MessageType.SubscribeProducers, new PayloadSubscribeProducers(producers)), serverAddress);
+		this.sendAndGetMessage(new Message(MessageType.SubscribeProducers, new PayloadSubscribeProducers(producers)),
+				serverAddress);
 		return true;
 	}
 
 	public boolean unsubscribeFromProducers(String[] producers) {
-		this.sendAndGetMessage(new Message(MessageType.UnsubscribeProducers, new PayloadUnsubscribeProducers(producers)), serverAddress);
+		this.sendAndGetMessage(
+				new Message(MessageType.UnsubscribeProducers, new PayloadUnsubscribeProducers(producers)),
+				serverAddress);
 		return true;
 	}
 
 	public String[] getProducers() {
 		Message answer = this.sendAndGetMessage(new Message(MessageType.getProducerList, null), serverAddress);
-		return ((PayloadGetProducerList)answer.getPayload()).getProducers();
+		return ((PayloadGetProducerList) answer.getPayload()).getProducers();
 	}
 
 	/**
 	 * 
 	 * @return the ID provided by the server.
 	 */
-	public String registerOnServer() {
-		// ich hab jetzt eine Methode erstellt, die ein Socket zur�ckliefert,
-		// welches mit dem Server kommuniziert. Das alles in ner eigenen
-		// Methode, da f�r das
-		// Einschreiben auf Produzenten, ne eigener Socket ben�tigt wird
-		// (sp�ter, wenn der Konsument registriert wurde und der Anwender sich
-		// auf neuen
-		// einschreiben will, ist zum Beispiel ein Socket zur Registrierung
-		// nicht mehr da) (oder sollte man eher ein SOcket im Konstruktor
-		// erschaffen und erst
-		// beim Beenden des Consumers schlei�en ?????????????????????????????)
-		Socket server = getTCPConnectionToServer();
-		PayloadRegisterConsumer payload = new PayloadRegisterConsumer(0, null);
-		Message m = new Message(MessageType.RegisterOnServer, payload);
-		// antwort verarbeiten
-		Message answer = sendandGetMessage(m, server);
+	public boolean registerOnServer() {
+		Message answer = sendAndGetMessage(new Message(MessageType.RegisterConsumer, null), serverAddress);
 
-		if (answer.getType() == MessageType.RegisterOnServer) {
-			PayloadRegisterConsumer answerPayload = (PayloadRegisterConsumer) answer.getPayload();
-			consumerID = answerPayload.getId();
-			multicastAddress = answerPayload.getMulticastAddress();
-		} else {
-			throw new RuntimeException("payload der message stimmt nicht");
-		}
-		closeSocket(server);
-
+		PayloadRegisterConsumer answerPayload = (PayloadRegisterConsumer) answer.getPayload();
+		this.consumerID = answerPayload.getId();
+		this.multicastAddress = answerPayload.getMulticastAddress();
+		return true;
 	}
 
 	public boolean deregisterFromServer() {
@@ -153,7 +137,7 @@ public class Consumer {
 	 * @param address
 	 *            The address of the server
 	 * @return The filled message. If the operation was not successful null.
-	 * @throws ClassNotFoundException 
+	 * @throws ClassNotFoundException
 	 */
 	private Message sendAndGetMessage(Message message, InetAddress address) {
 		Socket server;

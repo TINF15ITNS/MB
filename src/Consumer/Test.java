@@ -90,6 +90,25 @@ public class Test {
 			 * } catch (Exception e) {
 			 * System.out.println("Verbindung unterbrochen."); }
 			 */
+
+			/*
+			 * Beispiel: RegisterConsumer try {
+			 * System.out.println("Warte auf Anfrage eines Clients"); client =
+			 * ss.accept(); System.out.println("Anfrage akzeptiert"); out = new
+			 * ObjectOutputStream(client.getOutputStream()); in = new
+			 * ObjectInputStream(client.getInputStream());
+			 * System.out.println("Habe Streams geöffnet");
+			 * System.out.println("Lese jetzt die Nachricht");
+			 * 
+			 * Message m = (Message) in.readObject();
+			 * System.out.println("Schreibe jetzt die nachricht");
+			 * out.writeObject(new Message(MessageType.RegisterConsumer, new
+			 * PayloadRegisterConsumer(1337,
+			 * InetAddress.getByName("8.8.8.8"))));
+			 * 
+			 * } catch (Exception e) {
+			 * System.out.println("Verbindung unterbrochen."); }
+			 */
 		}
 
 	}
