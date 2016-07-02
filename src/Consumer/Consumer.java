@@ -61,12 +61,14 @@ public class Consumer {
 	 * @return
 	 */
 	public boolean subscribeToProducers(String[] producers) {
-		Message response = this.sendAndGetMessage(
+		this.sendAndGetMessage(
 				new Message(MessageType.SubscribeProducers, new PayloadSubscribeProducers(producers)), serverAddress);
 		return true;
 	}
 
-	public boolean unsubscribeFromProducer(String[] name) {
+	public boolean unsubscribeFromProducers(String[] producers) {
+		this.sendAndGetMessage(new Message(MessageType.UnsubscribeProducers, new PayloadUnsubscribeProducers(producers)), serverAddress);
+		return true;
 	}
 
 	public String[] getProducers() {

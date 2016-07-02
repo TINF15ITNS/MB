@@ -57,6 +57,29 @@ public class Test {
 			} catch (Exception e) {
 				System.out.println("Verbindung unterbrochen.");
 			}*/
+			
+			/* Beispiel UnsubscribeProducers:
+			try {
+				System.out.println("Warte auf Anfrage eines Clients");
+				client = ss.accept();
+				System.out.println("Anfrage akzeptiert");
+				out = new ObjectOutputStream(client.getOutputStream());
+				in = new ObjectInputStream(client.getInputStream());
+				System.out.println("Habe Streams geöffnet");
+				System.out.println("Lese jetzt die Nachricht");
+				
+				Message m = (Message) in.readObject();
+				PayloadUnsubscribeProducers p = (PayloadUnsubscribeProducers)m.getPayload();
+				for (String string : p.getToBeUnsubscribed()) {
+					System.out.println("- " + string);
+				}
+				System.out.println("Schreibe jetzt die nachricht");
+				out.writeObject(null);
+				
+			} catch (Exception e) {
+				System.out.println("Verbindung unterbrochen.");
+			}
+			*/
 
 		}
 

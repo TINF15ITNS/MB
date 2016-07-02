@@ -9,7 +9,7 @@ public enum MessageType {
 	RegisterConsumer,
 	DeregisterConsumer,
 	SubscribeProducers, //Implemented
-	UnsubscribeProducers,
+	UnsubscribeProducers, //
 	getProducerList, //Implemented
 	getSubscriptions, //Implemented
 	Message, //Implemented
