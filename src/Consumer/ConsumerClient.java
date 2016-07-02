@@ -5,7 +5,7 @@ import java.net.*;
 import java.util.Scanner;
 
 public class ConsumerClient {
-	private static int serverPort = 55555; //The address of the MessageServer
+	private static int serverPort = 55555; //The port of the MessageServer
 
 	public static void main(String[] args) {
 		boolean correctInetAddress = false;
@@ -24,6 +24,7 @@ public class ConsumerClient {
 				continue;
 			}
 		}
+		scanner.close();
 		
 		Consumer user = new Consumer(address, serverPort);
 		user.registerOnServer();
