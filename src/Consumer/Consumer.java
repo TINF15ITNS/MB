@@ -5,7 +5,7 @@ import java.net.*;
 import java.util.Scanner;
 import Message.*;
 
-public class Consumer implements ConsumerIF {
+public class Consumer {
 	private int consumerID;
 	private InetAddress serverAddress;
 	private int serverPort;
@@ -19,7 +19,6 @@ public class Consumer implements ConsumerIF {
 
 	}
 
-	@Override
 	public void startAction() {
 		boolean exit = true;
 		while (exit) {
@@ -42,7 +41,6 @@ public class Consumer implements ConsumerIF {
 		}
 	}
 
-	@Override
 	public void registerOnProducers() {
 		Socket server = getTCPConnectionToServer();
 		String[] producers = getOfferofProducers(server);
@@ -128,7 +126,6 @@ public class Consumer implements ConsumerIF {
 		}
 	}
 
-	@Override
 	public void registerOnServer() {
 		// ich hab jetzt eine Methode erstellt, die ein Socket zur�ckliefert, welches mit dem Server kommuniziert. Das alles in ner eigenen Methode, da f�r das
 		// Einschreiben auf Produzenten, ne eigener Socket ben�tigt wird (sp�ter, wenn der Konsument registriert wurde und der Anwender sich auf neuen
@@ -151,7 +148,6 @@ public class Consumer implements ConsumerIF {
 
 	}
 
-	@Override
 	public void deregister() {
 		PayloadDeregister payload = new PayloadDeregister(consumerID);
 		Message m = new Message(MessageType.Deregister, payload);
@@ -170,7 +166,6 @@ public class Consumer implements ConsumerIF {
 		closeSocket(server);
 	}
 
-	@Override
 	public void registerOnMulticastGroup() {
 		MulticastSocket udpSocket = null;
 		try {
