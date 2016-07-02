@@ -28,7 +28,9 @@ public class ConsumerCLI {
 			System.out.println(
 					"'1' Anmeldung, '2' Abmeldung, '3' Produzentenliste, '4' Abbonieren, '5' Deabbonieren, '6' Liste der Anmeldungen, '7' Beenden");
 
-			switch (scanner.nextInt()) {
+			int input = scanner.nextInt();
+			scanner.nextLine(); //Absolutely necessary because nextInt() reads only one int and does not finish the line.
+			switch (input) {
 			case 1:
 				user.registerOnServer();
 				break;

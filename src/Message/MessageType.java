@@ -8,11 +8,11 @@ package Message;
 public enum MessageType {
 	RegisterConsumer,
 	DeregisterConsumer,
-	SubscribeProducers,
+	SubscribeProducers, //Implemented
 	UnsubscribeProducers,
-	getProducerList,
-	getSubscriptions,
-	Message,
+	getProducerList, //Implemented
+	getSubscriptions, //Implemented
+	Message, //Implemented
 	RegisterProducer,
 	DeregisterProducer,
 }

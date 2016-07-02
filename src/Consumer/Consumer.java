@@ -4,6 +4,8 @@ import java.io.*;
 import java.net.*;
 import java.util.Scanner;
 import Message.*;
+import Message.Deprecated.PayloadDeregister;
+import Message.Deprecated.PayloadRegisterOnServer;
 
 public class Consumer {
 	private static int serverPort = 55555;
@@ -47,8 +49,8 @@ public class Consumer {
 	public String[] getSubscriptions() {
 
 			Message response = this.sendAndGetMessage(
-					new Message(MessageType.getSubscriptions, new PayloadSubscriptions(null)), serverAddress);
-			return ((PayloadSubscriptions) response.getPayload()).getSubscriptions();
+					new Message(MessageType.getSubscriptions, null), serverAddress);
+			return ((PayloadGetSubscriptions) response.getPayload()).getSubscriptions();
 
 	}
 
@@ -58,79 +60,10 @@ public class Consumer {
 	 *            The name of the producer (can not contain whitespaces)
 	 * @return
 	 */
-	public boolean subscribeToProducers(String[] name) {
-		Socket server = getTCPConnectionToServer();
-		String[] producers = getOfferofProducers(server);
-		System.out.println("Sie k�nnen sich f�r die folgenden Produzenten einschreiben:");
-		for (int i = 0; i < producers.length; i++) {
-			System.out.print(producers[i] + " , ");
-		}
-
-		System.out.print(
-				"\nGeben Sie den Namen, der betreffenden Produzenten, f�r die Sie sich einschreiben wollen, mit einem \",\" getrennt ein: ");
-		String[] input = scanner.nextLine().split(",");
-
-		// Durch die Eingabe des User entsteht bei Mehrfachauswahl hinter dem
-		// Komma eine Leerzeile, die nicht zum Namen des Producers geh�rt
-		// Folgender Code entfernt diese Leerzeile
-		for (int i = 0; i < input.length; i++) {
-			char[] c = input[i].toCharArray();
-			if (c[0] == ' ') {
-				char[] c2 = new char[c.length - 1];
-				java.lang.System.arraycopy(c, 1, c2, 0, c.length - 1);
-				input[i] = new String(c2);
-			}
-		}
-
-		// �berprufen, dass richtig eingegeben wurde
-		// wurde nicht, dann wird nur ausgegeben, dass nicht gelesen wurden
-		// konnte
-		int number = 0;
-		for (int i = 0; i < input.length; i++) {
-			boolean contained = false;
-			for (int k = 0; k < producers.length; k++) {
-				if (input[i].equals(producers[k])) {
-					number++;
-					contained = true;
-					break;
-				}
-			}
-			if (!contained) {
-				System.out.println("Mit der Eingabe " + input[i] + "ist nichts anzufangen");
-				input[i] = null;
-			}
-		}
-		String[] enterOnProducers = new String[number];
-		int k = 0;
-		for (int i = 0; i < input.length; i++) {
-			if (input[i] != null) {
-				enterOnProducers[k] = input[i];
-				k++;
-			}
-		}
-
-		PayloadRegisterOnProducer payload = new PayloadRegisterOnProducer(this.consumerID, enterOnProducers);
-		Message m = new Message(MessageType.RegisterOnProducer, payload);
-
-		Message answer = sendandGetMessage(m, server);
-		if (answer.getType() == MessageType.RegisterOnProducer) {
-			PayloadRegisterOnProducer answerPayload = (PayloadRegisterOnProducer) answer.getPayload();
-			String[] answerProducers = answerPayload.getProducers();
-			if (answerProducers != null) {
-				System.out.print("Der Einschreibevorgang war f�r die/den folgenden Producer nicht erfolgreich: ");
-				for (int i = 0; i < answerProducers.length; i++) {
-					System.out.print(answerProducers[i]);
-				}
-				System.out.print("\n");
-			} else {
-				System.out.println(
-						"Der Einschreibevorgang war erfolgreich! Sie werden bei Push-Nachrichten Ihrer abonnierten Produzenten informiert...");
-
-			}
-		} else {
-			throw new RuntimeException("payload der message stimmt nicht");
-		}
-		closeSocket(server);
+	public boolean subscribeToProducers(String[] producers) {
+		Message response = this.sendAndGetMessage(
+				new Message(MessageType.SubscribeProducers, new PayloadSubscribeProducers(producers)), serverAddress);
+		return true;
 	}
 
 	public boolean unsubscribeFromProducer(String[] name) {
@@ -138,12 +71,12 @@ public class Consumer {
 
 	public String[] getProducers() {
 
-		PayloadProducer payload = new PayloadProducer(null);
+		PayloadGetProducerList payload = new PayloadGetProducerList(null);
 		Message m = new Message(MessageType.getProducer, payload);
 
 		Message answer = sendandGetMessage(m, server);
 		if (answer.getType() == MessageType.getProducer) {
-			PayloadProducer answerPayload = (PayloadProducer) answer.getPayload();
+			PayloadGetProducerList answerPayload = (PayloadGetProducerList) answer.getPayload();
 			return answerPayload.getProducers();
 		} else {
 			throw new RuntimeException("payload der message stimmt nicht");

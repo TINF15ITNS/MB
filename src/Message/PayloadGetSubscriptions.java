@@ -2,7 +2,7 @@ package Message;
 
 import java.io.Serializable;
 
-public class PayloadSubscriptions implements Payload, Serializable {
+public class PayloadGetSubscriptions implements Payload, Serializable {
 
 	/**
 	 * 
@@ -11,7 +11,7 @@ public class PayloadSubscriptions implements Payload, Serializable {
 	
 	private final String[] subscriptions;
 
-	public PayloadSubscriptions(String[] subscriptions) {
+	public PayloadGetSubscriptions(String[] subscriptions) {
 		this.subscriptions = subscriptions;
 	}
 

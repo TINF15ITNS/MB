@@ -1,7 +1,9 @@
-package Message;
+package Message.Deprecated;
 
 import java.io.Serializable;
 import java.net.InetAddress;
+
+import Message.Payload;
 
 /**
  * 
@@ -9,6 +11,7 @@ import java.net.InetAddress;
  * 
  * @author Nikolai
  */
+@Deprecated
 public class PayloadRegisterOnServer implements Payload, Serializable {
 
 	/**

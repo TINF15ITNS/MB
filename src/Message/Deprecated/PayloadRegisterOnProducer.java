@@ -1,7 +1,9 @@
-package Message;
+package Message.Deprecated;
 
 import java.io.Serializable;
 
+import Message.Payload;
+@Deprecated
 public class PayloadRegisterOnProducer implements Payload, Serializable {
 
 	/**
