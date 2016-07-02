@@ -10,13 +10,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
-import MessageServer.Message;
-import MessageServer.MessageType;
-import MessageServer.PayloadForMessageTypeDeregister;
-import MessageServer.PayloadForMessageTypeMessage;
-import MessageServer.PayloadForMessageTypeRegisterOnProducer;
-import MessageServer.PayloadForMessageTypeRegisterOnServer;
-import MessageServer.PayloadForMessageTypegetProducer;
+import Message.*;
 
 public class Consumer implements ConsumerIF {
 	private String name;

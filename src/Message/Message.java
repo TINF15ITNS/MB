@@ -1,4 +1,4 @@
-package MessageServer;
+package Message;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

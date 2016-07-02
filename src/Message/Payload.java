@@ -1,4 +1,4 @@
-package MessageServer;
+package Message;
 
 public interface Payload {
 
