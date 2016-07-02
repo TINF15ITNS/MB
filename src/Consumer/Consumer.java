@@ -6,10 +6,9 @@ import java.util.Scanner;
 import Message.*;
 
 public class Consumer implements ConsumerIF {
-	private String name;
 	private int consumerID;
-	private InetAddress ssadr;
-	private int portServer;
+	private InetAddress serverAddress;
+	private int serverPort;
 	private InetAddress multicastAddress;
 	private Scanner scanner;
 
@@ -17,9 +16,9 @@ public class Consumer implements ConsumerIF {
 
 	}
 
-	public Consumer(InetAddress ssadr, int portServer) {
-		this.ssadr = ssadr;
-		this.portServer = portServer;
+	public Consumer(InetAddress address, int serverPort) {
+		this.serverAddress = address;
+		this.serverPort = serverPort;
 		scanner = new Scanner(System.in);
 
 	}
@@ -199,7 +198,7 @@ public class Consumer implements ConsumerIF {
 	private Socket getTCPConnectionToServer() {
 		Socket s = null;
 		try {
-			s = new Socket(ssadr, portServer);
+			s = new Socket(serverAddress, serverPort);
 		} catch (UnknownHostException e) {
 			System.out.println("Die Serveradresse stimmt nicht");
 			e.printStackTrace();
@@ -255,13 +254,6 @@ public class Consumer implements ConsumerIF {
 			}
 		}
 		return answer;
-	}
-
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
 	}
 
 	class GetMessage implements Runnable {
