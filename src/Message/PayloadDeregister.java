@@ -2,7 +2,7 @@ package Message;
 
 import java.io.Serializable;
 
-public class PayloadForMessageTypeDeregister implements Payload, Serializable {
+public class PayloadDeregister implements Payload, Serializable {
 
 	/**
 	 * 
@@ -15,7 +15,7 @@ public class PayloadForMessageTypeDeregister implements Payload, Serializable {
 	 */
 	private final int consignorID;
 
-	public PayloadForMessageTypeDeregister(int consignorID) {
+	public PayloadDeregister(int consignorID) {
 		this.consignorID = consignorID;
 	}
 

@@ -2,7 +2,7 @@ package Message;
 
 import java.io.Serializable;
 
-public class PayloadForMessageTypegetProducer implements Payload, Serializable {
+public class PayloadProducer implements Payload, Serializable {
 
 	/**
 	 * 
@@ -15,7 +15,7 @@ public class PayloadForMessageTypegetProducer implements Payload, Serializable {
 	 */
 	private final String[] producers;
 
-	public PayloadForMessageTypegetProducer(String[] producers) {
+	public PayloadProducer(String[] producers) {
 		this.producers = producers;
 	}
 

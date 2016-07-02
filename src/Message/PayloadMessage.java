@@ -2,7 +2,7 @@ package Message;
 
 import java.io.Serializable;
 
-public class PayloadForMessageTypeMessage implements Payload, Serializable {
+public class PayloadMessage implements Payload, Serializable {
 
 	/**
 	 * 
@@ -13,7 +13,7 @@ public class PayloadForMessageTypeMessage implements Payload, Serializable {
 
 	private final String text;
 
-	public PayloadForMessageTypeMessage(String consignorName, String text) {
+	public PayloadMessage(String consignorName, String text) {
 		this.consignorName = consignorName;
 		this.text = text;
 	}

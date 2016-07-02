@@ -2,7 +2,7 @@ package Message;
 
 import java.io.Serializable;
 
-public class PayloadForMessageTypeRegisterOnProducer implements Payload, Serializable {
+public class PayloadRegisterOnProducer implements Payload, Serializable {
 
 	/**
 	 * 
@@ -14,7 +14,7 @@ public class PayloadForMessageTypeRegisterOnProducer implements Payload, Seriali
 	private final String[] producers;
 	// entweder im Format "<producerID>:<producerName>" oder nur "<producerName>" wenn dieser eindeutig sein soll
 
-	public PayloadForMessageTypeRegisterOnProducer(int consignorID, String[] producers) {
+	public PayloadRegisterOnProducer(int consignorID, String[] producers) {
 		this.consignorID = consignorID;
 		this.producers = producers;
 	}

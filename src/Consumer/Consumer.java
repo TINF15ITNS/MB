@@ -96,12 +96,12 @@ public class Consumer implements ConsumerIF {
 			}
 		}
 
-		PayloadForMessageTypeRegisterOnProducer payload = new PayloadForMessageTypeRegisterOnProducer(this.consumerID, enterOnProducers);
+		PayloadRegisterOnProducer payload = new PayloadRegisterOnProducer(this.consumerID, enterOnProducers);
 		Message m = new Message(MessageType.RegisterOnProducer, payload);
 
 		Message answer = sendandGetMessage(m, server);
 		if (answer.getType() == MessageType.RegisterOnProducer) {
-			PayloadForMessageTypeRegisterOnProducer answerPayload = (PayloadForMessageTypeRegisterOnProducer) answer.getPayload();
+			PayloadRegisterOnProducer answerPayload = (PayloadRegisterOnProducer) answer.getPayload();
 			String[] answerProducers = answerPayload.getProducers();
 			if (answerProducers != null) {
 				System.out.print("Der Einschreibevorgang war für die/den folgenden Producer nicht erfolgreich: ");
@@ -121,12 +121,12 @@ public class Consumer implements ConsumerIF {
 
 	private String[] getOfferofProducers(Socket server) {
 
-		PayloadForMessageTypegetProducer payload = new PayloadForMessageTypegetProducer(null);
+		PayloadProducer payload = new PayloadProducer(null);
 		Message m = new Message(MessageType.getProducer, payload);
 
 		Message answer = sendandGetMessage(m, server);
 		if (answer.getType() == MessageType.getProducer) {
-			PayloadForMessageTypegetProducer answerPayload = (PayloadForMessageTypegetProducer) answer.getPayload();
+			PayloadProducer answerPayload = (PayloadProducer) answer.getPayload();
 			return answerPayload.getProducers();
 		} else {
 			throw new RuntimeException("payload der message stimmt nicht");
@@ -140,13 +140,13 @@ public class Consumer implements ConsumerIF {
 		// einschreiben will, ist zum Beispiel ein Socket zur Registrierung nicht mehr da) (oder sollte man eher ein SOcket im Konstruktor erschaffen und erst
 		// beim Beenden des Consumers schleißen ?????????????????????????????)
 		Socket server = getTCPConnectionToServer();
-		PayloadForMessageTypeRegisterOnServer payload = new PayloadForMessageTypeRegisterOnServer(0, null);
+		PayloadRegisterOnServer payload = new PayloadRegisterOnServer(0, null);
 		Message m = new Message(MessageType.RegisterOnServer, payload);
 		// antwort verarbeiten
 		Message answer = sendandGetMessage(m, server);
 
 		if (answer.getType() == MessageType.RegisterOnServer) {
-			PayloadForMessageTypeRegisterOnServer answerPayload = (PayloadForMessageTypeRegisterOnServer) answer.getPayload();
+			PayloadRegisterOnServer answerPayload = (PayloadRegisterOnServer) answer.getPayload();
 			consumerID = answerPayload.getId();
 			multicastAddress = answerPayload.getMulticastAddress();
 		} else {
@@ -158,13 +158,13 @@ public class Consumer implements ConsumerIF {
 
 	@Override
 	public void deregister() {
-		PayloadForMessageTypeDeregister payload = new PayloadForMessageTypeDeregister(consumerID);
+		PayloadDeregister payload = new PayloadDeregister(consumerID);
 		Message m = new Message(MessageType.Deregister, payload);
 
 		Socket server = getTCPConnectionToServer();
 		Message answer = sendandGetMessage(m, server);
 		if (answer.getType() == MessageType.Deregister) {
-			PayloadForMessageTypeDeregister answerPayload = (PayloadForMessageTypeDeregister) answer.getPayload();
+			PayloadDeregister answerPayload = (PayloadDeregister) answer.getPayload();
 			if (answerPayload.getConsignorID() != 0) {
 				System.out.println("Fehler: Irgendetwas ist beim Abmelden falsch gelaufen");
 			}
@@ -286,7 +286,7 @@ public class Consumer implements ConsumerIF {
 				// vlt funktioniert dies nicht, weil im hauptthread er gerade auf ne Eingabe wartet ... vlt muss man dann hier den hauptthread einschläfern und
 				// nach der Ausgabe wieder aufwecken?!
 				if (rsp.getType() == MessageType.Message) {
-					PayloadForMessageTypeMessage answerPayload = (PayloadForMessageTypeMessage) rsp.getPayload();
+					PayloadMessage answerPayload = (PayloadMessage) rsp.getPayload();
 
 					System.out.println(answerPayload.getConsignorName() + " meldet: \n" + answerPayload.getText());
 				} else {
