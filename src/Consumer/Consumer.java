@@ -1,8 +1,8 @@
 package Consumer;
 
-import java.beans.XMLDecoder;
-import java.beans.XMLEncoder;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
@@ -235,27 +235,38 @@ public class Consumer implements ConsumerIF {
 	}
 
 	private Message sendandGetMessage(Message m, Socket server) {
-
-		XMLEncoder enc = null;
-		XMLDecoder dec = null;
 		Message answer = null;
+		ObjectOutputStream out = null;
+		ObjectInputStream in = null;
 		try {
-			enc = new XMLEncoder(server.getOutputStream());
-			enc.writeObject(m);
-
-			dec = new XMLDecoder(server.getInputStream());
-			answer = (Message) dec.readObject();
-
+			out = new ObjectOutputStream(server.getOutputStream());
+			out.writeObject(m);
+			in = new ObjectInputStream(server.getInputStream());
+			answer = (Message) in.readObject();
+		} catch (ClassNotFoundException e) {
+			System.out.println("Fehler beim Lesen des Objektes");
+			e.printStackTrace();
 		} catch (IOException e) {
-			System.out.println("Fehler beim En- un Decodieren");
+			System.out.println("IOFehler beim Senden und Empfangen der Messages");
 			e.printStackTrace();
 		} finally {
-			if (enc != null)
-				enc.close();
-			if (dec != null)
-				dec.close();
+			if (out != null) {
+				try {
+					out.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if (in != null) {
+				try {
+					in.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
-
 		return answer;
 	}
 
