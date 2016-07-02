@@ -72,17 +72,8 @@ public class Consumer {
 	}
 
 	public String[] getProducers() {
-
-		PayloadGetProducerList payload = new PayloadGetProducerList(null);
-		Message m = new Message(MessageType.getProducer, payload);
-
-		Message answer = sendandGetMessage(m, server);
-		if (answer.getType() == MessageType.getProducer) {
-			PayloadGetProducerList answerPayload = (PayloadGetProducerList) answer.getPayload();
-			return answerPayload.getProducers();
-		} else {
-			throw new RuntimeException("payload der message stimmt nicht");
-		}
+		Message answer = this.sendAndGetMessage(new Message(MessageType.getProducerList, null), serverAddress);
+		return ((PayloadGetProducerList)answer.getPayload()).getProducers();
 	}
 
 	/**

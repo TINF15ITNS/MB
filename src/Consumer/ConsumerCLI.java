@@ -49,7 +49,7 @@ public class ConsumerCLI {
 				break;
 			case 5:
 				System.out.print("Welche Produzenten sollen deabboniert werden (mit Kommatas trennen)? ");
-				user.unsubscribeFromProducer(scanner.nextLine().replaceAll("\\s+", "").split(","));
+				user.unsubscribeFromProducers(scanner.nextLine().replaceAll("\\s+", "").split(","));
 				break;
 			case 6:
 				System.out.println("Ihre Anmeldungen:");
@@ -66,7 +66,7 @@ public class ConsumerCLI {
 		}
 		
 		scanner.close();
-		user.unsubscribeFromProducer(user.getSubscriptions());
+		user.unsubscribeFromProducers(user.getSubscriptions());
 		user.deregisterFromServer();
 	}
 }
