@@ -92,21 +92,11 @@ public class Consumer {
 
 	public boolean deregisterFromServer() {
 
-		PayloadDeregisterConsumer payload = new PayloadDeregisterConsumer(consumerID);
-		Message m = new Message(MessageType.Deregister, payload);
+		Message answer = sendAndGetMessage(new Message(MessageType.DeregisterConsumer, new PayloadDeregisterConsumer(consumerID)), serverAddress);
+		PayloadDeregisterConsumer answerPayload = (PayloadDeregisterConsumer) answer.getPayload();
+		
+		return answerPayload.getConsignorID() != 0;
 
-		Socket server = getTCPConnectionToServer();
-		Message answer = sendandGetMessage(m, server);
-		if (answer.getType() == MessageType.Deregister) {
-			PayloadDeregisterConsumer answerPayload = (PayloadDeregisterConsumer) answer.getPayload();
-			if (answerPayload.getConsignorID() != 0) {
-				System.out.println("Fehler: Irgendetwas ist beim Abmelden falsch gelaufen");
-			}
-		} else {
-			throw new RuntimeException("payload der message stimmt nicht");
-		}
-
-		closeSocket(server);
 	}
 
 	//
