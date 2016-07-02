@@ -34,29 +34,14 @@ public class Consumer {
 		}
 
 	}
-	public void startAction() {
-		boolean exit = true;
-		while (exit) {
 
-			System.out.println("Was m�chten Sie tun?: ");
-			// ...
-			System.out.println("Wenn Sie sich f�r einen neuen Produzenten einschreiben wollen, geben Sie die Option \"p\" ein ");
-			System.out.println("M�chten Sie den Konsumenten beenden, geben Sie die Option \"exit\" ein");
-			String s = scanner.nextLine();
-			switch (s) {
-			case "p":
-				registerOnProducers();
-				break;
-			case "exit":
-				exit = false;
-				deregister();
-				break;
-			default:
-			}
-		}
-	}
 
-	public void registerOnProducers() {
+	/**
+	 * 
+	 * @param name The name of the producer (can not contain whitespaces)
+	 * @return
+	 */
+	public boolean subscribeToProducer(String[] name) {
 		Socket server = getTCPConnectionToServer();
 		String[] producers = getOfferofProducers(server);
 		System.out.println("Sie k�nnen sich f�r die folgenden Produzenten einschreiben:");
@@ -127,7 +112,9 @@ public class Consumer {
 		closeSocket(server);
 	}
 
-	private String[] getOfferofProducers(Socket server) {
+	private boolean unsubscribeFromProducer(String[] name){}
+
+	private String[] getProducers() {
 
 		PayloadProducer payload = new PayloadProducer(null);
 		Message m = new Message(MessageType.getProducer, payload);
@@ -141,7 +128,11 @@ public class Consumer {
 		}
 	}
 
-	public void registerOnServer() {
+	/**
+	 * 
+	 * @return the ID privided by the server.
+	 */
+	public String registerOnServer() {
 		// ich hab jetzt eine Methode erstellt, die ein Socket zur�ckliefert, welches mit dem Server kommuniziert. Das alles in ner eigenen Methode, da f�r das
 		// Einschreiben auf Produzenten, ne eigener Socket ben�tigt wird (sp�ter, wenn der Konsument registriert wurde und der Anwender sich auf neuen
 		// einschreiben will, ist zum Beispiel ein Socket zur Registrierung nicht mehr da) (oder sollte man eher ein SOcket im Konstruktor erschaffen und erst
@@ -163,7 +154,8 @@ public class Consumer {
 
 	}
 
-	public void deregister() {
+	public boolean deregisterFromServer() {
+		
 		PayloadDeregister payload = new PayloadDeregister(consumerID);
 		Message m = new Message(MessageType.Deregister, payload);
 
@@ -181,7 +173,8 @@ public class Consumer {
 		closeSocket(server);
 	}
 
-	public void registerOnMulticastGroup() {
+	//
+	public boolean registerOnMulticastGroup() {
 		MulticastSocket udpSocket = null;
 		try {
 			udpSocket = new MulticastSocket();
@@ -201,30 +194,6 @@ public class Consumer {
 
 	}
 
-	private Socket getTCPConnectionToServer() {
-		Socket s = null;
-		try {
-			s = new Socket(serverAddress, serverPort);
-		} catch (UnknownHostException e) {
-			System.out.println("Die Serveradresse stimmt nicht");
-			e.printStackTrace();
-		} catch (IOException e) {
-			System.out.println("IO-Fehler bei Socketerstellung zum Server");
-			e.printStackTrace();
-		}
-		return s;
-	}
-
-	private void closeSocket(Socket s) {
-		if (s != null) {
-			try {
-				s.close();
-			} catch (IOException e) {
-				System.out.println("Socket l�sst sich nicht schlie�en");
-				e.printStackTrace();
-			}
-		}
-	}
 
 	private Message sendandGetMessage(Message m, Socket server) {
 		Message answer = null;

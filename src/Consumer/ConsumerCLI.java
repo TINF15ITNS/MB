@@ -21,13 +21,19 @@ public class ConsumerCLI {
 				System.out.println("Kein Server unter der angegebenen Adresse erreichbar.");
 			}
 		}
-		scanner.close();
 		
-		//To be refactored
-		user.registerOnServer();
-		user.registerOnMulticastGroup();
-		user.startAction();
+		while(true)
+		{
+			System.out.println("(1) ");
+			
+		}
 
+		
+		
+		
+		
+		
+		scanner.close();
 	}
 }
 
