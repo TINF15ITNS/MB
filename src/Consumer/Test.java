@@ -24,9 +24,9 @@ public class Test {
 				System.out.println("Warte auf Anfrage eines Clients");
 				client = ss.accept();
 				System.out.println("Anfrage akzeptiert");
-				in = new ObjectInputStream(client.getInputStream());
+
 				out = new ObjectOutputStream(client.getOutputStream());
-				out.flush();
+				in = new ObjectInputStream(client.getInputStream());
 
 				System.out.println("Habe Streams geöffnet");
 
