@@ -1,6 +1,18 @@
 package Message;
 
+/**
+ * 
+ * @author Nikolai Seip, Sebastian Mattheis, Fabian Hinz
+ *
+ */
 public enum MessageType {
-	RegisterOnServer(), RegisterOnProducer(), Deregister(), Message(), getProducer();
-	;
+	RegisterConsumer,
+	DeregisterConsumer,
+	SubscribeProducers,
+	UnsubscribeProducers,
+	getProducerList,
+	getSubscriptions,
+	Message,
+	RegisterProducer,
+	DeregisterProducer,
 }
