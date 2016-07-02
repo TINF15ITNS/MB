@@ -1,13 +1,7 @@
 package Message;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
+import java.io.*;
+import java.net.*;
 
 public class Message implements Serializable {
 	/**
