@@ -17,7 +17,7 @@ public class Consumer implements ConsumerIF {
 
 	}
 
-	public Consumer(String name, InetAddress ssadr, int portServer) {
+	public Consumer(InetAddress ssadr, int portServer) {
 		this.ssadr = ssadr;
 		this.portServer = portServer;
 		scanner = new Scanner(System.in);
@@ -29,10 +29,10 @@ public class Consumer implements ConsumerIF {
 		boolean exit = true;
 		while (exit) {
 
-			System.out.println("Was möchten Sie tun?: ");
+			System.out.println("Was mï¿½chten Sie tun?: ");
 			// ...
-			System.out.println("Wenn Sie sich für einen neuen Produzenten einschreiben wollen, geben Sie die Option \"p\" ein ");
-			System.out.println("Möchten Sie den Konsumenten beenden, geben Sie die Option \"exit\" ein");
+			System.out.println("Wenn Sie sich fï¿½r einen neuen Produzenten einschreiben wollen, geben Sie die Option \"p\" ein ");
+			System.out.println("Mï¿½chten Sie den Konsumenten beenden, geben Sie die Option \"exit\" ein");
 			String s = scanner.nextLine();
 			switch (s) {
 			case "p":
@@ -51,15 +51,15 @@ public class Consumer implements ConsumerIF {
 	public void registerOnProducers() {
 		Socket server = getTCPConnectionToServer();
 		String[] producers = getOfferofProducers(server);
-		System.out.println("Sie können sich für die folgenden Produzenten einschreiben:");
+		System.out.println("Sie kï¿½nnen sich fï¿½r die folgenden Produzenten einschreiben:");
 		for (int i = 0; i < producers.length; i++) {
 			System.out.print(producers[i] + " , ");
 		}
 
-		System.out.print("\nGeben Sie den Namen, der betreffenden Produzenten, für die Sie sich einschreiben wollen, mit einem \",\" getrennt ein: ");
+		System.out.print("\nGeben Sie den Namen, der betreffenden Produzenten, fï¿½r die Sie sich einschreiben wollen, mit einem \",\" getrennt ein: ");
 		String[] input = scanner.nextLine().split(",");
 
-		// Durch die Eingabe des User entsteht bei Mehrfachauswahl hinter dem Komma eine Leerzeile, die nicht zum Namen des Producers gehört
+		// Durch die Eingabe des User entsteht bei Mehrfachauswahl hinter dem Komma eine Leerzeile, die nicht zum Namen des Producers gehï¿½rt
 		// Folgender Code entfernt diese Leerzeile
 		for (int i = 0; i < input.length; i++) {
 			char[] c = input[i].toCharArray();
@@ -70,7 +70,7 @@ public class Consumer implements ConsumerIF {
 			}
 		}
 
-		// überprufen, dass richtig eingegeben wurde
+		// ï¿½berprufen, dass richtig eingegeben wurde
 		// wurde nicht, dann wird nur ausgegeben, dass nicht gelesen wurden konnte
 		int number = 0;
 		for (int i = 0; i < input.length; i++) {
@@ -104,7 +104,7 @@ public class Consumer implements ConsumerIF {
 			PayloadRegisterOnProducer answerPayload = (PayloadRegisterOnProducer) answer.getPayload();
 			String[] answerProducers = answerPayload.getProducers();
 			if (answerProducers != null) {
-				System.out.print("Der Einschreibevorgang war für die/den folgenden Producer nicht erfolgreich: ");
+				System.out.print("Der Einschreibevorgang war fï¿½r die/den folgenden Producer nicht erfolgreich: ");
 				for (int i = 0; i < answerProducers.length; i++) {
 					System.out.print(answerProducers[i]);
 				}
@@ -135,10 +135,10 @@ public class Consumer implements ConsumerIF {
 
 	@Override
 	public void registerOnServer() {
-		// ich hab jetzt eine Methode erstellt, die ein Socket zurückliefert, welches mit dem Server kommuniziert. Das alles in ner eigenen Methode, da für das
-		// Einschreiben auf Produzenten, ne eigener Socket benötigt wird (später, wenn der Konsument registriert wurde und der Anwender sich auf neuen
+		// ich hab jetzt eine Methode erstellt, die ein Socket zurï¿½ckliefert, welches mit dem Server kommuniziert. Das alles in ner eigenen Methode, da fï¿½r das
+		// Einschreiben auf Produzenten, ne eigener Socket benï¿½tigt wird (spï¿½ter, wenn der Konsument registriert wurde und der Anwender sich auf neuen
 		// einschreiben will, ist zum Beispiel ein Socket zur Registrierung nicht mehr da) (oder sollte man eher ein SOcket im Konstruktor erschaffen und erst
-		// beim Beenden des Consumers schleißen ?????????????????????????????)
+		// beim Beenden des Consumers schleiï¿½en ?????????????????????????????)
 		Socket server = getTCPConnectionToServer();
 		PayloadRegisterOnServer payload = new PayloadRegisterOnServer(0, null);
 		Message m = new Message(MessageType.RegisterOnServer, payload);
@@ -189,7 +189,7 @@ public class Consumer implements ConsumerIF {
 		}
 		// !!!!!!!!!!!!!!!!!!!!!!!!!
 		// Wird nicht geclost
-		// aber ich weißauch nicht wie und wo
+		// aber ich weiï¿½auch nicht wie und wo
 
 		Thread t = new Thread(new GetMessage(udpSocket));
 		t.start();
@@ -215,7 +215,7 @@ public class Consumer implements ConsumerIF {
 			try {
 				s.close();
 			} catch (IOException e) {
-				System.out.println("Socket lässt sich nicht schließen");
+				System.out.println("Socket lï¿½sst sich nicht schlieï¿½en");
 				e.printStackTrace();
 			}
 		}
@@ -267,7 +267,7 @@ public class Consumer implements ConsumerIF {
 	class GetMessage implements Runnable {
 		MulticastSocket udps;
 		// hier auch nochmal:
-		// Das mit den pipes funktioniert leider so nicht, wie ichmir das vorgestellt habe ... deswegen die unschöne variante
+		// Das mit den pipes funktioniert leider so nicht, wie ichmir das vorgestellt habe ... deswegen die unschï¿½ne variante
 
 		public GetMessage(MulticastSocket udps) {
 			this.udps = udps;
@@ -283,7 +283,7 @@ public class Consumer implements ConsumerIF {
 				// pw.write(m.getPayload() + ";");
 				System.out.println("Sie haben eine neue Push-Mitteilung:");
 				// er schreibt ja jetzt einfach raus ...
-				// vlt funktioniert dies nicht, weil im hauptthread er gerade auf ne Eingabe wartet ... vlt muss man dann hier den hauptthread einschläfern und
+				// vlt funktioniert dies nicht, weil im hauptthread er gerade auf ne Eingabe wartet ... vlt muss man dann hier den hauptthread einschlï¿½fern und
 				// nach der Ausgabe wieder aufwecken?!
 				if (rsp.getType() == MessageType.Message) {
 					PayloadMessage answerPayload = (PayloadMessage) rsp.getPayload();
