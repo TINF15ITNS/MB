@@ -30,3 +30,28 @@ public class ConsumerCLI {
 
 	}
 }
+
+/*
+ 
+  public void startAction() {
+		boolean exit = true;
+		while (exit) {
+
+			System.out.println("Was m�chten Sie tun?: ");
+			// ...
+			System.out.println("Wenn Sie sich f�r einen neuen Produzenten einschreiben wollen, geben Sie die Option \"p\" ein ");
+			System.out.println("M�chten Sie den Konsumenten beenden, geben Sie die Option \"exit\" ein");
+			String s = scanner.nextLine();
+			switch (s) {
+			case "p":
+				registerOnProducers();
+				break;
+			case "exit":
+				exit = false;
+				deregister();
+				break;
+			default:
+			}
+		}
+	}
+*/
