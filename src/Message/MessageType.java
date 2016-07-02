@@ -6,9 +6,13 @@ package Message;
  *
  */
 public enum MessageType {
-	RegisterOnServer,
-	RegisterOnProducer,
-	Deregister,
+	RegisterConsumer,
+	DeregisterConsumer,
+	SubscribeProducers,
+	UnsubscribeProducers,
+	getProducerList,
+	getSubscriptions,
 	Message,
-	getProducer
+	RegisterProducer,
+	DeregisterProducer,
 }
