@@ -21,21 +21,26 @@ public class Test {
 
 		ss = new ServerSocket(55555);
 		while (true) {
-			System.out.println("Warte auf Anfrage eines Clients");
-			client = ss.accept();
-			System.out.println("Anfrage akzeptiert");
+			try {
+				System.out.println("Warte auf Anfrage eines Clients");
+				client = ss.accept();
+				System.out.println("Anfrage akzeptiert");
 
-			out = new ObjectOutputStream(client.getOutputStream());
-			in = new ObjectInputStream(client.getInputStream());
+				out = new ObjectOutputStream(client.getOutputStream());
+				in = new ObjectInputStream(client.getInputStream());
 
-			System.out.println("Habe Streams geöffnet");
+				System.out.println("Habe Streams geöffnet");
 
-			System.out.println("Lese jetzt die Nachricht");
-			Message m = (Message) in.readObject();
-			Message answer = new Message(MessageType.RegisterOnServer,
-					new PayloadRegisterOnServer(1234, InetAddress.getByName("228.5.6.7")));
-			System.out.println("Schreibe jetzt die nachricht");
-			out.writeObject(answer);
+				System.out.println("Lese jetzt die Nachricht");
+				Message m = (Message) in.readObject();
+				Message answer = new Message(MessageType.RegisterConsumer,
+						new PayloadRegisterOnServer(1234, InetAddress.getByName("228.5.6.7")));
+				System.out.println("Schreibe jetzt die nachricht");
+				out.writeObject(answer);
+			} catch (Exception e) {
+				System.out.println("Verbindung unterbrochen.");
+			}
+
 		}
 
 	}

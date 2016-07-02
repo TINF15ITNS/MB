@@ -10,6 +10,8 @@ public class ConsumerCLI {
 
 		Scanner scanner = new Scanner(System.in);
 		Consumer user = null;
+		boolean exit = false;
+
 		while (true) {
 			try {
 				System.out.print("Bitte geben Sie die Adresse des Servers ein (ohne Port): ");
@@ -21,43 +23,49 @@ public class ConsumerCLI {
 				System.out.println("Kein Server unter der angegebenen Adresse erreichbar.");
 			}
 		}
-		
-		while(true)
-		{
-			System.out.println("(1) ");
-			
-		}
 
-		
-		
-		
-		
+		while (!exit) {
+			System.out.println(
+					"'1' Anmeldung, '2' Abmeldung, '3' Produzentenliste, '4' Abbonieren, '5' Deabbonieren, '6' Liste der Anmeldungen, '7' Beenden");
+
+			switch (scanner.nextInt()) {
+			case 1:
+				user.registerOnServer();
+				break;
+			case 2:
+				user.deregisterFromServer();
+				break;
+			case 3:
+				System.out.println("Verfügbare Produzenten:");
+				for (String p : user.getProducers()) {
+					System.out.println("\t" + p);
+				}
+				break;
+			case 4:
+				System.out.print("Welche Produzenten sollen abboniert werden (mit Kommatas trennen)? ");
+				user.subscribeToProducers(scanner.nextLine().replaceAll("\\s+", "").split(","));
+				break;
+			case 5:
+				System.out.print("Welche Produzenten sollen deabboniert werden (mit Kommatas trennen)? ");
+				user.unsubscribeFromProducer(scanner.nextLine().replaceAll("\\s+", "").split(","));
+				break;
+			case 6:
+				System.out.println("Ihre Anmeldungen:");
+				for (String s : user.getSubscriptions()) {
+					System.out.println("\t" + s);
+				}
+				break;
+			case 7:
+				exit = true;
+				break;
+			default:
+				break;
+			}
+		}
 		
 		scanner.close();
+		user.unsubscribeFromProducer(user.getSubscriptions());
+		user.deregisterFromServer();
 	}
 }
 
-/*
- 
-  public void startAction() {
-		boolean exit = true;
-		while (exit) {
-
-			System.out.println("Was mï¿½chten Sie tun?: ");
-			// ...
-			System.out.println("Wenn Sie sich fï¿½r einen neuen Produzenten einschreiben wollen, geben Sie die Option \"p\" ein ");
-			System.out.println("Mï¿½chten Sie den Konsumenten beenden, geben Sie die Option \"exit\" ein");
-			String s = scanner.nextLine();
-			switch (s) {
-			case "p":
-				registerOnProducers();
-				break;
-			case "exit":
-				exit = false;
-				deregister();
-				break;
-			default:
-			}
-		}
-	}
-*/
