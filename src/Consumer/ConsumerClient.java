@@ -5,7 +5,7 @@ import java.net.*;
 import java.util.Scanner;
 
 public class ConsumerClient {
-	private static int serverPort = 55555; //The port of the MessageServer
+	private static int serverPort = 55555; //The port of the MessageServer (should be fixed)
 
 	public static void main(String[] args) {
 		boolean correctInetAddress = false;
