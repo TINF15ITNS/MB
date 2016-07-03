@@ -21,6 +21,22 @@ public class Producer {
 		this.name = name;
 	}
 	
+	public boolean registerOnServer() {
+		Message answer = sendAndGetMessage(new Message(MessageType.RegisterProducer, new PayloadProducer(name)), serverAddress);
+		PayloadProducer answerPayload = (PayloadProducer) answer.getPayload();
+		return answerPayload.getSuccess();
+	}
+
+	public boolean deregisterFromServer() {
+
+		Message answer = sendAndGetMessage(new Message(MessageType.DeregisterProducer, new PayloadProducer(name)), serverAddress);
+		PayloadProducer answerPayload = (PayloadProducer) answer.getPayload();
+
+		return answerPayload.getSuccess();
+
+	}
+
+	
 	/**
 	 * 
 	 * The following three methods are taken identical to their counterparts in Consumer.
