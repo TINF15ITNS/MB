@@ -10,12 +10,24 @@ public class Producer {
 	private String name;
 	private InetAddress serverAddress;
 
-	public Producer(String name, String address) throws IOException{
+	public Producer(String name, String address) throws Exception, IOException {
 		this.serverAddress = InetAddress.getByName(address);
 		if (!testConnection(serverAddress, 1000))
 			throw new IOException("There is no server at the given address");
+		String[] producers = getProducers();
+		for (String n : producers) {
+			if (n.equalsIgnoreCase(name)) throw new Exception("This producer name is already taken");
+		}
 		this.name = name;
 	}
+	
+	/**
+	 * 
+	 * The following three methods are taken identical to their counterparts in Consumer.
+	 * Maybe move them to a utility class.
+	 * 
+	 */
+	
 	private boolean testConnection(InetAddress address, int timeout) {
 		Socket server = new Socket();
 		try {
