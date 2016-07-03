@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.Scanner;
 
 import Message.*;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class MessageServer {
 
@@ -20,16 +21,14 @@ public class MessageServer {
 
 	public final int portMessageServer;
 	private static int numberOfCustomers = 0, numberOfProducers = 0;
-	// HashMap<Integer, Customer> hashMapProducer, hashMapConsumer;
-	HashSet<Integer> dataConsumer, dataProducer;
+	HashSet<Integer> dataConsumer;
+	HashMap<Integer, ProducerMS> dataProducer;
 	Scanner scanner;
 	InetAddress multicastadr;
 
 	public MessageServer(int pms) {
-		// hashMapProducer = new HashMap<>();
-		// hashMapConsumer = new HashMap<>();
 		dataConsumer = new HashSet<>();
-		dataConsumer = new HashSet<>();
+		dataProducer = new HashMap<>();
 		portMessageServer = pms;
 		try {
 			multicastadr = InetAddress.getByName("255.255.255.255");
@@ -39,18 +38,10 @@ public class MessageServer {
 
 	}
 
-	// Oder das hier in der MainMethode in eigene threads auslagern
-	// da hab ich mir noch keine gedanken drüber gemacht
 	/**
 	 * waits for Messages from Producers or Consumers
 	 */
 	public void getMessages() {
-		// diese Methode hält den einen Port offen, wo auf nachrichten der konsumenten und Produzenten gehört wird
-		// Casted diese dann nach message und schaut dann was sie damit machen soll und ruft die jeweilige Methode auf
-
-		// hier ist dann nen ServerSocket, dass nen neuen thread startet, wenn eine Anfrage kommt.
-		// wie Skript Folie 37 E
-
 		try (ServerSocket serverSo = new ServerSocket(4711)) {
 			Socket clientSo = null;
 			while (true) {
@@ -86,6 +77,7 @@ public class MessageServer {
 					answer = deregisterProducer(m);
 					break;
 				case Message:
+					// weiterleiten an Consumer
 					answer = recieveMessageFromProducer(m);
 					break;
 				case RegisterConsumer:
@@ -173,8 +165,13 @@ public class MessageServer {
 		 */
 		private Message registerProducer(Message m) {
 			int id = numberOfProducers++;
-			// return new Message(MessageType.RegisterProducer, new PayloadRegisterProducer(id, multicastadr));
-			return null;
+
+			PayloadRegisterProducer prp = (PayloadRegisterProducer) m.getPayload();
+			ProducerMS prod = new ProducerMS(id, prp.getName());
+			dataProducer.put(prod.getID(), prod);
+
+			// not implemented !!!!!!!!!!!!!!!
+			return new Message(MessageType.RegisterProducer, new PayloadRegisterProducer(id, multicastadr));
 		}
 
 		/**
@@ -183,9 +180,12 @@ public class MessageServer {
 		 * @param m
 		 * @return
 		 */
+
 		private Message recieveMessageFromProducer(Message m) {
-			// die große Frage: gibt es eine MulticastGruppe oder emhrere?
-			return null;
+			PayloadMessage pm = (PayloadMessage) m.getPayload();
+			ProducerMS p = dataProducer.get(pm.getSenderID());
+			sendMulticastMessage(p.getName() + "meldet: \n" + pm.getText());
+			return new Message(MessageType.Message, null); // ????????
 
 		}
 
@@ -197,7 +197,9 @@ public class MessageServer {
 		 * @return answer-message
 		 */
 		private Message deregisterConsumer(Message m) {
-			return null;
+			PayloadDeregisterConsumer pdc = (PayloadDeregisterConsumer) m.getPayload();
+			dataConsumer.remove(pdc.getSenderID());
+			return new Message(MessageType.DeregisterConsumer, null); // ???????
 		}
 
 		/**
@@ -208,7 +210,9 @@ public class MessageServer {
 		 * @return answer-message
 		 */
 		private Message deregisterProducer(Message m) {
-			return null;
+			PayloadDeregisterProducer pdp = (PayloadDeregisterProducer) m.getPayload();
+			dataProducer.remove(pdp.getSenderID());
+			return new Message(MessageType.DeregisterProducer, null); // ???????
 		}
 
 		/**
@@ -231,6 +235,35 @@ public class MessageServer {
 		private Message unsubscribeProducers(Message m) {
 			return null;
 
+		}
+
+		public boolean sendMulticastMessage(String s) throws NotImplementedException {
+			throw new NotImplementedException();
+		}
+	}
+
+	class ProducerMS {
+
+		private final int ID;
+		private final String name;
+
+		public ProducerMS(int id, String n) {
+			ID = id;
+			name = n;
+		}
+
+		/**
+		 * @return the iD
+		 */
+		public int getID() {
+			return ID;
+		}
+
+		/**
+		 * @return the name
+		 */
+		public String getName() {
+			return name;
 		}
 	}
 }
