@@ -52,37 +52,39 @@ public class Consumer {
 	 * @return a list of producers this consumer is subscribed to
 	 */
 	public String[] getSubscriptions() {
-
 		Message response = this.sendAndGetMessage(new Message(MessageType.getSubscriptions, null), serverAddress);
-		return ((PayloadGetSubscriptions) response.getPayload()).getSubscriptions();
-
+		return ((PayloadGetSubscriptions) response.getPayload()).getSubscriptions(); // Always expects a string array, even if there are no producers available (then its just empty)
 	}
 
 	/**
 	 * Subscribes this user to the given producers
 	 * 
-	 * @param name
-	 *            The names of the producers (can not contain whitespaces)
-	 * @return
+	 * @param producers
+	 *            The names of the producers (can not be null)
+	 * @return an array of producers the consumer is now newly subscribed to
 	 */
-	public boolean subscribeToProducers(String[] producers) {
-		this.sendAndGetMessage(new Message(MessageType.SubscribeProducers, new PayloadSubscribeProducers(producers)),
-				serverAddress);
-		return true; // TODO Operation successful?
+	public String[] subscribeToProducers(String[] producers) {
+		if (producers == null)
+			throw new IllegalArgumentException("'producers' may not be null");
+		Message answer = this.sendAndGetMessage(
+				new Message(MessageType.SubscribeProducers, new PayloadSubscribeProducers(producers)), serverAddress);
+		return ((PayloadSubscribeProducers) answer.getPayload()).getToBeSubscribed();
 	}
 
 	/**
 	 * Unsubscribes this user from the given producers
 	 * 
 	 * @param producers
-	 *            The names of the producers (can not contain whitespaces)
-	 * @return
+	 *            The names of the producers (can not be null)
+	 * @return an array of producers the consumer is now unsubscribed from
 	 */
-	public boolean unsubscribeFromProducers(String[] producers) {
-		this.sendAndGetMessage(
+	public String[] unsubscribeFromProducers(String[] producers) {
+		if (producers == null)
+			throw new IllegalArgumentException("'producers' may not be null");
+		Message answer = this.sendAndGetMessage(
 				new Message(MessageType.UnsubscribeProducers, new PayloadUnsubscribeProducers(producers)),
 				serverAddress);
-		return true; // TODO Operation successful?
+		return ((PayloadUnsubscribeProducers) answer.getPayload()).getToBeUnsubscribed();
 	}
 
 	/**
@@ -192,7 +194,7 @@ public class Consumer {
 	 * System.out.println("Sie haben eine neue Push-Mitteilung:"); // er
 	 * schreibt ja jetzt einfach raus ... // vlt funktioniert dies nicht, weil
 	 * im hauptthread er gerade // auf ne Eingabe wartet ... vlt muss man dann
-	 * hier den // hauptthread einschl�fern und // nach der Ausgabe wieder
+	 * hier den // hauptthread einschlï¿½fern und // nach der Ausgabe wieder
 	 * aufwecken?! if (rsp.getType() == MessageType.Message) { PayloadMessage
 	 * answerPayload = (PayloadMessage) rsp.getPayload();
 	 * 

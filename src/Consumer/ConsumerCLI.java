@@ -24,8 +24,7 @@ public class ConsumerCLI {
 		}
 
 		while (!exit) {
-			System.out.println(
-					"'1' Anmeldung, '2' Abmeldung, '3' Produzentenliste, '4' Abbonieren, '5' Deabbonieren, '6' Liste der Anmeldungen, '7' Beenden");
+			System.out.println("'1' Anmeldung, '2' Abmeldung, '3' Produzentenliste, '4' Abonnieren, '5' Deabonnieren, '6' Liste der Anmeldungen, '7' Beenden");
 
 			int input = scanner.nextInt();
 			scanner.nextLine(); //Absolutely necessary because nextInt() reads only one int and does not finish the line.
@@ -37,21 +36,29 @@ public class ConsumerCLI {
 				user.deregisterFromServer();
 				break;
 			case 3:
-				System.out.println("Verfügbare Produzenten:");
+				System.out.println("VerfÃ¼gbare Produzenten:");
 				for (String p : user.getProducers()) {
 					System.out.println("\t" + p);
 				}
 				break;
 			case 4:
-				System.out.print("Welche Produzenten sollen abboniert werden (mit Kommatas trennen)? ");
-				user.subscribeToProducers(scanner.nextLine().replaceAll("\\s+", "").split(","));
+				System.out.print("Welche Produzenten sollen abonniert werden (mit Kommatas trennen)? ");
+				String[] subscriptions = user.subscribeToProducers(scanner.nextLine().replaceAll("\\s+", "").split(","));
+				System.out.println("Sie haben folgende Produzenten abonniert:");
+				for (String producer : subscriptions) {
+					System.out.println("\t" + producer);
+				}
 				break;
 			case 5:
-				System.out.print("Welche Produzenten sollen deabboniert werden (mit Kommatas trennen)? ");
-				user.unsubscribeFromProducers(scanner.nextLine().replaceAll("\\s+", "").split(","));
+				System.out.print("Welche Produzenten sollen deabonniert werden (mit Kommatas trennen)? ");
+				String[] unsubscriptions = user.unsubscribeFromProducers(scanner.nextLine().replaceAll("\\s+", "").split(","));
+				System.out.println("Sie haben folgende Produzenten deabonniert:");
+				for (String producer : unsubscriptions) {
+					System.out.println("\t" + producer);
+				}
 				break;
 			case 6:
-				System.out.println("Ihre Anmeldungen:");
+				System.out.println("Ihre Abos:");
 				for (String s : user.getSubscriptions()) {
 					System.out.println("\t" + s);
 				}
@@ -63,10 +70,9 @@ public class ConsumerCLI {
 				break;
 			}
 		}
-		
+
 		scanner.close();
 		user.unsubscribeFromProducers(user.getSubscriptions());
 		user.deregisterFromServer();
 	}
 }
-
