@@ -9,20 +9,20 @@ public class PayloadMessage implements Payload, Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private final String consignorName;
+	private final String senderName;
 
 	private final String text;
 
-	public PayloadMessage(String consignorName, String text) {
-		this.consignorName = consignorName;
+	public PayloadMessage(String senderName, String text) {
+		this.senderName = senderName;
 		this.text = text;
 	}
 
 	/**
-	 * @return the consignorName
+	 * @return the senderName
 	 */
-	public String getConsignorName() {
-		return consignorName;
+	public String getSenderName() {
+		return senderName;
 	}
 
 	/**
