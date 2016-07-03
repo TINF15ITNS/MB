@@ -123,7 +123,7 @@ public class Consumer {
 				new Message(MessageType.DeregisterConsumer, new PayloadDeregisterConsumer(consumerID)), serverAddress);
 		PayloadDeregisterConsumer answerPayload = (PayloadDeregisterConsumer) answer.getPayload();
 
-		return answerPayload.getConsignorID() != 0;
+		return answerPayload.getSenderID() != 0;
 
 	}
 
