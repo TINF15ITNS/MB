@@ -9,7 +9,8 @@ import java.net.InetAddress;
  * 
  * @author Nikolai
  */
-public class PayloadRegisterOnServer implements Payload, Serializable {
+
+public class PayloadRegisterConsumer implements Payload, Serializable {
 
 	/**
 	 * 
@@ -29,7 +30,7 @@ public class PayloadRegisterOnServer implements Payload, Serializable {
 
 	// der Server brauch den namen des Consumers ja gar nicht zu wissen ... kann dem egal sein, wenns ne eindeutige ID gibt
 
-	public PayloadRegisterOnServer(int id, InetAddress multi) {
+	public PayloadRegisterConsumer(int id, InetAddress multi) {
 		this.id = id;
 		this.multicastAddress = multi;
 	}
