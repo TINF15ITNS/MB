@@ -64,12 +64,8 @@ public class MessageServer {
 			try {
 				ObjectInputStream in = new ObjectInputStream(client.getInputStream());
 				Message m = (Message) in.readObject();
-
-				/*
-				 * RegisterConsumer, DeregisterConsumer, SubscribeProducers, UnsubscribeProducers, getProducerList, getSubscriptions, Message, RegisterProducer,
-				 * DeregisterProducer,
-				 */
 				Message answer = null;
+
 				switch (m.getType()) {
 				case DeregisterConsumer:
 					answer = deregisterConsumer(m);
@@ -112,6 +108,15 @@ public class MessageServer {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} finally {
+				if (client != null) {
+					try {
+						client.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 			}
 
 		}
