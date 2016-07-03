@@ -35,8 +35,8 @@ public class Message implements Serializable {
 		this.payload = payload;
 	}
 
-	// sollte man dann an dieser Stelle auch ne Methode implementieren, die f�r das versenden von Messages sorgt, wie die MEthode sendAndGetMessages() in
-	// Consumer? Rein aus sch�nheitsgr�nden, da hier auch die Methode getMessageAsDatagramPacket liegt?
+	// sollte man dann an dieser Stelle auch ne Methode implementieren, die für das versenden von Messages sorgt, wie die MEthode sendAndGetMessages() in
+	// Consumer? Rein aus schönheitsgründen, da hier auch die Methode getMessageAsDatagramPacket liegt?
 
 	/**
 	 * wraps the message to a DatagramPacket
