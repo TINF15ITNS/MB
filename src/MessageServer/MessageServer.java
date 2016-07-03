@@ -3,12 +3,14 @@ package MessageServer;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Scanner;
 
-import Message.Message;
+import Message.*;
 
 public class MessageServer {
 
@@ -16,13 +18,20 @@ public class MessageServer {
 	// immer und nicht das neuen mit den veränderten Variablenwerten ... Quelle Internet
 
 	public final int portMessageServer;
+	private static int numberOfCustomers = 0;
 	HashMap<Integer, Customer> hashMapProducer, hashMapConsumer;
 	Scanner scanner;
+	InetAddress multicastadr;
 
 	public MessageServer(int pms) {
 		hashMapProducer = new HashMap<>();
 		hashMapConsumer = new HashMap<>();
 		portMessageServer = pms;
+		try {
+			multicastadr = InetAddress.getByName("255.255.255.255");
+		} catch (UnknownHostException e) {
+			// tritt nicht ein, da vorgegeben
+		}
 
 	}
 
@@ -151,7 +160,10 @@ public class MessageServer {
 			// und es wird ein ConsumerMS Objekt erzeugt ( siehe Interface Customer) und in der HashMap gespeichert
 			// Key Value ist die id
 			// und erzeugte id und die MulticastAdresse werden im neuen Message-Objekt gespeichert und zurückgegeben.
-			return null;
+			numberOfCustomers++;
+			Customer c = new ConsumerMS(numberOfCustomers);
+			// hashMapConsumer.put(key, value);
+			return new Message(MessageType.RegisterConsumer, new PayloadRegisterConsumer(numberOfCustomers, multicastadr));
 		}
 
 		/**
