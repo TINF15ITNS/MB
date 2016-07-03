@@ -8,6 +8,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Scanner;
 
 import Message.*;
@@ -18,14 +19,17 @@ public class MessageServer {
 	// immer und nicht das neuen mit den veränderten Variablenwerten ... Quelle Internet
 
 	public final int portMessageServer;
-	private static int numberOfCustomers = 0;
-	HashMap<Integer, Customer> hashMapProducer, hashMapConsumer;
+	private static int numberOfCustomers = 0, numberOfProducers = 0;
+	// HashMap<Integer, Customer> hashMapProducer, hashMapConsumer;
+	HashSet<Integer> dataConsumer, dataProducer;
 	Scanner scanner;
 	InetAddress multicastadr;
 
 	public MessageServer(int pms) {
-		hashMapProducer = new HashMap<>();
-		hashMapConsumer = new HashMap<>();
+		// hashMapProducer = new HashMap<>();
+		// hashMapConsumer = new HashMap<>();
+		dataConsumer = new HashSet<>();
+		dataConsumer = new HashSet<>();
 		portMessageServer = pms;
 		try {
 			multicastadr = InetAddress.getByName("255.255.255.255");
@@ -156,14 +160,10 @@ public class MessageServer {
 		 * @return
 		 */
 		private Message registerConsumer(Message m) {
-			// kommt ne registrierungsanfrage, dann wird hier ne id erzeugt und als Message zurückgesendet
-			// und es wird ein ConsumerMS Objekt erzeugt ( siehe Interface Customer) und in der HashMap gespeichert
-			// Key Value ist die id
-			// und erzeugte id und die MulticastAdresse werden im neuen Message-Objekt gespeichert und zurückgegeben.
 			numberOfCustomers++;
-			Customer c = new ConsumerMS(numberOfCustomers);
-			// hashMapConsumer.put(key, value);
-			return new Message(MessageType.RegisterConsumer, new PayloadRegisterConsumer(numberOfCustomers, multicastadr));
+			int id = numberOfCustomers;
+			dataConsumer.add(new Integer(id));
+			return new Message(MessageType.RegisterConsumer, new PayloadRegisterConsumer(id, multicastadr));
 		}
 
 		/**
@@ -172,10 +172,8 @@ public class MessageServer {
 		 * @return
 		 */
 		private Message registerProducer(Message m) {
-			// kommt ne registrierungsanfrage, dann wird hier ne id erzeugt und als Message zurückgesendet
-			// und es wird ein ConsumerMS Objekt erzeugt ( siehe Interface Customer) und in der HashMap gespeichert
-			// Key Value ist die id
-			// und erzeugte id und die MulticastAdresse werden im neuen Message-Objekt gespeichert und zurückgegeben.
+			int id = numberOfProducers++;
+			// return new Message(MessageType.RegisterProducer, new PayloadRegisterProducer(id, multicastadr));
 			return null;
 		}
 
