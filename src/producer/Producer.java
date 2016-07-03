@@ -31,9 +31,14 @@ public class Producer {
 
 		Message answer = sendAndGetMessage(new Message(MessageType.DeregisterProducer, new PayloadProducer(name)), serverAddress);
 		PayloadProducer answerPayload = (PayloadProducer) answer.getPayload();
-
 		return answerPayload.getSuccess();
 
+	}
+	
+	//TODO: Implement Confirmation process
+	public boolean broadcastMessage(String m) {
+		Message answer = sendAndGetMessage(new Message(MessageType.Message, new PayloadMessage(name, m)), serverAddress);
+		return true;
 	}
 
 	
