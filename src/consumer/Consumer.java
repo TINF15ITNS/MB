@@ -1,8 +1,9 @@
-package Consumer;
+package consumer;
 
 import java.io.*;
 import java.net.*;
-import Message.*;
+
+import message.*;
 
 public class Consumer {
 	private static int serverPort = 55555;

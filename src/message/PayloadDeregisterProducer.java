@@ -1,7 +1,7 @@
 /**
  * 
  */
-package Message;
+package message;
 
 /**
  * @author 

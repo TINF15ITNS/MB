@@ -1,4 +1,4 @@
-package Message;
+package message;
 
 import java.io.*;
 import java.net.*;
@@ -35,8 +35,8 @@ public class Message implements Serializable {
 		this.payload = payload;
 	}
 
-	// sollte man dann an dieser Stelle auch ne Methode implementieren, die für das versenden von Messages sorgt, wie die MEthode sendAndGetMessages() in
-	// Consumer? Rein aus schönheitsgründen, da hier auch die Methode getMessageAsDatagramPacket liegt?
+	// sollte man dann an dieser Stelle auch ne Methode implementieren, die fï¿½r das versenden von Messages sorgt, wie die MEthode sendAndGetMessages() in
+	// Consumer? Rein aus schï¿½nheitsgrï¿½nden, da hier auch die Methode getMessageAsDatagramPacket liegt?
 
 	/**
 	 * wraps the message to a DatagramPacket

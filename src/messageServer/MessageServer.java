@@ -1,12 +1,12 @@
-package MessageServer;
+package messageServer;
 
 import java.util.HashMap;
 import java.util.Scanner;
 
 public class MessageServer {
 
-	// nicht das gleihe Objekt zurücksenden! Wird iwie die gleiche Referenz zurückgesendet, dann erkennt das der Client und nimmt das alte Objekt warum auch
-	// immer und nicht das neuen mit den veränderten Variablenwerten ... Quelle Internet
+	// nicht das gleihe Objekt zurï¿½cksenden! Wird iwie die gleiche Referenz zurï¿½ckgesendet, dann erkennt das der Client und nimmt das alte Objekt warum auch
+	// immer und nicht das neuen mit den verï¿½nderten Variablenwerten ... Quelle Internet
 
 	public final int portMessageServer;
 	HashMap<Integer, Customer> hashMapProducer, hashMapConsumer;
@@ -23,19 +23,19 @@ public class MessageServer {
 
 		scanner = new Scanner(System.in);
 		System.out.println("Willkommen beim Installationsvorgang Ihres MessageServers:");
-		System.out.print("Geben Sie bitte den Port an, über welchen Konsumenten und Produzenten den MessageServer erreichen können ");
+		System.out.print("Geben Sie bitte den Port an, ï¿½ber welchen Konsumenten und Produzenten den MessageServer erreichen kï¿½nnen ");
 		portMessageServer = scanner.nextInt();
 
 		System.out.println("\n\n\nIhr MessageServer wurde erfolgreich installiert\nSie erreichen den MessageServer unter folgendem Port: " + portMessageServer);
 	}
 
 	// Oder das hier in der MainMethode in eigene threads auslagern
-	// da hab ich mir noch keine gedanken drüber gemacht
+	// da hab ich mir noch keine gedanken drï¿½ber gemacht
 	/**
 	 * waits for Messages
 	 */
 	public void getMessages() {
-		// diese Methode hält den einen Port offen, wo auf nachrichten der konsumenten und Produzenten gehört wird
+		// diese Methode hï¿½lt den einen Port offen, wo auf nachrichten der konsumenten und Produzenten gehï¿½rt wird
 		// Casted diese dann nach message und schaut dann was sie damit machen soll und ruft die jeweilige Methode auf
 
 		// hier ist dann nen ServerSocket, dass nen neuen thread startet, wenn eine Anfrage kommt.
@@ -53,7 +53,7 @@ public class MessageServer {
 	 * This Method accepts the register-Messages and saves the Producer and Consuments.
 	 */
 	public void register() {
-		// kommt ne registrierungsanfrage, dann wird hier ne id erzeugt und als Message zurückgesendet
+		// kommt ne registrierungsanfrage, dann wird hier ne id erzeugt und als Message zurï¿½ckgesendet
 		// und es wird ein ConsumerMS Objekt erzeugt ( siehe Interface Customer) und in der HashMap gespeichert
 		// Key Value ist die id
 	}

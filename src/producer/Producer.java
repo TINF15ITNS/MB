@@ -1,8 +1,9 @@
-package Producer;
+package producer;
 
 import java.io.*;
 import java.net.*;
-import Message.*;
+
+import message.*;
 
 public class Producer {
 	private static int serverPort = 55555;

@@ -1,4 +1,4 @@
-package MessageServer;
+package messageServer;
 
 import java.net.InetAddress;
 import java.util.Set;
@@ -7,7 +7,7 @@ public interface Customer {
 
 }
 
-// das sind die Objekte die in der HashMap gespeichert werden sollen, die die Informationen über Produzenten und Konsumenten halten
+// das sind die Objekte die in der HashMap gespeichert werden sollen, die die Informationen ï¿½ber Produzenten und Konsumenten halten
 class ConsumerMS implements Customer {
 	String name;
 	InetAddress address;
