@@ -6,5 +6,9 @@ package Message;
  *
  */
 public enum MessageType {
-	RegisterConsumer, DeregisterConsumer, SubscribeProducers, UnsubscribeProducers, getProducerList, getSubscriptions, Message, RegisterProducer, DeregisterProducer,
+
+	RegisterConsumer, DeregisterConsumer, SubscribeProducers, UnsubscribeProducers, getProducerList, getSubscriptions, Message, RegisterProducer, // Not
+																																					// implemented
+	DeregisterProducer, // Not implemented
+
 }

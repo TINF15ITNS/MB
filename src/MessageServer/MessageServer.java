@@ -49,7 +49,6 @@ public class MessageServer {
 			System.out.println("IOFehler beim ServerSocket");
 			e.printStackTrace();
 		}
-
 	}
 
 	class MessageHandler implements Runnable {
