@@ -1,4 +1,4 @@
-package Message;
+package message;
 
 /**
  * 
@@ -13,6 +13,6 @@ public enum MessageType {
 	getProducerList,
 	getSubscriptions,
 	Message,
-	RegisterProducer, //Not implemented
-	DeregisterProducer, //Not implemented
+	RegisterProducer,
+	DeregisterProducer
 }
