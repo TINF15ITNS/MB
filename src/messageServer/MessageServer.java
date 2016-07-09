@@ -20,15 +20,15 @@ public class MessageServer {
 	// immer und nicht das neuen mit den veränderten Variablenwerten ... Quelle Internet
 
 	public final int portMessageServer;
-	private static int numberOfCustomers = 0, numberOfProducers = 0;
+	private static int numberOfCustomers = 0;
 	HashSet<Integer> dataConsumer;
-	HashMap<Integer, ProducerMS> dataProducer;
+	HashSet<String> dataProducer;
 	Scanner scanner;
 	InetAddress multicastadr;
 
 	public MessageServer(int pms) {
 		dataConsumer = new HashSet<>();
-		dataProducer = new HashMap<>();
+		dataProducer = new HashSet<>();
 		portMessageServer = pms;
 		try {
 			multicastadr = InetAddress.getByName("255.255.255.255");
@@ -137,55 +137,66 @@ public class MessageServer {
 		 * In this Method the MessageServer offers the available Producers
 		 * 
 		 * @param m
+		 *            sended message
 		 * @return
 		 */
 		private Message getProducerList(Message m) {
 			// heißt er generiert ne Antwort-Message und returned diese
-			return null;
+			PayloadGetProducerList payload = new PayloadGetProducerList(dataProducer.toArray(new String[0]));
+			return new Message(MessageType.getProducerList, payload);
 
 		}
 
 		/**
 		 * This Method registers the consumers.
 		 * 
+		 * @param m
+		 *            sended message
 		 * @return
 		 */
 		private Message registerConsumer(Message m) {
 			numberOfCustomers++;
-			int id = numberOfCustomers;
-			dataConsumer.add(new Integer(id));
-			return new Message(MessageType.RegisterConsumer, new PayloadRegisterConsumer(id, multicastadr));
+			dataConsumer.add(new Integer(numberOfCustomers));
+			return new Message(MessageType.RegisterConsumer, new PayloadRegisterConsumer(numberOfCustomers, multicastadr));
 		}
 
 		/**
 		 * This Method accepts the register-messages and saves the producer.
 		 * 
+		 * @param m
+		 *            sended message
 		 * @return
 		 */
 		private Message registerProducer(Message m) {
-			int id = numberOfProducers++;
 
-			PayloadRegisterProducer prp = (PayloadRegisterProducer) m.getPayload();
-			ProducerMS prod = new ProducerMS(id, prp.getName());
-			dataProducer.put(prod.getID(), prod);
-
-			// not implemented !!!!!!!!!!!!!!!
-			return new Message(MessageType.RegisterProducer, new PayloadRegisterProducer(id, multicastadr));
+			PayloadProducer pp = (PayloadProducer) m.getPayload();
+			PayloadProducer ppresp = new PayloadProducer(pp.getName());
+			// falls Name schon vorhanden, wird Success nicht auf true gesetzte
+			if (!dataProducer.contains(pp.getName())) {
+				dataProducer.add(pp.getName());
+				ppresp.setSuccess();
+			}
+			return new Message(MessageType.RegisterProducer, ppresp);
 		}
 
 		/**
 		 * this method forwards the messages of the Producers to the Consumers
 		 * 
 		 * @param m
+		 *            sended message
 		 * @return
 		 */
 
 		private Message receiveMessageFromProducer(Message m) {
 			PayloadMessage pm = (PayloadMessage) m.getPayload();
-			ProducerMS p = dataProducer.get(pm.getName());
-			sendMulticastMessage(p.getName() + "meldet: \n" + pm.getText());
-			return new Message(MessageType.Message, null); // ????????
-
+			// schauen, ob der Absender sich beim Server auch angemeldet hat
+			if (dataProducer.contains(pm.getName())) {
+				sendMulticastMessage(pm.getName() + "meldet: \n" + pm.getText());
+				// TODO: soll bzw. was soll zuückgesendet werden
+				PayloadMessage pmresp = new PayloadMessage("Server", "ok");
+				return new Message(MessageType.Message, pmresp);
+			}
+			return new Message(MessageType.Message, null);
 		}
 
 		/**
@@ -198,7 +209,8 @@ public class MessageServer {
 		private Message deregisterConsumer(Message m) {
 			PayloadDeregisterConsumer pdc = (PayloadDeregisterConsumer) m.getPayload();
 			dataConsumer.remove(pdc.getSenderID());
-			return new Message(MessageType.DeregisterConsumer, null); // ???????
+			// TODO: soll bzw. was soll zuückgesendet werden
+			return new Message(MessageType.DeregisterConsumer, null);
 		}
 
 		/**
@@ -209,8 +221,8 @@ public class MessageServer {
 		 * @return answer-message
 		 */
 		private Message deregisterProducer(Message m) {
-			PayloadDeregisterProducer pdp = (PayloadDeregisterProducer) m.getPayload();
-			dataProducer.remove(pdp.getSenderID());
+			PayloadProducer pdp = (PayloadProducer) m.getPayload();
+			dataProducer.remove(pdp.getName());
 			return new Message(MessageType.DeregisterProducer, null); // ???????
 		}
 
@@ -218,6 +230,7 @@ public class MessageServer {
 		 * subscribes the consumer, who sent the message, at the desired producers
 		 * 
 		 * @param m
+		 *            sended message
 		 * @return
 		 */
 		private Message subscribeProducers(Message m) {
@@ -229,6 +242,7 @@ public class MessageServer {
 		 * unsubscribes the consumer, who sent the message, at the desired producers
 		 * 
 		 * @param m
+		 *            sended message
 		 * @return
 		 */
 		private Message unsubscribeProducers(Message m) {
@@ -236,33 +250,8 @@ public class MessageServer {
 
 		}
 
-		public boolean sendMulticastMessage(String s) throws NotImplementedException {
-			throw new NotImplementedException();
-		}
-	}
-
-	class ProducerMS {
-
-		private final int ID;
-		private final String name;
-
-		public ProducerMS(int id, String n) {
-			ID = id;
-			name = n;
-		}
-
-		/**
-		 * @return the iD
-		 */
-		public int getID() {
-			return ID;
-		}
-
-		/**
-		 * @return the name
-		 */
-		public String getName() {
-			return name;
+		public boolean sendMulticastMessage(String s) {
+			return false;
 		}
 	}
 }
