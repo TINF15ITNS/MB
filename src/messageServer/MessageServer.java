@@ -7,12 +7,10 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Scanner;
 
 import message.*;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class MessageServer {
 
@@ -26,10 +24,10 @@ public class MessageServer {
 	Scanner scanner;
 	InetAddress multicastadr;
 
-	public MessageServer(int pms) {
+	public MessageServer(int sp) {
 		dataConsumer = new HashSet<>();
 		dataProducer = new HashSet<>();
-		serverPort = pms;
+		serverPort = sp;
 		try {
 			multicastadr = InetAddress.getByName("255.255.255.255");
 		} catch (UnknownHostException e) {
@@ -54,7 +52,7 @@ public class MessageServer {
 		}
 	}
 
-	class MessageHandler implements Runnable {
+	private class MessageHandler implements Runnable {
 		Socket client;
 
 		public MessageHandler(Socket client) {
@@ -76,7 +74,6 @@ public class MessageServer {
 					answer = deregisterProducer(m);
 					break;
 				case Message:
-					// weiterleiten an Consumer
 					answer = receiveMessageFromProducer(m);
 					break;
 				case RegisterConsumer:
@@ -106,7 +103,7 @@ public class MessageServer {
 				out.writeObject(answer);
 
 			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
+				System.out.println("Kann kein Objekt aus dem Stream lesen ... Klasse nicht auffindbar");
 				e.printStackTrace();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -121,13 +118,12 @@ public class MessageServer {
 					}
 				}
 			}
-
 		}
 
 		/**
 		 * 
 		 * @param m
-		 * @return
+		 * @return the response-message
 		 */
 		public Message getSubscriptions(Message m) {
 			return null;
@@ -138,7 +134,7 @@ public class MessageServer {
 		 * 
 		 * @param m
 		 *            sended message
-		 * @return
+		 * @return the response-message
 		 */
 		private Message getProducerList(Message m) {
 			// heißt er generiert ne Antwort-Message und returned diese
@@ -152,7 +148,7 @@ public class MessageServer {
 		 * 
 		 * @param m
 		 *            sended message
-		 * @return
+		 * @return the response-message
 		 */
 		private Message registerConsumer(Message m) {
 			numberOfCustomers++;
@@ -165,7 +161,7 @@ public class MessageServer {
 		 * 
 		 * @param m
 		 *            sended message
-		 * @return
+		 * @return the response-message
 		 */
 		private Message registerProducer(Message m) {
 
@@ -184,7 +180,7 @@ public class MessageServer {
 		 * 
 		 * @param m
 		 *            sended message
-		 * @return
+		 * @return the response-message
 		 */
 
 		private Message receiveMessageFromProducer(Message m) {
@@ -204,7 +200,7 @@ public class MessageServer {
 		 * 
 		 * @param m
 		 *            sended message
-		 * @return answer-message
+		 * @return the response-message
 		 */
 		private Message deregisterConsumer(Message m) {
 			PayloadDeregisterConsumer pdc = (PayloadDeregisterConsumer) m.getPayload();
@@ -218,7 +214,7 @@ public class MessageServer {
 		 * 
 		 * @param m
 		 *            sended message
-		 * @return answer-message
+		 * @return the response-message
 		 */
 		private Message deregisterProducer(Message m) {
 			PayloadProducer pdp = (PayloadProducer) m.getPayload();
@@ -231,7 +227,7 @@ public class MessageServer {
 		 * 
 		 * @param m
 		 *            sended message
-		 * @return
+		 * @return the response-message
 		 */
 		private Message subscribeProducers(Message m) {
 			return null;
@@ -243,7 +239,7 @@ public class MessageServer {
 		 * 
 		 * @param m
 		 *            sended message
-		 * @return
+		 * @return the response-message
 		 */
 		private Message unsubscribeProducers(Message m) {
 			return null;
