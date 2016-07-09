@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Scanner;
 
-import Message.*;
+import message.*;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class MessageServer {
