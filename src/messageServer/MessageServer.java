@@ -19,7 +19,7 @@ public class MessageServer {
 	// nicht das gleihe Objekt zurücksenden! Wird iwie die gleiche Referenz zurückgesendet, dann erkennt das der Client und nimmt das alte Objekt warum auch
 	// immer und nicht das neuen mit den veränderten Variablenwerten ... Quelle Internet
 
-	public final int portMessageServer;
+	public final int serverPort;
 	private static int numberOfCustomers = 0;
 	HashSet<Integer> dataConsumer;
 	HashSet<String> dataProducer;
@@ -29,7 +29,7 @@ public class MessageServer {
 	public MessageServer(int pms) {
 		dataConsumer = new HashSet<>();
 		dataProducer = new HashSet<>();
-		portMessageServer = pms;
+		serverPort = pms;
 		try {
 			multicastadr = InetAddress.getByName("255.255.255.255");
 		} catch (UnknownHostException e) {

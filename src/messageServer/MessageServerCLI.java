@@ -7,13 +7,9 @@ public class MessageServerCLI {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		Scanner scanner = new Scanner(System.in);
-		System.out.println("Willkommen beim Installationsvorgang Ihres MessageServers:");
-		System.out.print("Geben Sie bitte den Port an, über welchen Konsumenten und Produzenten den MessageServer erreichen können ");
-		int portMessageServer = scanner.nextInt();
-
-		MessageServer ms = new MessageServer(portMessageServer);
-
-		System.out.println("\n\n\nIhr MessageServer wurde erfolgreich installiert\nSie erreichen den MessageServer unter folgendem Port: " + portMessageServer);
+		System.out.println("Ihr Message-Server wird nun gestartet");
+		MessageServer ms = new MessageServer(55555);
+		System.out.println("\n\n\nIhr MessageServer wurde erfolgreich gestartet und ist nun betriebsbereit");
 		scanner.close();
 	}
 
