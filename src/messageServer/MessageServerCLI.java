@@ -14,7 +14,7 @@ public class MessageServerCLI {
 		MessageServer ms = new MessageServer(portMessageServer);
 
 		System.out.println("\n\n\nIhr MessageServer wurde erfolgreich installiert\nSie erreichen den MessageServer unter folgendem Port: " + portMessageServer);
-
+		scanner.close();
 	}
 
 }
