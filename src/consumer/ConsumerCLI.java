@@ -27,10 +27,11 @@ public class ConsumerCLI {
 			System.out.println("'1' Anmeldung, '2' Abmeldung, '3' Produzentenliste, '4' Abonnieren, '5' Deabonnieren, '6' Liste der Anmeldungen, '7' Beenden");
 
 			int input = scanner.nextInt();
-			scanner.nextLine(); //Absolutely necessary because nextInt() reads only one int and does not finish the line.
+			scanner.nextLine(); // Absolutely necessary because nextInt() reads only one int and does not finish the line.
 			switch (input) {
 			case 1:
 				user.registerOnServer();
+				user.registerOnMulticastGroup();
 				break;
 			case 2:
 				user.deregisterFromServer();
@@ -43,24 +44,26 @@ public class ConsumerCLI {
 				break;
 			case 4:
 				System.out.print("Welche Produzenten sollen abonniert werden (mit Kommatas trennen)? ");
-				String[] subscriptions = user.subscribeToProducers(scanner.nextLine().replaceAll("\\s+", "").split(","));
-				System.out.println("Sie haben folgende Produzenten abonniert:");
-				for (String producer : subscriptions) {
+				String[] s1 = user.subscribeToProducers(scanner.nextLine().replaceAll("\\s+", "").split(","));
+				if (s1[0] != null)
+					System.out.println("Es war nicht möglich, sich für die folgenden Produzenten zu abonnieren: ");
+				for (String producer : s1) {
 					System.out.println("\t" + producer);
 				}
 				break;
 			case 5:
 				System.out.print("Welche Produzenten sollen deabonniert werden (mit Kommatas trennen)? ");
-				String[] unsubscriptions = user.unsubscribeFromProducers(scanner.nextLine().replaceAll("\\s+", "").split(","));
-				System.out.println("Sie haben folgende Produzenten deabonniert:");
-				for (String producer : unsubscriptions) {
+				String[] s2 = user.unsubscribeFromProducers(scanner.nextLine().replaceAll("\\s+", "").split(","));
+				if (s2[0] != null)
+					System.out.println("Sie konnten sich nicht für die folgenden Produzenten deabonnieren: ");
+				for (String producer : s2) {
 					System.out.println("\t" + producer);
 				}
 				break;
 			case 6:
 				System.out.println("Ihre Abos:");
-				for (String s : user.getSubscriptions()) {
-					System.out.println("\t" + s);
+				for (String s3 : user.getSubscriptions()) {
+					System.out.println("\t" + s3);
 				}
 				break;
 			case 7:
