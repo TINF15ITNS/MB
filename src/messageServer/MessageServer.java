@@ -3,7 +3,9 @@ package messageServer;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.DatagramPacket;
 import java.net.InetAddress;
+import java.net.MulticastSocket;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -82,17 +84,8 @@ public class MessageServer {
 				case RegisterProducer:
 					answer = registerProducer(m);
 					break;
-				case SubscribeProducers:
-					answer = subscribeProducers(m);
-					break;
-				case UnsubscribeProducers:
-					answer = unsubscribeProducers(m);
-					break;
 				case getProducerList:
 					answer = getProducerList(m);
-					break;
-				case getSubscriptions:
-					answer = getSubscriptions(m);
 					break;
 				default:
 					throw new RuntimeException("Dieser Fall kann nicht eintreten");
@@ -118,15 +111,6 @@ public class MessageServer {
 					}
 				}
 			}
-		}
-
-		/**
-		 * 
-		 * @param m
-		 * @return the response-message
-		 */
-		public Message getSubscriptions(Message m) {
-			return null;
 		}
 
 		/**
@@ -222,31 +206,17 @@ public class MessageServer {
 			return new Message(MessageType.DeregisterProducer, null); // ???????
 		}
 
-		/**
-		 * subscribes the consumer, who sent the message, at the desired producers
-		 * 
-		 * @param m
-		 *            sended message
-		 * @return the response-message
-		 */
-		private Message subscribeProducers(Message m) {
-			return null;
-
-		}
-
-		/**
-		 * unsubscribes the consumer, who sent the message, at the desired producers
-		 * 
-		 * @param m
-		 *            sended message
-		 * @return the response-message
-		 */
-		private Message unsubscribeProducers(Message m) {
-			return null;
-
-		}
-
 		public boolean sendMulticastMessage(String s) {
+
+			try (MulticastSocket udpSocket = new MulticastSocket();) {
+				udpSocket.setTimeToLive(1); // begrenzt auf lokales Subnetz
+				DatagramPacket dp = Message.getMessageAsDatagrammPacket(new Message(MessageType.Message, new PayloadMessage("Server", s)), multicastadr,
+						serverPort);
+				udpSocket.send(dp);
+			} catch (IOException e) {
+				System.out.println("IOFehler beim Weiterleiten der Nachricht an die Konsumenten");
+				e.printStackTrace();
+			}
 			return false;
 		}
 	}
