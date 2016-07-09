@@ -1,4 +1,4 @@
-package MessageServer;
+package messageServer;
 
 import java.util.Scanner;
 
