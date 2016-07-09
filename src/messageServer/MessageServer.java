@@ -77,7 +77,7 @@ public class MessageServer {
 					break;
 				case Message:
 					// weiterleiten an Consumer
-					answer = recieveMessageFromProducer(m);
+					answer = receiveMessageFromProducer(m);
 					break;
 				case RegisterConsumer:
 					answer = registerConsumer(m);
@@ -180,9 +180,9 @@ public class MessageServer {
 		 * @return
 		 */
 
-		private Message recieveMessageFromProducer(Message m) {
+		private Message receiveMessageFromProducer(Message m) {
 			PayloadMessage pm = (PayloadMessage) m.getPayload();
-			ProducerMS p = dataProducer.get(pm.getSenderID());
+			ProducerMS p = dataProducer.get(pm.getName());
 			sendMulticastMessage(p.getName() + "meldet: \n" + pm.getText());
 			return new Message(MessageType.Message, null); // ????????
 
