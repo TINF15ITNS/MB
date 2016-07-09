@@ -1,4 +1,4 @@
-package Message;
+package message;
 
 import java.io.*;
 import java.net.*;
@@ -20,7 +20,7 @@ public class Message implements Serializable {
 	 * 
 	 * id of the Producer or Consumer who sent this message
 	 * 
-	 * private final int consignorID;
+	 * private final int senderID;
 	 */
 	/**
 	 * type of the message to indicate how to handle with this message
@@ -28,15 +28,15 @@ public class Message implements Serializable {
 	private final MessageType type;
 
 	/*
-	 * public Message(MessageType type, int consignorID, String payload) { this.type = type; this.consignorID = consignorID; this.payload = payload; }
+	 * public Message(MessageType type, int senderID, String payload) { this.type = type; this.senderID = senderID; this.payload = payload; }
 	 */
 	public Message(MessageType type, Payload payload) {
 		this.type = type;
 		this.payload = payload;
 	}
 
-	// sollte man dann an dieser Stelle auch ne Methode implementieren, die für das versenden von Messages sorgt, wie die MEthode sendAndGetMessages() in
-	// Consumer? Rein aus schönheitsgründen, da hier auch die Methode getMessageAsDatagramPacket liegt?
+	// sollte man dann an dieser Stelle auch ne Methode implementieren, die fÃ¼r das versenden von Messages sorgt, wie die MEthode sendAndGetMessages() in
+	// Consumer? Rein aus schÃ¶nheitsgrÃ¼nden, da hier auch die Methode getMessageAsDatagramPacket liegt?
 
 	/**
 	 * wraps the message to a DatagramPacket

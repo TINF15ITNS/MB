@@ -1,4 +1,4 @@
-package MessageServer;
+package messageServer;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -35,7 +35,6 @@ public class MessageServer {
 		} catch (UnknownHostException e) {
 			// tritt nicht ein, da vorgegeben
 		}
-
 	}
 
 	/**

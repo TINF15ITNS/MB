@@ -1,8 +1,9 @@
-package Consumer;
+package consumer;
 
 import java.io.*;
 import java.net.*;
-import Message.*;
+
+import message.*;
 
 public class Test {
 
@@ -21,7 +22,7 @@ public class Test {
 			 * ss.accept(); System.out.println("Anfrage akzeptiert"); out = new
 			 * ObjectOutputStream(client.getOutputStream()); in = new
 			 * ObjectInputStream(client.getInputStream());
-			 * System.out.println("Habe Streams geöffnet");
+			 * System.out.println("Habe Streams geï¿½ffnet");
 			 * System.out.println("Lese jetzt die Nachricht");
 			 * 
 			 * Message m = (Message) in.readObject(); Message answer = new
@@ -40,7 +41,7 @@ public class Test {
 			 * ss.accept(); System.out.println("Anfrage akzeptiert"); out = new
 			 * ObjectOutputStream(client.getOutputStream()); in = new
 			 * ObjectInputStream(client.getInputStream());
-			 * System.out.println("Habe Streams geöffnet");
+			 * System.out.println("Habe Streams geï¿½ffnet");
 			 * System.out.println("Lese jetzt die Nachricht");
 			 * 
 			 * Message m = (Message) in.readObject(); PayloadSubscribeProducers
@@ -59,7 +60,7 @@ public class Test {
 			 * ss.accept(); System.out.println("Anfrage akzeptiert"); out = new
 			 * ObjectOutputStream(client.getOutputStream()); in = new
 			 * ObjectInputStream(client.getInputStream());
-			 * System.out.println("Habe Streams geöffnet");
+			 * System.out.println("Habe Streams geï¿½ffnet");
 			 * System.out.println("Lese jetzt die Nachricht");
 			 * 
 			 * Message m = (Message) in.readObject();
@@ -79,7 +80,7 @@ public class Test {
 			 * ss.accept(); System.out.println("Anfrage akzeptiert"); out = new
 			 * ObjectOutputStream(client.getOutputStream()); in = new
 			 * ObjectInputStream(client.getInputStream());
-			 * System.out.println("Habe Streams geöffnet");
+			 * System.out.println("Habe Streams geï¿½ffnet");
 			 * System.out.println("Lese jetzt die Nachricht");
 			 * 
 			 * Message m = (Message) in.readObject();
@@ -97,7 +98,7 @@ public class Test {
 			 * ss.accept(); System.out.println("Anfrage akzeptiert"); out = new
 			 * ObjectOutputStream(client.getOutputStream()); in = new
 			 * ObjectInputStream(client.getInputStream());
-			 * System.out.println("Habe Streams geöffnet");
+			 * System.out.println("Habe Streams geï¿½ffnet");
 			 * System.out.println("Lese jetzt die Nachricht");
 			 * 
 			 * Message m = (Message) in.readObject();
