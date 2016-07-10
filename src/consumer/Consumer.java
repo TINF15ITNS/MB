@@ -21,30 +21,8 @@ public class Consumer {
 	 */
 	public Consumer(String address) throws IOException {
 		this.serverAddress = InetAddress.getByName(address);
-		if (!testConnection(serverAddress, 1000))
+		if (!Util.testConnection(serverAddress, serverPort, 1000))
 			throw new IOException("There ist no server on the specified address");
-	}
-
-	/**
-	 * Checks if it is possible to establish a TCP connection using the
-	 * "serverPort"
-	 * 
-	 * @param adress
-	 *            The address of the server to be checked
-	 * @param timeout
-	 *            Timeout of the connection
-	 * @return if the connection was successful
-	 */
-	private boolean testConnection(InetAddress adress, int timeout) {
-		Socket server = new Socket();
-		try {
-			server.connect(new InetSocketAddress(adress, serverPort), timeout);
-			server.close();
-			return true;
-		} catch (IOException e) {
-			return false;
-		}
-
 	}
 
 	/**

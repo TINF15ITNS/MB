@@ -12,7 +12,7 @@ public class Producer {
 
 	public Producer(String name, String address) throws Exception, IOException {
 		this.serverAddress = InetAddress.getByName(address);
-		if (!testConnection(serverAddress, 1000))
+		if (!Util.testConnection(serverAddress, serverPort, 1000))
 			throw new IOException("There is no server at the given address");
 		String[] producers = getProducers();
 		for (String n : producers) {
@@ -41,24 +41,6 @@ public class Producer {
 		return true;
 	}
 
-	
-	/**
-	 * 
-	 * The following three methods are taken identical to their counterparts in Consumer.
-	 * Maybe move them to a utility class.
-	 * 
-	 */
-	
-	private boolean testConnection(InetAddress address, int timeout) {
-		Socket server = new Socket();
-		try {
-			server.connect(new InetSocketAddress(address, serverPort), timeout);
-			server.close();
-			return true;
-		} catch (IOException e) {
-			return false;
-		}
-	}
 	public String[] getProducers() {
 		Message answer = Util.sendAndGetMessage(MessageFactory.createRequestProducerListMsg(), serverAddress, serverPort);
 		return ((PayloadGetProducerList) answer.getPayload()).getProducers();
