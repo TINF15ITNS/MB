@@ -40,25 +40,30 @@ public class MessageServer {
 	/**
 	 * waits for Messages from Producers or Consumers
 	 */
-	public void getMessages() {
+	public void initialisingForwardingMessages() {
 		try (ServerSocket serverSo = new ServerSocket(4711)) {
+			MulticastSocket udpSocket = new MulticastSocket();
+			udpSocket.setTimeToLive(1);
+
 			Socket clientSo = null;
 			while (true) {
 				clientSo = serverSo.accept();
-				Thread t = new Thread(new MessageHandler(clientSo));
+				Thread t = new Thread(new MessageHandler(clientSo, udpSocket));
 				t.start();
 			}
 		} catch (IOException e) {
-			System.out.println("IOFehler beim ServerSocket");
+			System.out.println("IOFehler beim Erzeugen des ServerSockets oder des MulticastSockets");
 			e.printStackTrace();
 		}
 	}
 
 	private class MessageHandler implements Runnable {
 		Socket client;
+		MulticastSocket udpSocket;
 
-		public MessageHandler(Socket client) {
+		public MessageHandler(Socket client, MulticastSocket udpSocket) {
 			this.client = client;
+			this.udpSocket = udpSocket;
 		}
 
 		@Override
@@ -110,6 +115,9 @@ public class MessageServer {
 						e.printStackTrace();
 					}
 				}
+				if (udpSocket != null) {
+					udpSocket.close();
+				}
 			}
 		}
 
@@ -121,7 +129,6 @@ public class MessageServer {
 		 * @return the response-message
 		 */
 		private Message getProducerList(Message m) {
-			// heißt er generiert ne Antwort-Message und returned diese
 			PayloadGetProducerList payload = new PayloadGetProducerList(dataProducer.toArray(new String[0]));
 			return new Message(MessageType.getProducerList, payload);
 
@@ -148,13 +155,12 @@ public class MessageServer {
 		 * @return the response-message
 		 */
 		private Message registerProducer(Message m) {
-
 			PayloadProducer pp = (PayloadProducer) m.getPayload();
 			PayloadProducer ppresp = new PayloadProducer(pp.getName());
-			// falls Name schon vorhanden, wird Success nicht auf true gesetzte
 			if (!dataProducer.contains(pp.getName())) {
 				dataProducer.add(pp.getName());
 				ppresp.setSuccess();
+				// TODO ich glaube das ist mit diesem Payload nicht so schön!!! mit dem aufruf setSuccess ...
 			}
 			return new Message(MessageType.RegisterProducer, ppresp);
 		}
@@ -171,7 +177,9 @@ public class MessageServer {
 			PayloadMessage pm = (PayloadMessage) m.getPayload();
 			// schauen, ob der Absender sich beim Server auch angemeldet hat
 			if (dataProducer.contains(pm.getName())) {
-				sendMulticastMessage(pm.getName() + "meldet: \n" + pm.getText());
+				DatagramPacket dp = Message.getMessageAsDatagrammPacket(
+						new Message(MessageType.Message, new PayloadMessage("Server", pm.getName() + "meldet: \n" + pm.getText())), multicastadr, serverPort);
+				sendMulticastMessage(dp);
 				// TODO: soll bzw. was soll zuückgesendet werden
 				PayloadMessage pmresp = new PayloadMessage("Server", "ok");
 				return new Message(MessageType.Message, pmresp);
@@ -203,21 +211,21 @@ public class MessageServer {
 		private Message deregisterProducer(Message m) {
 			PayloadProducer pdp = (PayloadProducer) m.getPayload();
 			dataProducer.remove(pdp.getName());
-			return new Message(MessageType.DeregisterProducer, null); // ???????
+			DatagramPacket dp = Message.getMessageAsDatagrammPacket(new Message(MessageType.DeregisterProducer, new PayloadProducer(pdp.getName())),
+					multicastadr, serverPort);
+			sendMulticastMessage(dp);
+			// TODO was soll hier zurückgesendet werden
+			return new Message(MessageType.DeregisterProducer, null);
 		}
 
-		public boolean sendMulticastMessage(String s) {
-
-			try (MulticastSocket udpSocket = new MulticastSocket();) {
-				udpSocket.setTimeToLive(1); // begrenzt auf lokales Subnetz
-				DatagramPacket dp = Message.getMessageAsDatagrammPacket(new Message(MessageType.Message, new PayloadMessage("Server", s)), multicastadr,
-						serverPort);
+		public boolean sendMulticastMessage(DatagramPacket dp) {
+			try {
 				udpSocket.send(dp);
 			} catch (IOException e) {
-				System.out.println("IOFehler beim Weiterleiten der Nachricht an die Konsumenten");
+				System.out.println("IOFehler beim Senden der Multicast-Nachricht");
 				e.printStackTrace();
 			}
-			return false;
+			return true;
 		}
 	}
 }
