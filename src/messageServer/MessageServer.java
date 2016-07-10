@@ -190,7 +190,7 @@ public class MessageServer {
 			PayloadDeregisterConsumer pdc = (PayloadDeregisterConsumer) m.getPayload();
 			dataConsumer.remove(pdc.getSenderID());
 			// TODO: soll bzw. was soll zuückgesendet werden
-			return new Message(MessageType.DeregisterConsumer, null);
+			return new Message(MessageType.DeregisterConsumer, new PayloadDeregisterConsumer(0));
 		}
 
 		/**
