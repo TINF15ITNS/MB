@@ -3,8 +3,6 @@ package producer;
 import java.io.IOException;
 import java.util.Scanner;
 
-import consumer.Consumer;
-
 public class ProducerCLI {
 
 	public static void main(String[] args) {
