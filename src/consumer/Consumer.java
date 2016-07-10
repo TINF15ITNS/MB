@@ -210,22 +210,42 @@ public class Consumer {
 
 		@Override
 		public void run() {
-			// Idee mit Pipes zu arbeiten und dem User ne M�glichkeit zu geben, abzufragen, ob es neue Nachrichten gibt...
+			// TODO Idee mit Pipes zu arbeiten und dem User ne M�glichkeit zu geben, abzufragen, ob es neue Nachrichten gibt...
 			DatagramPacket dp = null;
 			while (true) {
 				try {
 					udps.receive(dp);
 					Message m = Message.getMessageFromDatagramPacket(dp);
-					System.out.println("Sie haben eine neue Push-Mitteilung:"); // er schreibt ja jetzt einfach raus ... // vlt funktioniert dies nicht, weil im
-																				// hauptthread er gerade // auf ne Eingabe wartet ... vlt muss man dann hier den
-					// hauptthread einschlï¿½fern und // nach der Ausgabe wieder aufwecken?!
-					if (m.getType() != MessageType.Message)
-						throw new RuntimeException("Falscher Payload in GetMessage");
 
-					PayloadMessage payload = (PayloadMessage) m.getPayload();
+					switch (m.getType()) {
 
-					if (subscriptions.contains(payload.getName()))
-						System.out.println(payload.getName() + " meldet: \n" + payload.getText());
+					case DeregisterProducer:
+						if (m.getType() != MessageType.DeregisterProducer)
+							throw new RuntimeException("Falscher Payload in GetMessage");
+						PayloadProducer pp = (PayloadProducer) m.getPayload();
+						System.out.println("Der Producer " + pp.getName()
+								+ " hat den Dienst eingestellt. Sie k�nnen leider keine Push-Nachrichten mehr von ihm erhalten...");
+						producerList.remove(pp.getName());
+						subscriptions.remove(pp.getName());
+						break;
+
+					case Message:
+						if (m.getType() != MessageType.Message)
+							throw new RuntimeException("Falscher Payload in GetMessage");
+						System.out.println("Sie haben eine neue Push-Mitteilung:"); // er schreibt ja jetzt einfach raus ... // vlt funktioniert dies nicht,
+																					// weil im
+																					// hauptthread er gerade // auf ne Eingabe wartet ... vlt muss man dann hier
+																					// den
+						// hauptthread einschlï¿½fern und // nach der Ausgabe wieder aufwecken?!
+						PayloadMessage payload = (PayloadMessage) m.getPayload();
+						if (subscriptions.contains(payload.getName()))
+							System.out.println(payload.getName() + " meldet: \n" + payload.getText());
+						break;
+
+					default:
+						break;
+
+					}
 
 				} catch (IOException e) {
 					System.out.println("Fehler beim Bearbeiten der erhaltenen UDP-Message");
