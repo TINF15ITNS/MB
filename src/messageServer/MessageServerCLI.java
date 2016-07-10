@@ -9,7 +9,7 @@ public class MessageServerCLI {
 		System.out.println("Ihr Message-Server wird nun gestartet");
 		MessageServer ms = new MessageServer(55555);
 		System.out.println("\nIhr MessageServer wurde erfolgreich gestartet und ist nun betriebsbereit");
-		ms.getMessages();
+		ms.initialisingForwardingMessages();
 		scanner.close();
 	}
 
