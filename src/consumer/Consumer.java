@@ -94,7 +94,7 @@ public class Consumer {
 	 * @return all available producers
 	 */
 	public String[] getProducers() {
-		Message answer = Util.sendAndGetMessage(new Message(MessageType.getProducerList, null), serverAddress, serverPort);
+		Message answer = Util.sendAndGetMessage(MessageFactory.createRequestProducerListMsg(), serverAddress, serverPort);
 		return ((PayloadGetProducerList) answer.getPayload()).getProducers();
 	}
 
@@ -117,7 +117,6 @@ public class Consumer {
 	 * @return if the operation was successful
 	 */
 	public boolean deregisterFromServer() {
-
 		Message answer = Util.sendAndGetMessage(
 				new Message(MessageType.DeregisterConsumer, new PayloadDeregisterConsumer(consumerID)), serverAddress, serverPort);
 		PayloadDeregisterConsumer answerPayload = (PayloadDeregisterConsumer) answer.getPayload();

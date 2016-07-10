@@ -9,7 +9,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 /**
- * @author naibafo
+ * @author Nikolai Seip, Sebastian Mattheis, Fabian Hinz
  *
  */
 public class Util {

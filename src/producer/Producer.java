@@ -60,7 +60,7 @@ public class Producer {
 		}
 	}
 	public String[] getProducers() {
-		Message answer = Util.sendAndGetMessage(new Message(MessageType.getProducerList, null), serverAddress, serverPort);
+		Message answer = Util.sendAndGetMessage(MessageFactory.createRequestProducerListMsg(), serverAddress, serverPort);
 		return ((PayloadGetProducerList) answer.getPayload()).getProducers();
 	}
 }
