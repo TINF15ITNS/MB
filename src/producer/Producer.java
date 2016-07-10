@@ -22,14 +22,14 @@ public class Producer {
 	}
 	
 	public boolean registerOnServer() {
-		Message answer = sendAndGetMessage(new Message(MessageType.RegisterProducer, new PayloadProducer(name)), serverAddress);
+		Message answer = sendAndGetMessage(MessageFactory.createRegisterProducerMsg(name), serverAddress);
 		PayloadProducer answerPayload = (PayloadProducer) answer.getPayload();
 		return answerPayload.getSuccess();
 	}
 
 	public boolean deregisterFromServer() {
 
-		Message answer = sendAndGetMessage(new Message(MessageType.DeregisterProducer, new PayloadProducer(name)), serverAddress);
+		Message answer = sendAndGetMessage(MessageFactory.createDeregisterProducerMsg(name), serverAddress);
 		PayloadProducer answerPayload = (PayloadProducer) answer.getPayload();
 		return answerPayload.getSuccess();
 
