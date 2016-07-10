@@ -15,6 +15,20 @@ import java.net.Socket;
  *
  */
 public class Util {
+	
+	/**
+	 * A method that opens a TCP connection with a server, sends a message,
+	 * waits for an answer and closes the connection
+	 * 
+	 * @param message
+	 * The message that is supposed to be sent
+	 * @param address
+	 * The address of the target server
+	 * @param serverPort
+	 * The open port of the target server
+	 * @return
+	 * The Message response of the server
+	 */
 	public static Message sendAndGetMessage(Message message, InetAddress address, int serverPort) {
 		Socket server;
 		try {
@@ -39,16 +53,17 @@ public class Util {
 	}
 	
 	/**
-	 * Checks if it is possible to establish a TCP connection with a
-	 * specified address and port
+	 * Checks if it is possible to establish a TCP connection to a server
+	 * with specified address and port
 	 * 
 	 * @param address
-	 *            The address of the server to be checked
+	 * The address of the target server
 	 * @param serverPort
-	 *            The port to be checked
+	 * The port to be checked
 	 * @param timeout
-	 *            Timeout of the connection
-	 * @return a boolean indicating success or failure
+	 * Timeout of the connection
+	 * @return 
+	 * A boolean indicating success or failure
 	 */
 	public static boolean testConnection(InetAddress adress, int serverPort, int timeout) {
 		Socket server = new Socket();
@@ -59,9 +74,5 @@ public class Util {
 		} catch (IOException e) {
 			return false;
 		}
-
 	}
-
-
-
 }

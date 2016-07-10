@@ -22,6 +22,12 @@ public class MessageFactory {
 	public static Message createRequestProducerListMsg() {
 		return new Message(MessageType.getProducerList, null);
 	}
+	
+	public static Message createBroadcastMessage(String sender, String message) {
+		if (sender == null) throw new IllegalArgumentException("You cannot send a message without a sender");
+		if (message == null) throw new IllegalArgumentException("You cannot send a message without content");
+		return new Message(MessageType.Message, new PayloadMessage(sender, message));
+	}
 
 
 }

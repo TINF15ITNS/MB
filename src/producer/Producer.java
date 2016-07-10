@@ -36,8 +36,8 @@ public class Producer {
 	}
 	
 	//TODO: Implement Confirmation process
-	public boolean broadcastMessage(String m) {
-		Message answer = Util.sendAndGetMessage(new Message(MessageType.Message, new PayloadMessage(name, m)), serverAddress, serverPort);
+	public boolean broadcastMessage(String msg) {
+		Message answer = Util.sendAndGetMessage(MessageFactory.createBroadcastMessage(name, msg), serverAddress, serverPort);
 		return true;
 	}
 
