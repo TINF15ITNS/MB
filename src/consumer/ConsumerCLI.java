@@ -67,6 +67,8 @@ public class ConsumerCLI {
 				}
 				break;
 			case 7:
+				// ich habe jetzt den neuen Thread nicht iwie beendet ... ich gehe mal davon aus, da es auch einObjekt ist, wird es / er gelöscht, wenn nichts
+				// mehr auf ihn referenziert
 				exit = true;
 				break;
 			default:
@@ -77,5 +79,6 @@ public class ConsumerCLI {
 		scanner.close();
 		user.unsubscribeFromProducers(user.getSubscriptions());
 		user.deregisterFromServer();
+		user.deregisterFromMulticastGroup();
 	}
 }

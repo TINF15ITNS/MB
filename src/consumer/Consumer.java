@@ -11,10 +11,11 @@ import message.*;
 public class Consumer {
 	private static int serverPort = 55555;
 	private int consumerID;
-	private InetAddress multicastadr;
+	private InetAddress mcastadr;
 	private InetAddress serverAddress;
 	private HashSet<String> subscriptions;
 	private HashSet<String> producerList;
+	MulticastSocket udpSocket;
 	// private InetAddress multicastAddress;
 
 	/**
@@ -43,10 +44,9 @@ public class Consumer {
 	 * @return if the connection was successful
 	 */
 	private boolean testConnection(InetAddress adress, int timeout) {
-		Socket server = new Socket();
-		try {
+
+		try (Socket server = new Socket();) {
 			server.connect(new InetSocketAddress(adress, serverPort), timeout);
-			server.close();
 			return true;
 		} catch (IOException e) {
 			return false;
@@ -128,7 +128,7 @@ public class Consumer {
 
 		PayloadRegisterConsumer answerPayload = (PayloadRegisterConsumer) answer.getPayload();
 		this.consumerID = answerPayload.getId();
-		this.multicastadr = answerPayload.getMulticastAddress();
+		this.mcastadr = answerPayload.getMulticastAddress();
 		// TODO Operation successful?
 	}
 
@@ -179,10 +179,9 @@ public class Consumer {
 	}
 
 	public void registerOnMulticastGroup() {
-		MulticastSocket udpSocket = null;
 		try {
 			udpSocket = new MulticastSocket();
-			udpSocket.joinGroup(multicastadr);
+			udpSocket.joinGroup(mcastadr);
 		} catch (IOException e) {
 			System.out.println("IOFehler beim Registrieren in der Multicastgruppe");
 			e.printStackTrace();
@@ -193,15 +192,14 @@ public class Consumer {
 		t.start();
 	}
 
-	/**
-	 * 
-	 * @param message
-	 *            The message to be filled with content
-	 * @param address
-	 *            The address of the server
-	 * @return The filled message. If the operation was not successful null.
-	 * @throws ClassNotFoundException
-	 */
+	public void deregisterFromMulticastGroup() {
+		try {
+			udpSocket.leaveGroup(mcastadr);
+		} catch (IOException e) {
+			System.out.println("IOFehler beim Verlassen der Multicastgruppe");
+			e.printStackTrace();
+		}
+	}
 
 	private class WaitForMessage implements Runnable {
 		MulticastSocket udps;
@@ -212,14 +210,12 @@ public class Consumer {
 
 		@Override
 		public void run() {
+			// Idee mit Pipes zu arbeiten und dem User ne M�glichkeit zu geben, abzufragen, ob es neue Nachrichten gibt...
 			DatagramPacket dp = null;
 			while (true) {
 				try {
 					udps.receive(dp);
 					Message m = Message.getMessageFromDatagramPacket(dp);
-					// schreibt noch nen ; dahinter, damit ich oben sehen kann, ob
-					// mehrere Messages kamen //
-					// pw.write(m.getPayload() + ";");
 					System.out.println("Sie haben eine neue Push-Mitteilung:"); // er schreibt ja jetzt einfach raus ... // vlt funktioniert dies nicht, weil im
 																				// hauptthread er gerade // auf ne Eingabe wartet ... vlt muss man dann hier den
 					// hauptthread einschlï¿½fern und // nach der Ausgabe wieder aufwecken?!
