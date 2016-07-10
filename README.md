@@ -1,6 +1,9 @@
 # MB
 A message broker implemented in Java according to our courses project guidelines
 
+# ToDo
+* alle Downcast mit insatnceof überprüfen?
+* überlegen oob man da nicht was mit Generics machen kann
 
 
 #Offene Fragen: 
