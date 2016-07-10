@@ -16,7 +16,6 @@ public class Consumer {
 	private HashSet<String> subscriptions;
 	private HashSet<String> producerList;
 	MulticastSocket udpSocket;
-	// private InetAddress multicastAddress;
 
 	/**
 	 * Used to interact with a MessageServer
@@ -120,16 +119,14 @@ public class Consumer {
 
 	/**
 	 * Registers the user on the server
-	 * 
-	 * @return
 	 */
 	public void registerOnServer() {
 		Message answer = sendAndGetMessage(new Message(MessageType.RegisterConsumer, null), serverAddress);
-
 		PayloadRegisterConsumer answerPayload = (PayloadRegisterConsumer) answer.getPayload();
 		this.consumerID = answerPayload.getId();
 		this.mcastadr = answerPayload.getMulticastAddress();
 		// TODO Operation successful?
+		// TODO vlt die Methode registerOnMulticastGroup hier aufrufen und nicht seperat?
 	}
 
 	/**
@@ -156,29 +153,23 @@ public class Consumer {
 	 * @return the answer from the server
 	 */
 	private Message sendAndGetMessage(Message message, InetAddress address) {
-		Socket server;
-		try {
-			server = new Socket(address, serverPort);
 
-			Message answer = null;
-			ObjectOutputStream out = null;
-			ObjectInputStream in = null;
+		try (Socket server = new Socket(address, serverPort);
+				ObjectOutputStream out = new ObjectOutputStream(server.getOutputStream());
+				ObjectInputStream in = new ObjectInputStream(server.getInputStream());) {
 
-			out = new ObjectOutputStream(server.getOutputStream());
-			in = new ObjectInputStream(server.getInputStream());
 			out.writeObject(message);
-			answer = (Message) in.readObject();
-
-			in.close();
-			out.close();
-			server.close();
+			Message answer = (Message) in.readObject();
 			return answer;
 		} catch (Exception e) {
 			return null;
 		}
 	}
 
-	public void registerOnMulticastGroup() {
+	/**
+	 * method name says all
+	 */
+	public void joinMulticastGroup() {
 		try {
 			udpSocket = new MulticastSocket();
 			udpSocket.joinGroup(mcastadr);
@@ -201,6 +192,11 @@ public class Consumer {
 		}
 	}
 
+	/**
+	 * 
+	 * The class is listening for messages from the server and prints them on the console
+	 *
+	 */
 	private class WaitForMessage implements Runnable {
 		MulticastSocket udps;
 
@@ -210,7 +206,7 @@ public class Consumer {
 
 		@Override
 		public void run() {
-			// TODO Idee mit Pipes zu arbeiten und dem User ne M�glichkeit zu geben, abzufragen, ob es neue Nachrichten gibt...
+			// TODO Idee mit Pipes zu arbeiten und dem User ne Möglichkeit zu geben, abzufragen, ob es neue Nachrichten gibt...
 			DatagramPacket dp = null;
 			while (true) {
 				try {
@@ -224,7 +220,7 @@ public class Consumer {
 							throw new RuntimeException("Falscher Payload in GetMessage");
 						PayloadProducer pp = (PayloadProducer) m.getPayload();
 						System.out.println("Der Producer " + pp.getName()
-								+ " hat den Dienst eingestellt. Sie k�nnen leider keine Push-Nachrichten mehr von ihm erhalten...");
+								+ " hat den Dienst eingestellt. Sie k�nnen leider keine Push-Nachrichten mehr von ihm erhalten...");
 						producerList.remove(pp.getName());
 						subscriptions.remove(pp.getName());
 						break;
@@ -232,11 +228,9 @@ public class Consumer {
 					case Message:
 						if (m.getType() != MessageType.Message)
 							throw new RuntimeException("Falscher Payload in GetMessage");
-						System.out.println("Sie haben eine neue Push-Mitteilung:"); // er schreibt ja jetzt einfach raus ... // vlt funktioniert dies nicht,
-																					// weil im
-																					// hauptthread er gerade // auf ne Eingabe wartet ... vlt muss man dann hier
-																					// den
-						// hauptthread einschlï¿½fern und // nach der Ausgabe wieder aufwecken?!
+						System.out.println("Sie haben eine neue Push-Mitteilung:");
+						// er schreibt ja jetzt einfach raus ... vlt funktioniert dies nicht, weil im hauptthread er gerade auf ne Eingabe wartet ... vlt muss
+						// man dann hier den Hauptthread einschläfern und nach der Ausgabe wieder aufwecken?!
 						PayloadMessage payload = (PayloadMessage) m.getPayload();
 						if (subscriptions.contains(payload.getName()))
 							System.out.println(payload.getName() + " meldet: \n" + payload.getText());

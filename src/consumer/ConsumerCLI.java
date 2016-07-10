@@ -31,10 +31,11 @@ public class ConsumerCLI {
 			switch (input) {
 			case 1:
 				user.registerOnServer();
-				user.registerOnMulticastGroup();
+				user.joinMulticastGroup();
 				break;
 			case 2:
 				user.deregisterFromServer();
+				user.deregisterFromMulticastGroup();
 				break;
 			case 3:
 				System.out.println("VerfÃ¼gbare Produzenten:");
@@ -46,7 +47,7 @@ public class ConsumerCLI {
 				System.out.print("Welche Produzenten sollen abonniert werden (mit Kommatas trennen)? ");
 				String[] s1 = user.subscribeToProducers(scanner.nextLine().replaceAll("\\s+", "").split(","));
 				if (s1[0] != null)
-					System.out.println("Es war nicht möglich, sich für die folgenden Produzenten zu abonnieren: ");
+					System.out.println("Es war nicht mÃ¶glich, sich fï¿½r die folgenden Produzenten zu abonnieren: ");
 				for (String producer : s1) {
 					System.out.println("\t" + producer);
 				}
@@ -55,7 +56,7 @@ public class ConsumerCLI {
 				System.out.print("Welche Produzenten sollen deabonniert werden (mit Kommatas trennen)? ");
 				String[] s2 = user.unsubscribeFromProducers(scanner.nextLine().replaceAll("\\s+", "").split(","));
 				if (s2[0] != null)
-					System.out.println("Sie konnten sich nicht für die folgenden Produzenten deabonnieren: ");
+					System.out.println("Sie konnten sich nicht fÃ¼r die folgenden Produzenten deabonnieren: ");
 				for (String producer : s2) {
 					System.out.println("\t" + producer);
 				}
@@ -67,7 +68,7 @@ public class ConsumerCLI {
 				}
 				break;
 			case 7:
-				// ich habe jetzt den neuen Thread nicht iwie beendet ... ich gehe mal davon aus, da es auch einObjekt ist, wird es / er gelöscht, wenn nichts
+				// ich habe jetzt den neuen Thread nicht iwie beendet ... ich gehe mal davon aus, da es auch ein Objekt ist, wird er gelÃ¶scht, wenn nichts
 				// mehr auf ihn referenziert
 				exit = true;
 				break;

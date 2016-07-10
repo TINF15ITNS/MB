@@ -16,8 +16,8 @@ import message.*;
 
 public class MessageServer {
 
-	// nicht das gleihe Objekt zurücksenden! Wird iwie die gleiche Referenz zurückgesendet, dann erkennt das der Client und nimmt das alte Objekt warum auch
-	// immer und nicht das neuen mit den veränderten Variablenwerten ... Quelle Internet
+	// nicht das gleihe Objekt zurï¿½cksenden! Wird iwie die gleiche Referenz zurï¿½ckgesendet, dann erkennt das der Client und nimmt das alte Objekt warum auch
+	// immer und nicht das neuen mit den verÃ¤nderten Variablenwerten ... Quelle Internet
 
 	public final int serverPort;
 	private static int numberOfCustomers = 0;
@@ -126,7 +126,7 @@ public class MessageServer {
 		 * 
 		 * @param m
 		 *            sended message
-		 * @return the response-message
+		 * @return response-message
 		 */
 		private Message getProducerList(Message m) {
 			PayloadGetProducerList payload = new PayloadGetProducerList(dataProducer.toArray(new String[0]));
@@ -139,7 +139,7 @@ public class MessageServer {
 		 * 
 		 * @param m
 		 *            sended message
-		 * @return the response-message
+		 * @return response-message
 		 */
 		private Message registerConsumer(Message m) {
 			numberOfCustomers++;
@@ -152,7 +152,7 @@ public class MessageServer {
 		 * 
 		 * @param m
 		 *            sended message
-		 * @return the response-message
+		 * @return response-message
 		 */
 		private Message registerProducer(Message m) {
 			PayloadProducer pp = (PayloadProducer) m.getPayload();
@@ -160,7 +160,7 @@ public class MessageServer {
 			if (!dataProducer.contains(pp.getName())) {
 				dataProducer.add(pp.getName());
 				ppresp.setSuccess();
-				// TODO ich glaube das ist mit diesem Payload nicht so schön!!! mit dem aufruf setSuccess ...
+				// TODO ich glaube das ist mit diesem Payload nicht so schï¿½n!!! mit dem aufruf setSuccess ...
 			}
 			return new Message(MessageType.RegisterProducer, ppresp);
 		}
@@ -170,7 +170,7 @@ public class MessageServer {
 		 * 
 		 * @param m
 		 *            sended message
-		 * @return the response-message
+		 * @return response-message
 		 */
 
 		private Message receiveMessageFromProducer(Message m) {
@@ -180,7 +180,7 @@ public class MessageServer {
 				DatagramPacket dp = Message.getMessageAsDatagrammPacket(
 						new Message(MessageType.Message, new PayloadMessage("Server", pm.getName() + "meldet: \n" + pm.getText())), multicastadr, serverPort);
 				sendMulticastMessage(dp);
-				// TODO: soll bzw. was soll zuückgesendet werden
+				// TODO: soll bzw. was soll zuï¿½ckgesendet werden
 				PayloadMessage pmresp = new PayloadMessage("Server", "ok");
 				return new Message(MessageType.Message, pmresp);
 			}
@@ -192,12 +192,12 @@ public class MessageServer {
 		 * 
 		 * @param m
 		 *            sended message
-		 * @return the response-message
+		 * @return response-message
 		 */
 		private Message deregisterConsumer(Message m) {
 			PayloadDeregisterConsumer pdc = (PayloadDeregisterConsumer) m.getPayload();
 			dataConsumer.remove(pdc.getSenderID());
-			// TODO: soll bzw. was soll zuückgesendet werden
+			// TODO: soll bzw. was soll zuï¿½ckgesendet werden
 			return new Message(MessageType.DeregisterConsumer, new PayloadDeregisterConsumer(0));
 		}
 
@@ -206,7 +206,7 @@ public class MessageServer {
 		 * 
 		 * @param m
 		 *            sended message
-		 * @return the response-message
+		 * @return response-message
 		 */
 		private Message deregisterProducer(Message m) {
 			PayloadProducer pdp = (PayloadProducer) m.getPayload();
@@ -214,18 +214,23 @@ public class MessageServer {
 			DatagramPacket dp = Message.getMessageAsDatagrammPacket(new Message(MessageType.DeregisterProducer, new PayloadProducer(pdp.getName())),
 					multicastadr, serverPort);
 			sendMulticastMessage(dp);
-			// TODO was soll hier zurückgesendet werden
+			// TODO was soll hier zurï¿½ckgesendet werden
 			return new Message(MessageType.DeregisterProducer, null);
 		}
 
-		public boolean sendMulticastMessage(DatagramPacket dp) {
+		/**
+		 * forwards the message to the consumers
+		 * 
+		 * @param dp
+		 *            the message-object as DatagramPacket
+		 */
+		public void sendMulticastMessage(DatagramPacket dp) {
 			try {
 				udpSocket.send(dp);
 			} catch (IOException e) {
 				System.out.println("IOFehler beim Senden der Multicast-Nachricht");
 				e.printStackTrace();
 			}
-			return true;
 		}
 	}
 }
