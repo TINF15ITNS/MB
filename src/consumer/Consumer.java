@@ -53,7 +53,7 @@ public class Consumer {
 	 * @return a list of producers this consumer is subscribed to
 	 */
 	public String[] getSubscriptions() {
-		Message response = this.sendAndGetMessage(new Message(MessageType.getSubscriptions, null), serverAddress);
+		Message response = Util.sendAndGetMessage(new Message(MessageType.getSubscriptions, null), serverAddress, serverPort);
 		return ((PayloadGetSubscriptions) response.getPayload()).getSubscriptions(); // Always expects a string array, even if there are no producers available (then its just empty)
 	}
 
@@ -67,8 +67,8 @@ public class Consumer {
 	public String[] subscribeToProducers(String[] producers) {
 		if (producers == null)
 			throw new IllegalArgumentException("'producers' may not be null");
-		Message answer = this.sendAndGetMessage(
-				new Message(MessageType.SubscribeProducers, new PayloadSubscribeProducers(producers)), serverAddress);
+		Message answer = Util.sendAndGetMessage(
+				new Message(MessageType.SubscribeProducers, new PayloadSubscribeProducers(producers)), serverAddress, serverPort);
 		return ((PayloadSubscribeProducers) answer.getPayload()).getToBeSubscribed();
 	}
 
@@ -82,9 +82,9 @@ public class Consumer {
 	public String[] unsubscribeFromProducers(String[] producers) {
 		if (producers == null)
 			throw new IllegalArgumentException("'producers' may not be null");
-		Message answer = this.sendAndGetMessage(
+		Message answer = Util.sendAndGetMessage(
 				new Message(MessageType.UnsubscribeProducers, new PayloadUnsubscribeProducers(producers)),
-				serverAddress);
+				serverAddress, serverPort);
 		return ((PayloadUnsubscribeProducers) answer.getPayload()).getToBeUnsubscribed();
 	}
 
@@ -94,7 +94,7 @@ public class Consumer {
 	 * @return all available producers
 	 */
 	public String[] getProducers() {
-		Message answer = this.sendAndGetMessage(new Message(MessageType.getProducerList, null), serverAddress);
+		Message answer = Util.sendAndGetMessage(new Message(MessageType.getProducerList, null), serverAddress, serverPort);
 		return ((PayloadGetProducerList) answer.getPayload()).getProducers();
 	}
 
@@ -104,8 +104,7 @@ public class Consumer {
 	 * @return
 	 */
 	public boolean registerOnServer() {
-		Message answer = sendAndGetMessage(new Message(MessageType.RegisterConsumer, null), serverAddress);
-
+		Message answer = Util.sendAndGetMessage(new Message(MessageType.RegisterConsumer, null), serverAddress, serverPort);
 		PayloadRegisterConsumer answerPayload = (PayloadRegisterConsumer) answer.getPayload();
 		this.consumerID = answerPayload.getId();
 		// this.multicastAddress = answerPayload.getMulticastAddress();
@@ -119,44 +118,12 @@ public class Consumer {
 	 */
 	public boolean deregisterFromServer() {
 
-		Message answer = sendAndGetMessage(
-				new Message(MessageType.DeregisterConsumer, new PayloadDeregisterConsumer(consumerID)), serverAddress);
+		Message answer = Util.sendAndGetMessage(
+				new Message(MessageType.DeregisterConsumer, new PayloadDeregisterConsumer(consumerID)), serverAddress, serverPort);
 		PayloadDeregisterConsumer answerPayload = (PayloadDeregisterConsumer) answer.getPayload();
 
 		return answerPayload.getSenderID() != 0;
 
-	}
-
-	/**
-	 * Sends a message object to the server via TCP and receives it afterwards
-	 * 
-	 * @param message
-	 *            the message to be sent
-	 * @param address
-	 *            the address the message is to be sent to
-	 * @return the answer from the server
-	 */
-	private Message sendAndGetMessage(Message message, InetAddress address) {
-		Socket server;
-		try {
-			server = new Socket(address, serverPort);
-
-			Message answer = null;
-			ObjectOutputStream out = null;
-			ObjectInputStream in = null;
-
-			out = new ObjectOutputStream(server.getOutputStream());
-			in = new ObjectInputStream(server.getInputStream());
-			out.writeObject(message);
-			answer = (Message) in.readObject();
-
-			in.close();
-			out.close();
-			server.close();
-			return answer;
-		} catch (Exception e) {
-			return null;
-		}
 	}
 
 	/*

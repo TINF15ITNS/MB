@@ -22,14 +22,14 @@ public class Producer {
 	}
 	
 	public boolean registerOnServer() {
-		Message answer = sendAndGetMessage(MessageFactory.createRegisterProducerMsg(name), serverAddress);
+		Message answer = Util.sendAndGetMessage(MessageFactory.createRegisterProducerMsg(name), serverAddress, serverPort);
 		PayloadProducer answerPayload = (PayloadProducer) answer.getPayload();
 		return answerPayload.getSuccess();
 	}
 
 	public boolean deregisterFromServer() {
 
-		Message answer = sendAndGetMessage(MessageFactory.createDeregisterProducerMsg(name), serverAddress);
+		Message answer = Util.sendAndGetMessage(MessageFactory.createDeregisterProducerMsg(name), serverAddress, serverPort);
 		PayloadProducer answerPayload = (PayloadProducer) answer.getPayload();
 		return answerPayload.getSuccess();
 
@@ -37,7 +37,7 @@ public class Producer {
 	
 	//TODO: Implement Confirmation process
 	public boolean broadcastMessage(String m) {
-		Message answer = sendAndGetMessage(new Message(MessageType.Message, new PayloadMessage(name, m)), serverAddress);
+		Message answer = Util.sendAndGetMessage(new Message(MessageType.Message, new PayloadMessage(name, m)), serverAddress, serverPort);
 		return true;
 	}
 
@@ -60,30 +60,7 @@ public class Producer {
 		}
 	}
 	public String[] getProducers() {
-		Message answer = this.sendAndGetMessage(new Message(MessageType.getProducerList, null), serverAddress);
+		Message answer = Util.sendAndGetMessage(new Message(MessageType.getProducerList, null), serverAddress, serverPort);
 		return ((PayloadGetProducerList) answer.getPayload()).getProducers();
 	}
-	private Message sendAndGetMessage(Message message, InetAddress address) {
-		Socket server;
-		try {
-			server = new Socket(address, serverPort);
-
-			Message answer = null;
-			ObjectOutputStream out = null;
-			ObjectInputStream in = null;
-
-			out = new ObjectOutputStream(server.getOutputStream());
-			in = new ObjectInputStream(server.getInputStream());
-			out.writeObject(message);
-			answer = (Message) in.readObject();
-
-			in.close();
-			out.close();
-			server.close();
-			return answer;
-		} catch (Exception e) {
-			return null;
-		}
-}
-
 }
