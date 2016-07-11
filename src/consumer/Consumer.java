@@ -29,27 +29,8 @@ public class Consumer {
 		subscriptions = new HashSet<>();
 		producerList = new HashSet<>();
 		this.serverAddress = InetAddress.getByName(address);
-		if (!testConnection(serverAddress, 1000))
+		if (!Util.testConnection(serverAddress, serverPort, 1000))
 			throw new IOException("There ist no server on the specified address");
-	}
-
-	/**
-	 * Checks if it is possible to establish a TCP connection using the "serverPort"
-	 * 
-	 * @param adress
-	 *            The address of the server to be checked
-	 * @param timeout
-	 *            Timeout of the connection
-	 * @return if the connection was successful
-	 */
-	private boolean testConnection(InetAddress adress, int timeout) {
-
-		try (Socket server = new Socket();) {
-			server.connect(new InetSocketAddress(adress, serverPort), timeout);
-			return true;
-		} catch (IOException e) {
-			return false;
-		}
 
 	}
 
@@ -60,6 +41,13 @@ public class Consumer {
 	 */
 	public String[] getSubscriptions() {
 		return subscriptions.toArray(new String[0]);
+		/*
+		 * Deine Lösung Fabian, aber mit meiner brauchen wir das hier nicht mehr
+		 * 
+		 * Message response = Util.sendAndGetMessage(new Message(MessageType.getSubscriptions, null), serverAddress, serverPort); return
+		 * ((PayloadGetSubscriptions) response.getPayload()).getSubscriptions(); // Always expects a string array, even if there are no producers available
+		 * (then its just empty)
+		 */
 	}
 
 	/**
@@ -72,6 +60,7 @@ public class Consumer {
 	public String[] subscribeToProducers(String[] producers) {
 		if (producers == null)
 			throw new IllegalArgumentException("'producers' may not be null");
+
 		List<String> list = new LinkedList<>();
 		for (String s : producers) {
 			// existiert dieser Producer?
@@ -82,6 +71,11 @@ public class Consumer {
 			}
 		}
 		return list.toArray(new String[0]);
+
+		/*
+		 * Message answer = Util.sendAndGetMessage( new Message(MessageType.SubscribeProducers, new PayloadSubscribeProducers(producers)), serverAddress,
+		 * serverPort); return ((PayloadSubscribeProducers) answer.getPayload()).getToBeSubscribed();
+		 */
 
 	}
 
@@ -95,6 +89,7 @@ public class Consumer {
 	public String[] unsubscribeFromProducers(String[] producers) {
 		if (producers == null)
 			throw new IllegalArgumentException("'producers' may not be null");
+
 		List<String> list = new LinkedList<>();
 		for (String s : producers) {
 			if (!subscriptions.remove(s)) {
@@ -102,6 +97,11 @@ public class Consumer {
 			}
 		}
 		return list.toArray(new String[0]);
+		/*
+		 * Message answer = Util.sendAndGetMessage( new Message(MessageType.UnsubscribeProducers, new PayloadUnsubscribeProducers(producers)), serverAddress,
+		 * serverPort); return ((PayloadUnsubscribeProducers) answer.getPayload()).getToBeUnsubscribed();
+		 */
+
 	}
 
 	/**
@@ -110,18 +110,27 @@ public class Consumer {
 	 * @return all available producers
 	 */
 	public String[] getProducers() {
-		Message answer = this.sendAndGetMessage(new Message(MessageType.getProducerList, null), serverAddress);
+
+		Message answer = Util.sendAndGetMessage(MessageFactory.createRequestProducerListMsg(), serverAddress, serverPort);
 		for (String s : ((PayloadGetProducerList) answer.getPayload()).getProducers()) {
 			producerList.add(s);
 		}
 		return producerList.toArray(new String[0]);
+
+		/*
+		 * Message answer = Util.sendAndGetMessage(MessageFactory.createRequestProducerListMsg(), serverAddress, serverPort); return ((PayloadGetProducerList)
+		 * answer.getPayload()).getProducers();
+		 */
+
 	}
 
 	/**
 	 * Registers the user on the server
 	 */
 	public void registerOnServer() {
-		Message answer = sendAndGetMessage(new Message(MessageType.RegisterConsumer, null), serverAddress);
+
+		Message answer = Util.sendAndGetMessage(new Message(MessageType.RegisterConsumer, null), serverAddress, serverPort);
+
 		PayloadRegisterConsumer answerPayload = (PayloadRegisterConsumer) answer.getPayload();
 		this.consumerID = answerPayload.getId();
 		this.mcastadr = answerPayload.getMulticastAddress();
@@ -136,34 +145,13 @@ public class Consumer {
 	 */
 	public boolean deregisterFromServer() {
 
-		Message answer = sendAndGetMessage(new Message(MessageType.DeregisterConsumer, new PayloadDeregisterConsumer(consumerID)), serverAddress);
+		Message answer = Util.sendAndGetMessage(new Message(MessageType.DeregisterConsumer, new PayloadDeregisterConsumer(consumerID)), serverAddress,
+				serverPort);
+
 		PayloadDeregisterConsumer answerPayload = (PayloadDeregisterConsumer) answer.getPayload();
 
 		return answerPayload.getSenderID() != 0;
 
-	}
-
-	/**
-	 * Sends a message object to the server via TCP and receives it afterwards
-	 * 
-	 * @param message
-	 *            the message to be sent
-	 * @param address
-	 *            the address the message is to be sent to
-	 * @return the answer from the server
-	 */
-	private Message sendAndGetMessage(Message message, InetAddress address) {
-
-		try (Socket server = new Socket(address, serverPort);
-				ObjectOutputStream out = new ObjectOutputStream(server.getOutputStream());
-				ObjectInputStream in = new ObjectInputStream(server.getInputStream());) {
-
-			out.writeObject(message);
-			Message answer = (Message) in.readObject();
-			return answer;
-		} catch (Exception e) {
-			return null;
-		}
 	}
 
 	/**
@@ -197,6 +185,8 @@ public class Consumer {
 	 * The class is listening for messages from the server and prints them on the console
 	 *
 	 */
+	// hallo
+
 	private class WaitForMessage implements Runnable {
 		MulticastSocket udps;
 
@@ -232,8 +222,8 @@ public class Consumer {
 						// er schreibt ja jetzt einfach raus ... vlt funktioniert dies nicht, weil im hauptthread er gerade auf ne Eingabe wartet ... vlt muss
 						// man dann hier den Hauptthread einschläfern und nach der Ausgabe wieder aufwecken?!
 						PayloadMessage payload = (PayloadMessage) m.getPayload();
-						if (subscriptions.contains(payload.getName()))
-							System.out.println(payload.getName() + " meldet: \n" + payload.getText());
+						if (subscriptions.contains(payload.getSender()))
+							System.out.println(payload.getSender() + " meldet: \n" + payload.getMessage());
 						break;
 
 					default:

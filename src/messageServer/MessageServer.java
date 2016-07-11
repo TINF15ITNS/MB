@@ -176,9 +176,10 @@ public class MessageServer {
 		private Message receiveMessageFromProducer(Message m) {
 			PayloadMessage pm = (PayloadMessage) m.getPayload();
 			// schauen, ob der Absender sich beim Server auch angemeldet hat
-			if (dataProducer.contains(pm.getName())) {
+			if (dataProducer.contains(pm.getSender())) {
 				DatagramPacket dp = Message.getMessageAsDatagrammPacket(
-						new Message(MessageType.Message, new PayloadMessage("Server", pm.getName() + "meldet: \n" + pm.getText())), multicastadr, serverPort);
+						new Message(MessageType.Message, new PayloadMessage("Server", pm.getSender() + "meldet: \n" + pm.getMessage())), multicastadr,
+						serverPort);
 				sendMulticastMessage(dp);
 				// TODO: soll bzw. was soll zu�ckgesendet werden
 				PayloadMessage pmresp = new PayloadMessage("Server", "ok");
