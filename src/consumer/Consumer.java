@@ -2,14 +2,20 @@ package consumer;
 
 import java.io.*;
 import java.net.*;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 
 import message.*;
 
 public class Consumer {
 	private static int serverPort = 55555;
 	private int consumerID;
+	private InetAddress mcastadr;
 	private InetAddress serverAddress;
-	// private InetAddress multicastAddress;
+	private HashSet<String> subscriptions;
+	private HashSet<String> producerList;
+	MulticastSocket udpSocket;
 
 	/**
 	 * Used to interact with a MessageServer
@@ -20,14 +26,15 @@ public class Consumer {
 	 *             when the address is not reachable.
 	 */
 	public Consumer(String address) throws IOException {
+		subscriptions = new HashSet<>();
+		producerList = new HashSet<>();
 		this.serverAddress = InetAddress.getByName(address);
 		if (!testConnection(serverAddress, 1000))
 			throw new IOException("There ist no server on the specified address");
 	}
 
 	/**
-	 * Checks if it is possible to establish a TCP connection using the
-	 * "serverPort"
+	 * Checks if it is possible to establish a TCP connection using the "serverPort"
 	 * 
 	 * @param adress
 	 *            The address of the server to be checked
@@ -36,10 +43,9 @@ public class Consumer {
 	 * @return if the connection was successful
 	 */
 	private boolean testConnection(InetAddress adress, int timeout) {
-		Socket server = new Socket();
-		try {
+
+		try (Socket server = new Socket();) {
 			server.connect(new InetSocketAddress(adress, serverPort), timeout);
-			server.close();
 			return true;
 		} catch (IOException e) {
 			return false;
@@ -53,8 +59,7 @@ public class Consumer {
 	 * @return a list of producers this consumer is subscribed to
 	 */
 	public String[] getSubscriptions() {
-		Message response = this.sendAndGetMessage(new Message(MessageType.getSubscriptions, null), serverAddress);
-		return ((PayloadGetSubscriptions) response.getPayload()).getSubscriptions(); // Always expects a string array, even if there are no producers available (then its just empty)
+		return subscriptions.toArray(new String[0]);
 	}
 
 	/**
@@ -62,14 +67,22 @@ public class Consumer {
 	 * 
 	 * @param producers
 	 *            The names of the producers (can not be null)
-	 * @return an array of producers the consumer is now newly subscribed to
+	 * @return a list of producers, it wasn't possible to subscribe on
 	 */
 	public String[] subscribeToProducers(String[] producers) {
 		if (producers == null)
 			throw new IllegalArgumentException("'producers' may not be null");
-		Message answer = this.sendAndGetMessage(
-				new Message(MessageType.SubscribeProducers, new PayloadSubscribeProducers(producers)), serverAddress);
-		return ((PayloadSubscribeProducers) answer.getPayload()).getToBeSubscribed();
+		List<String> list = new LinkedList<>();
+		for (String s : producers) {
+			// existiert dieser Producer?
+			if (this.producerList.contains(s)) {
+				subscriptions.add(s);
+			} else {
+				list.add(s);
+			}
+		}
+		return list.toArray(new String[0]);
+
 	}
 
 	/**
@@ -77,15 +90,18 @@ public class Consumer {
 	 * 
 	 * @param producers
 	 *            The names of the producers (can not be null)
-	 * @return an array of producers the consumer is now unsubscribed from
+	 * @return
 	 */
 	public String[] unsubscribeFromProducers(String[] producers) {
 		if (producers == null)
 			throw new IllegalArgumentException("'producers' may not be null");
-		Message answer = this.sendAndGetMessage(
-				new Message(MessageType.UnsubscribeProducers, new PayloadUnsubscribeProducers(producers)),
-				serverAddress);
-		return ((PayloadUnsubscribeProducers) answer.getPayload()).getToBeUnsubscribed();
+		List<String> list = new LinkedList<>();
+		for (String s : producers) {
+			if (!subscriptions.remove(s)) {
+				list.add(s);
+			}
+		}
+		return list.toArray(new String[0]);
 	}
 
 	/**
@@ -95,21 +111,22 @@ public class Consumer {
 	 */
 	public String[] getProducers() {
 		Message answer = this.sendAndGetMessage(new Message(MessageType.getProducerList, null), serverAddress);
-		return ((PayloadGetProducerList) answer.getPayload()).getProducers();
+		for (String s : ((PayloadGetProducerList) answer.getPayload()).getProducers()) {
+			producerList.add(s);
+		}
+		return producerList.toArray(new String[0]);
 	}
 
 	/**
 	 * Registers the user on the server
-	 * 
-	 * @return
 	 */
-	public boolean registerOnServer() {
+	public void registerOnServer() {
 		Message answer = sendAndGetMessage(new Message(MessageType.RegisterConsumer, null), serverAddress);
-
 		PayloadRegisterConsumer answerPayload = (PayloadRegisterConsumer) answer.getPayload();
 		this.consumerID = answerPayload.getId();
-		// this.multicastAddress = answerPayload.getMulticastAddress();
-		return true; // TODO Operation successful?
+		this.mcastadr = answerPayload.getMulticastAddress();
+		// TODO Operation successful?
+		// TODO vlt die Methode registerOnMulticastGroup hier aufrufen und nicht seperat?
 	}
 
 	/**
@@ -119,8 +136,7 @@ public class Consumer {
 	 */
 	public boolean deregisterFromServer() {
 
-		Message answer = sendAndGetMessage(
-				new Message(MessageType.DeregisterConsumer, new PayloadDeregisterConsumer(consumerID)), serverAddress);
+		Message answer = sendAndGetMessage(new Message(MessageType.DeregisterConsumer, new PayloadDeregisterConsumer(consumerID)), serverAddress);
 		PayloadDeregisterConsumer answerPayload = (PayloadDeregisterConsumer) answer.getPayload();
 
 		return answerPayload.getSenderID() != 0;
@@ -137,73 +153,100 @@ public class Consumer {
 	 * @return the answer from the server
 	 */
 	private Message sendAndGetMessage(Message message, InetAddress address) {
-		Socket server;
-		try {
-			server = new Socket(address, serverPort);
 
-			Message answer = null;
-			ObjectOutputStream out = null;
-			ObjectInputStream in = null;
+		try (Socket server = new Socket(address, serverPort);
+				ObjectOutputStream out = new ObjectOutputStream(server.getOutputStream());
+				ObjectInputStream in = new ObjectInputStream(server.getInputStream());) {
 
-			out = new ObjectOutputStream(server.getOutputStream());
-			in = new ObjectInputStream(server.getInputStream());
 			out.writeObject(message);
-			answer = (Message) in.readObject();
-
-			in.close();
-			out.close();
-			server.close();
+			Message answer = (Message) in.readObject();
 			return answer;
 		} catch (Exception e) {
 			return null;
 		}
 	}
 
-	/*
-	 * public boolean registerOnMulticastGroup() { MulticastSocket udpSocket =
-	 * null; try { udpSocket = new MulticastSocket();
-	 * 
-	 * udpSocket.joinGroup(multicastAddress); } catch (IOException e) {
-	 * System.out.println("IOFehler beim Registrieren in der Multicastgruppe");
-	 * e.printStackTrace();
-	 * 
-	 * }
-	 * 
-	 * Thread t = new Thread(new GetMessage(udpSocket)); t.start();
-	 * 
-	 * }
+	/**
+	 * method name says all
 	 */
+	public void joinMulticastGroup() {
+		try {
+			udpSocket = new MulticastSocket();
+			udpSocket.joinGroup(mcastadr);
+		} catch (IOException e) {
+			System.out.println("IOFehler beim Registrieren in der Multicastgruppe");
+			e.printStackTrace();
+
+		}
+
+		Thread t = new Thread(new WaitForMessage(udpSocket));
+		t.start();
+	}
+
+	public void deregisterFromMulticastGroup() {
+		try {
+			udpSocket.leaveGroup(mcastadr);
+		} catch (IOException e) {
+			System.out.println("IOFehler beim Verlassen der Multicastgruppe");
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * 
-	 * @param message
-	 *            The message to be filled with content
-	 * @param address
-	 *            The address of the server
-	 * @return The filled message. If the operation was not successful null.
-	 * @throws ClassNotFoundException
+	 * The class is listening for messages from the server and prints them on the console
+	 *
 	 */
+	private class WaitForMessage implements Runnable {
+		MulticastSocket udps;
 
-	/*
-	 * class GetMessage implements Runnable { MulticastSocket udps;
-	 * 
-	 * public GetMessage(MulticastSocket udps) { this.udps = udps; }
-	 * 
-	 * @Override public void run() { DatagramPacket dp = null;// `?????? try {
-	 * udps.receive(dp); Message rsp = Message.getMessageFromDatagramPacket(dp);
-	 * // schreibt noch nen ; dahinter, damit ich oben sehen kann, ob // mehrere
-	 * Messages kamen // pw.write(m.getPayload() + ";");
-	 * System.out.println("Sie haben eine neue Push-Mitteilung:"); // er
-	 * schreibt ja jetzt einfach raus ... // vlt funktioniert dies nicht, weil
-	 * im hauptthread er gerade // auf ne Eingabe wartet ... vlt muss man dann
-	 * hier den // hauptthread einschlï¿½fern und // nach der Ausgabe wieder
-	 * aufwecken?! if (rsp.getType() == MessageType.Message) { PayloadMessage
-	 * answerPayload = (PayloadMessage) rsp.getPayload();
-	 * 
-	 * System.out.println(answerPayload.getConsignorName() + " meldet: \n" +
-	 * answerPayload.getText()); } else { throw new
-	 * RuntimeException("Falscher Payload in GetMessage"); } } catch
-	 * (IOException e) {
-	 * System.out.println("Fehler beim bearbeiten der erhaltenen UDP-Message");
-	 * e.printStackTrace(); } } }
-	 */
+		public WaitForMessage(MulticastSocket udps) {
+			this.udps = udps;
+		}
+
+		@Override
+		public void run() {
+			// TODO Idee mit Pipes zu arbeiten und dem User ne Möglichkeit zu geben, abzufragen, ob es neue Nachrichten gibt...
+			DatagramPacket dp = null;
+			while (true) {
+				try {
+					udps.receive(dp);
+					Message m = Message.getMessageFromDatagramPacket(dp);
+
+					switch (m.getType()) {
+
+					case DeregisterProducer:
+						if (m.getType() != MessageType.DeregisterProducer)
+							throw new RuntimeException("Falscher Payload in GetMessage");
+						PayloadProducer pp = (PayloadProducer) m.getPayload();
+						System.out.println("Der Producer " + pp.getName()
+								+ " hat den Dienst eingestellt. Sie k�nnen leider keine Push-Nachrichten mehr von ihm erhalten...");
+						producerList.remove(pp.getName());
+						subscriptions.remove(pp.getName());
+						break;
+
+					case Message:
+						if (m.getType() != MessageType.Message)
+							throw new RuntimeException("Falscher Payload in GetMessage");
+						System.out.println("Sie haben eine neue Push-Mitteilung:");
+						// er schreibt ja jetzt einfach raus ... vlt funktioniert dies nicht, weil im hauptthread er gerade auf ne Eingabe wartet ... vlt muss
+						// man dann hier den Hauptthread einschläfern und nach der Ausgabe wieder aufwecken?!
+						PayloadMessage payload = (PayloadMessage) m.getPayload();
+						if (subscriptions.contains(payload.getName()))
+							System.out.println(payload.getName() + " meldet: \n" + payload.getText());
+						break;
+
+					default:
+						break;
+
+					}
+
+				} catch (IOException e) {
+					System.out.println("Fehler beim Bearbeiten der erhaltenen UDP-Message");
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
 }

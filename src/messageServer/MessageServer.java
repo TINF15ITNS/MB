@@ -3,7 +3,9 @@ package messageServer;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.DatagramPacket;
 import java.net.InetAddress;
+import java.net.MulticastSocket;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -14,8 +16,8 @@ import message.*;
 
 public class MessageServer {
 
-	// nicht das gleihe Objekt zurücksenden! Wird iwie die gleiche Referenz zurückgesendet, dann erkennt das der Client und nimmt das alte Objekt warum auch
-	// immer und nicht das neuen mit den veränderten Variablenwerten ... Quelle Internet
+	// nicht das gleihe Objekt zurï¿½cksenden! Wird iwie die gleiche Referenz zurï¿½ckgesendet, dann erkennt das der Client und nimmt das alte Objekt warum auch
+	// immer und nicht das neuen mit den verÃ¤nderten Variablenwerten ... Quelle Internet
 
 	public final int serverPort;
 	private static int numberOfCustomers = 0;
@@ -38,25 +40,30 @@ public class MessageServer {
 	/**
 	 * waits for Messages from Producers or Consumers
 	 */
-	public void getMessages() {
+	public void initialisingForwardingMessages() {
 		try (ServerSocket serverSo = new ServerSocket(4711)) {
+			MulticastSocket udpSocket = new MulticastSocket();
+			udpSocket.setTimeToLive(1);
+
 			Socket clientSo = null;
 			while (true) {
 				clientSo = serverSo.accept();
-				Thread t = new Thread(new MessageHandler(clientSo));
+				Thread t = new Thread(new MessageHandler(clientSo, udpSocket));
 				t.start();
 			}
 		} catch (IOException e) {
-			System.out.println("IOFehler beim ServerSocket");
+			System.out.println("IOFehler beim Erzeugen des ServerSockets oder des MulticastSockets");
 			e.printStackTrace();
 		}
 	}
 
 	private class MessageHandler implements Runnable {
 		Socket client;
+		MulticastSocket udpSocket;
 
-		public MessageHandler(Socket client) {
+		public MessageHandler(Socket client, MulticastSocket udpSocket) {
 			this.client = client;
+			this.udpSocket = udpSocket;
 		}
 
 		@Override
@@ -82,17 +89,8 @@ public class MessageServer {
 				case RegisterProducer:
 					answer = registerProducer(m);
 					break;
-				case SubscribeProducers:
-					answer = subscribeProducers(m);
-					break;
-				case UnsubscribeProducers:
-					answer = unsubscribeProducers(m);
-					break;
 				case getProducerList:
 					answer = getProducerList(m);
-					break;
-				case getSubscriptions:
-					answer = getSubscriptions(m);
 					break;
 				default:
 					throw new RuntimeException("Dieser Fall kann nicht eintreten");
@@ -117,16 +115,10 @@ public class MessageServer {
 						e.printStackTrace();
 					}
 				}
+				if (udpSocket != null) {
+					udpSocket.close();
+				}
 			}
-		}
-
-		/**
-		 * 
-		 * @param m
-		 * @return the response-message
-		 */
-		public Message getSubscriptions(Message m) {
-			return null;
 		}
 
 		/**
@@ -134,10 +126,9 @@ public class MessageServer {
 		 * 
 		 * @param m
 		 *            sended message
-		 * @return the response-message
+		 * @return response-message
 		 */
 		private Message getProducerList(Message m) {
-			// heißt er generiert ne Antwort-Message und returned diese
 			PayloadGetProducerList payload = new PayloadGetProducerList(dataProducer.toArray(new String[0]));
 			return new Message(MessageType.getProducerList, payload);
 
@@ -148,7 +139,7 @@ public class MessageServer {
 		 * 
 		 * @param m
 		 *            sended message
-		 * @return the response-message
+		 * @return response-message
 		 */
 		private Message registerConsumer(Message m) {
 			numberOfCustomers++;
@@ -161,16 +152,15 @@ public class MessageServer {
 		 * 
 		 * @param m
 		 *            sended message
-		 * @return the response-message
+		 * @return response-message
 		 */
 		private Message registerProducer(Message m) {
-
 			PayloadProducer pp = (PayloadProducer) m.getPayload();
 			PayloadProducer ppresp = new PayloadProducer(pp.getName());
-			// falls Name schon vorhanden, wird Success nicht auf true gesetzte
 			if (!dataProducer.contains(pp.getName())) {
 				dataProducer.add(pp.getName());
 				ppresp.setSuccess();
+				// TODO ich glaube das ist mit diesem Payload nicht so schï¿½n!!! mit dem aufruf setSuccess ...
 			}
 			return new Message(MessageType.RegisterProducer, ppresp);
 		}
@@ -180,15 +170,17 @@ public class MessageServer {
 		 * 
 		 * @param m
 		 *            sended message
-		 * @return the response-message
+		 * @return response-message
 		 */
 
 		private Message receiveMessageFromProducer(Message m) {
 			PayloadMessage pm = (PayloadMessage) m.getPayload();
 			// schauen, ob der Absender sich beim Server auch angemeldet hat
 			if (dataProducer.contains(pm.getName())) {
-				sendMulticastMessage(pm.getName() + "meldet: \n" + pm.getText());
-				// TODO: soll bzw. was soll zuückgesendet werden
+				DatagramPacket dp = Message.getMessageAsDatagrammPacket(
+						new Message(MessageType.Message, new PayloadMessage("Server", pm.getName() + "meldet: \n" + pm.getText())), multicastadr, serverPort);
+				sendMulticastMessage(dp);
+				// TODO: soll bzw. was soll zuï¿½ckgesendet werden
 				PayloadMessage pmresp = new PayloadMessage("Server", "ok");
 				return new Message(MessageType.Message, pmresp);
 			}
@@ -200,13 +192,13 @@ public class MessageServer {
 		 * 
 		 * @param m
 		 *            sended message
-		 * @return the response-message
+		 * @return response-message
 		 */
 		private Message deregisterConsumer(Message m) {
 			PayloadDeregisterConsumer pdc = (PayloadDeregisterConsumer) m.getPayload();
 			dataConsumer.remove(pdc.getSenderID());
-			// TODO: soll bzw. was soll zuückgesendet werden
-			return new Message(MessageType.DeregisterConsumer, null);
+			// TODO: soll bzw. was soll zuï¿½ckgesendet werden
+			return new Message(MessageType.DeregisterConsumer, new PayloadDeregisterConsumer(0));
 		}
 
 		/**
@@ -214,40 +206,31 @@ public class MessageServer {
 		 * 
 		 * @param m
 		 *            sended message
-		 * @return the response-message
+		 * @return response-message
 		 */
 		private Message deregisterProducer(Message m) {
 			PayloadProducer pdp = (PayloadProducer) m.getPayload();
 			dataProducer.remove(pdp.getName());
-			return new Message(MessageType.DeregisterProducer, null); // ???????
+			DatagramPacket dp = Message.getMessageAsDatagrammPacket(new Message(MessageType.DeregisterProducer, new PayloadProducer(pdp.getName())),
+					multicastadr, serverPort);
+			sendMulticastMessage(dp);
+			// TODO was soll hier zurï¿½ckgesendet werden
+			return new Message(MessageType.DeregisterProducer, null);
 		}
 
 		/**
-		 * subscribes the consumer, who sent the message, at the desired producers
+		 * forwards the message to the consumers
 		 * 
-		 * @param m
-		 *            sended message
-		 * @return the response-message
+		 * @param dp
+		 *            the message-object as DatagramPacket
 		 */
-		private Message subscribeProducers(Message m) {
-			return null;
-
-		}
-
-		/**
-		 * unsubscribes the consumer, who sent the message, at the desired producers
-		 * 
-		 * @param m
-		 *            sended message
-		 * @return the response-message
-		 */
-		private Message unsubscribeProducers(Message m) {
-			return null;
-
-		}
-
-		public boolean sendMulticastMessage(String s) {
-			return false;
+		public void sendMulticastMessage(DatagramPacket dp) {
+			try {
+				udpSocket.send(dp);
+			} catch (IOException e) {
+				System.out.println("IOFehler beim Senden der Multicast-Nachricht");
+				e.printStackTrace();
+			}
 		}
 	}
 }
