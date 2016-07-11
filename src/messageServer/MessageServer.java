@@ -41,7 +41,7 @@ public class MessageServer {
 	 * waits for Messages from Producers or Consumers
 	 */
 	public void initialisingForwardingMessages() {
-		try (ServerSocket serverSo = new ServerSocket(4711)) {
+		try (ServerSocket serverSo = new ServerSocket(55555)) {
 			MulticastSocket udpSocket = new MulticastSocket();
 			udpSocket.setTimeToLive(1);
 
@@ -69,6 +69,7 @@ public class MessageServer {
 		@Override
 		public void run() {
 			try {
+				ObjectOutputStream out = new ObjectOutputStream(client.getOutputStream());
 				ObjectInputStream in = new ObjectInputStream(client.getInputStream());
 				Message m = (Message) in.readObject();
 				Message answer = null;
@@ -97,8 +98,9 @@ public class MessageServer {
 
 				}
 
-				ObjectOutputStream out = new ObjectOutputStream(client.getOutputStream());
 				out.writeObject(answer);
+				in.close();
+				out.close();
 
 			} catch (ClassNotFoundException e) {
 				System.out.println("Kann kein Objekt aus dem Stream lesen ... Klasse nicht auffindbar");
