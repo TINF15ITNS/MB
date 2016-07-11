@@ -1,6 +1,8 @@
 package message;
 
-public class PayloadProducer implements Payload {
+import java.io.Serializable;
+
+public class PayloadProducer implements Payload, Serializable {
 
 	private final String name;
 	private boolean success = false;
