@@ -2,8 +2,14 @@
 A message broker implemented in Java according to our courses project guidelines
 
 # ToDo
-* alle Downcast mit insatnceof überprüfen?
-* überlegen oob man da nicht was mit Generics machen kann
+* alle Downcast mit instanceof Ã¼berprÃ¼fen oder auf MessageType?
+* Ã¼berlegen oob man da nicht was mit Generics machen kann
+
+*Interfaceentkopplung
+*try-with-ressouces
+
+*was passiert wenn Server nicht da ist, TimeoutExceptions abfangen und ausgeben
+
 
 
 #Offene Fragen: 
