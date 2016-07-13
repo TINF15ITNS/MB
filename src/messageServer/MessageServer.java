@@ -169,11 +169,11 @@ public class MessageServer {
 						new Message(MessageType.Message, new PayloadMessage("Server", pm.getSender() + "meldet: \n" + pm.getMessage())), multicastadr,
 						serverPort);
 				sendMulticastMessage(dp);
-				// TODO: soll bzw. was soll zu�ckgesendet werden
+				// TODO: soll bzw. was soll zurückgesendet werden
 				PayloadMessage pmresp = new PayloadMessage("Server", "ok");
 				return new Message(MessageType.Message, pmresp);
 			}
-			return new Message(MessageType.Message, null);
+			return new Message(MessageType.Message, new PayloadMessage("Server", "not registered"));
 		}
 
 		/**

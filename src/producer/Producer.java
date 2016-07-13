@@ -16,11 +16,12 @@ public class Producer {
 			throw new IOException("There is no server at the given address");
 		String[] producers = getProducers();
 		for (String n : producers) {
-			if (n.equalsIgnoreCase(name)) throw new Exception("This producer name is already taken");
+			if (n.equalsIgnoreCase(name))
+				throw new Exception("This producer name is already taken");
 		}
 		this.name = name;
 	}
-	
+
 	public boolean registerOnServer() {
 		Message answer = Util.sendAndGetMessage(MessageFactory.createRegisterProducerMsg(name), serverAddress, serverPort);
 		PayloadProducer answerPayload = (PayloadProducer) answer.getPayload();
@@ -34,11 +35,19 @@ public class Producer {
 		return answerPayload.getSuccess();
 
 	}
-	
-	//TODO: Implement Confirmation process
+
 	public boolean broadcastMessage(String msg) {
 		Message answer = Util.sendAndGetMessage(MessageFactory.createBroadcastMessage(name, msg), serverAddress, serverPort);
-		return true;
+		PayloadMessage pm = (PayloadMessage) answer.getPayload();
+		switch (pm.getMessage()) {
+		case "not registered":
+			return false;
+		case "ok":
+			return true;
+		default:
+			throw new RuntimeException("Test in Antwortmessage nicht interpretierbar");
+		}
+
 	}
 
 	public String[] getProducers() {
