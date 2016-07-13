@@ -5,10 +5,10 @@ A message broker implemented in Java according to our courses project guidelines
 * alle Downcast mit instanceof überprüfen oder auf MessageType?
 * überlegen oob man da nicht was mit Generics machen kann
 
-*Interfaceentkopplung
-*try-with-ressouces
+* Interfaceentkopplung
+* try-with-ressouces
 
-*was passiert wenn Server nicht da ist, TimeoutExceptions abfangen und ausgeben
+* was passiert wenn Server nicht da ist, TimeoutExceptions abfangen und ausgeben
 
 
 
