@@ -40,9 +40,10 @@ public class MessageServer {
 	/**
 	 * waits for Messages from Producers or Consumers
 	 */
+	// TODO MessageServer beendbar machen
 	public void initialisingForwardingMessages() {
-		try (ServerSocket serverSo = new ServerSocket(55555)) {
-			MulticastSocket udpSocket = new MulticastSocket();
+		try (ServerSocket serverSo = new ServerSocket(55555); MulticastSocket udpSocket = new MulticastSocket();) {
+
 			udpSocket.setTimeToLive(1);
 
 			Socket clientSo = null;
@@ -58,19 +59,20 @@ public class MessageServer {
 	}
 
 	private class MessageHandler implements Runnable {
-		Socket client;
+		Socket s;
 		MulticastSocket udpSocket;
 
 		public MessageHandler(Socket client, MulticastSocket udpSocket) {
-			this.client = client;
+			this.s = client;
 			this.udpSocket = udpSocket;
 		}
 
 		@Override
 		public void run() {
-			try {
-				ObjectOutputStream out = new ObjectOutputStream(client.getOutputStream());
-				ObjectInputStream in = new ObjectInputStream(client.getInputStream());
+			try (Socket client = s;
+					ObjectOutputStream out = new ObjectOutputStream(client.getOutputStream());
+					ObjectInputStream in = new ObjectInputStream(client.getInputStream());) {
+
 				Message m = (Message) in.readObject();
 				Message answer = null;
 
@@ -97,29 +99,13 @@ public class MessageServer {
 					throw new RuntimeException("Dieser Fall kann nicht eintreten");
 
 				}
-
 				out.writeObject(answer);
-				in.close();
-				out.close();
 
 			} catch (ClassNotFoundException e) {
 				System.out.println("Kann kein Objekt aus dem Stream lesen ... Klasse nicht auffindbar");
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} finally {
-				if (client != null) {
-					try {
-						client.close();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				if (udpSocket != null) {
-					udpSocket.close();
-				}
 			}
 		}
 
