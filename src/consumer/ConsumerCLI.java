@@ -8,7 +8,7 @@ public class ConsumerCLI {
 	public static void main(String[] args) {
 
 		Scanner scanner = new Scanner(System.in);
-		Consumer user = null;
+		ConsumerIF user = null;
 		boolean exit = false;
 
 		while (true) {
@@ -31,11 +31,9 @@ public class ConsumerCLI {
 			switch (input) {
 			case 1:
 				user.registerOnServer();
-				user.joinMulticastGroup();
 				break;
 			case 2:
 				user.deregisterFromServer();
-				user.deregisterFromMulticastGroup();
 				break;
 			case 3:
 				System.out.println("Verfügbare Produzenten:");
@@ -44,16 +42,16 @@ public class ConsumerCLI {
 				}
 				break;
 			case 4:
-				System.out.print("Welche Produzenten sollen abonniert werden (mit Kommatas trennen)? ");
+				System.out.print("Welche Produzenten (bitte mit Kommatas trennen) sollen abonniert werden ? ");
 				String[] s1 = user.subscribeToProducers(scanner.nextLine().replaceAll("\\s+", "").split(","));
 				if (s1[0] != null)
-					System.out.println("Es war nicht möglich, sich f�r die folgenden Produzenten zu abonnieren: ");
+					System.out.println("Es war nicht möglich, sich für die folgenden Produzenten zu abonnieren: ");
 				for (String producer : s1) {
 					System.out.println("\t" + producer);
 				}
 				break;
 			case 5:
-				System.out.print("Welche Produzenten sollen deabonniert werden (mit Kommatas trennen)? ");
+				System.out.print("Welche Produzenten (bitte mit Kommatas trennen) sollen deabonniert werden ? ");
 				String[] s2 = user.unsubscribeFromProducers(scanner.nextLine().replaceAll("\\s+", "").split(","));
 				if (s2[0] != null)
 					System.out.println("Sie konnten sich nicht für die folgenden Produzenten deabonnieren: ");
@@ -78,8 +76,8 @@ public class ConsumerCLI {
 		}
 
 		scanner.close();
+		// ist das hier notwendig? doch eigentlich nicht in dieser Variante
 		user.unsubscribeFromProducers(user.getSubscriptions());
 		user.deregisterFromServer();
-		user.deregisterFromMulticastGroup();
 	}
 }
