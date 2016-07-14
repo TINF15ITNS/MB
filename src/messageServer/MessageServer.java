@@ -26,7 +26,7 @@ public class MessageServer implements MessageServerIF {
 		dataProducer = new HashSet<>();
 		serverPort = sp;
 		try {
-			multicastadr = InetAddress.getByName("255.255.255.255");
+			multicastadr = InetAddress.getByName("225.225.225.225");
 		} catch (UnknownHostException e) {
 			// tritt nicht ein, da vorgegeben
 		}
@@ -45,6 +45,7 @@ public class MessageServer implements MessageServerIF {
 			Socket clientSo = null;
 			while (true) {
 				clientSo = serverSo.accept();
+				System.out.println("Verbindung aufgebaut");
 				Thread t = new Thread(new MessageHandler(clientSo, udpSocket));
 				t.start();
 			}
@@ -95,6 +96,7 @@ public class MessageServer implements MessageServerIF {
 					throw new RuntimeException("Dieser Fall kann nicht eintreten");
 
 				}
+				System.out.println("Antworte nun");
 				out.writeObject(answer);
 
 			} catch (ClassNotFoundException e) {
