@@ -5,7 +5,7 @@ import java.net.*;
 
 import message.*;
 
-public class Producer {
+public class Producer implements ProducerIF {
 	private static int serverPort = 55555;
 	private String name;
 	private InetAddress serverAddress;
@@ -22,21 +22,23 @@ public class Producer {
 		this.name = name;
 	}
 
+	@Override
 	public boolean registerOnServer() {
 		Message answer = Util.sendAndGetMessage(MessageFactory.createRegisterProducerMsg(name), serverAddress, serverPort);
 		PayloadProducer answerPayload = (PayloadProducer) answer.getPayload();
 		return answerPayload.getSuccess();
 	}
 
+	@Override
 	public boolean deregisterFromServer() {
-
 		Message answer = Util.sendAndGetMessage(MessageFactory.createDeregisterProducerMsg(name), serverAddress, serverPort);
 		PayloadProducer answerPayload = (PayloadProducer) answer.getPayload();
 		return answerPayload.getSuccess();
 
 	}
 
-	public boolean broadcastMessage(String msg) {
+	@Override
+	public boolean sendMessage(String msg) {
 		Message answer = Util.sendAndGetMessage(MessageFactory.createBroadcastMessage(name, msg), serverAddress, serverPort);
 		PayloadMessage pm = (PayloadMessage) answer.getPayload();
 		switch (pm.getMessage()) {
@@ -47,10 +49,9 @@ public class Producer {
 		default:
 			throw new RuntimeException("Test in Antwortmessage nicht interpretierbar");
 		}
-
 	}
 
-	public String[] getProducers() {
+	private String[] getProducers() {
 		Message answer = Util.sendAndGetMessage(MessageFactory.createRequestProducerListMsg(), serverAddress, serverPort);
 		return ((PayloadGetProducerList) answer.getPayload()).getProducers();
 	}

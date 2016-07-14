@@ -9,7 +9,7 @@ public class ProducerCLI {
 		Scanner scanner = new Scanner(System.in);
 		Producer prod = null;
 		boolean exit = false;
-		
+
 		System.out.println("Herzlich Willkommen\n\n");
 
 		while (true) {
@@ -32,9 +32,9 @@ public class ProducerCLI {
 			System.out.println("'1' Anmeldung, '2' Abmeldung, '3' Sende Nachricht, '4' Beenden");
 
 			int input = scanner.nextInt();
-			scanner.nextLine(); //Absolutely necessary because nextInt() reads only one int and does not finish the line.
+			scanner.nextLine(); // Absolutely necessary because nextInt() reads only one int and does not finish the line.
 			switch (input) {
-			//TODO: Implement confirmation routines and error messages for the user
+			// TODO: Implement confirmation routines and error messages for the user
 			case 1:
 				prod.registerOnServer();
 				break;
@@ -43,17 +43,17 @@ public class ProducerCLI {
 				break;
 			case 3:
 				System.out.println("Geben Sie im bitte Ihre neue Nachricht ein und beenden Sie die Eingabe mit nur '#end' in der letzten Zeile");
-			    StringBuffer m = new StringBuffer();
-	            while (scanner.hasNext()) {
-	            	String tmp = scanner.nextLine();
-	            	if (tmp.equals("#end"))
-	            		break;
-	            	m.append(tmp);
-	            	m.append(new String("\n"));
-		        }
-	            prod.broadcastMessage(m.toString());
+				StringBuffer m = new StringBuffer();
+				while (scanner.hasNext()) {
+					String tmp = scanner.nextLine();
+					if (tmp.equals("#end"))
+						break;
+					m.append(tmp);
+					m.append(new String("\n"));
+				}
+				prod.sendMessage(m.toString());
 				break;
-				
+
 			case 4:
 				exit = true;
 				break;
