@@ -72,7 +72,7 @@ public class Message implements Serializable {
 	 *            the DatagramPacket
 	 * @return message-object
 	 */
-	public static Message getMessageFromDatagramPacket(DatagramPacket dp) {
+	public static Message getMessageOutOfDatagramPacket(DatagramPacket dp) {
 		byte[] buf = dp.getData();
 		ByteArrayInputStream bin = new ByteArrayInputStream(buf); // von Datagram
 		ObjectInputStream objIn = null;
