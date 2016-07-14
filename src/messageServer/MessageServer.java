@@ -33,7 +33,7 @@ public class MessageServer implements MessageServerIF {
 	}
 
 	/**
-	 * waits for Messages from Producers or Consumers and response them
+	 * waits for Messages from Producers or Consumers
 	 */
 	// TODO MessageServer beendbar machen
 	@Override
