@@ -51,7 +51,8 @@ public class ProducerCLI {
 
 				break;
 			case 3:
-				System.out.println("Geben Sie im bitte Ihre neue Nachricht ein und beenden Sie die Eingabe mit nur '#end' in der letzten Zeile");
+				System.out.println(
+						"Geben Sie im bitte Ihre neue Nachricht ein (mehrzeilige Eingabe mit Enter möglich) und beenden Sie die Eingabe mit nur '#end' in der letzten Zeile");
 				StringBuffer m = new StringBuffer();
 				while (scanner.hasNext()) {
 					String tmp = scanner.nextLine();
@@ -60,18 +61,23 @@ public class ProducerCLI {
 					m.append(tmp);
 					m.append(new String("\n"));
 				}
-				prod.sendMessage(m.toString());
+				if (prod.sendMessage(m.toString())) {
+					System.out.println("Die Nachrichtübermittlung war erfolgreich");
+				} else {
+					System.out.println("Der Produzent wurde noch nicht am Server registriert");
+				}
 				break;
 
 			case 4:
 				exit = true;
 				break;
 			default:
+				System.out.println("Ihre Eingabe war leider nicht interpretierbar :( .");
 				break;
 			}
 		}
-		scanner.close();
 		prod.deregisterFromServer();
+		scanner.close();
 	}
 
 }
