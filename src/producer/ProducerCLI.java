@@ -7,7 +7,7 @@ public class ProducerCLI {
 
 	public static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in);
-		Producer prod = null;
+		ProducerIF prod = null;
 		boolean exit = false;
 
 		System.out.println("Herzlich Willkommen\n\n");
