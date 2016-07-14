@@ -34,9 +34,6 @@ public class Consumer implements ConsumerIF {
 
 	}
 
-	/**
-	 * Registers the user on the server
-	 */
 	@Override
 	public void registerOnServer() {
 
@@ -59,11 +56,6 @@ public class Consumer implements ConsumerIF {
 		t.start();
 	}
 
-	/**
-	 * Fetches all available producers
-	 * 
-	 * @return all available producers
-	 */
 	@Override
 	public String[] getProducers() {
 
@@ -74,13 +66,6 @@ public class Consumer implements ConsumerIF {
 		return producerList.toArray(new String[0]);
 	}
 
-	/**
-	 * Subscribes this user to the given producers
-	 * 
-	 * @param producers
-	 *            The names of the producers (can not be null)
-	 * @return a list of producers, it wasn't possible to subscribe on
-	 */
 	@Override
 	public String[] subscribeToProducers(String[] producers) {
 		if (producers == null)
@@ -98,30 +83,11 @@ public class Consumer implements ConsumerIF {
 		return list.toArray(new String[0]);
 	}
 
-	/**
-	 * Fetches a list of all producers this consumer is subscribed to
-	 * 
-	 * @return a list of producers this consumer is subscribed to
-	 */
 	@Override
 	public String[] getSubscriptions() {
 		return subscriptions.toArray(new String[0]);
-		/*
-		 * Deine Lösung Fabian, aber mit meiner brauchen wir das hier nicht mehr
-		 * 
-		 * Message response = Util.sendAndGetMessage(new Message(MessageType.getSubscriptions, null), serverAddress, serverPort); return
-		 * ((PayloadGetSubscriptions) response.getPayload()).getSubscriptions(); // Always expects a string array, even if there are no producers available
-		 * (then its just empty)
-		 */
 	}
 
-	/**
-	 * Unsubscribes this user from the given producers
-	 * 
-	 * @param producers
-	 *            The names of the producers (can not be null)
-	 * @return
-	 */
 	@Override
 	public String[] unsubscribeFromProducers(String[] producers) {
 		if (producers == null)
@@ -134,18 +100,8 @@ public class Consumer implements ConsumerIF {
 			}
 		}
 		return list.toArray(new String[0]);
-		/*
-		 * Message answer = Util.sendAndGetMessage( new Message(MessageType.UnsubscribeProducers, new PayloadUnsubscribeProducers(producers)), serverAddress,
-		 * serverPort); return ((PayloadUnsubscribeProducers) answer.getPayload()).getToBeUnsubscribed();
-		 */
-
 	}
 
-	/**
-	 * Deregisters the user on the server
-	 * 
-	 * @return if the operation was successful
-	 */
 	@Override
 	public boolean deregisterFromServer() {
 		Message answer = Util.sendAndGetMessage(new Message(MessageType.DeregisterConsumer, new PayloadDeregisterConsumer(consumerID)), serverAddress,
@@ -193,10 +149,7 @@ public class Consumer implements ConsumerIF {
 					Message m = Message.getMessageFromDatagramPacket(dp);
 
 					switch (m.getType()) {
-
 					case DeregisterProducer:
-						if (m.getType() != MessageType.DeregisterProducer)
-							throw new RuntimeException("Falscher Payload in GetMessage");
 						PayloadProducer pp = (PayloadProducer) m.getPayload();
 						System.out.println("Der Producer " + pp.getName()
 								+ " hat den Dienst eingestellt. Sie können leider keine Push-Nachrichten mehr von ihm erhalten...");
@@ -205,8 +158,6 @@ public class Consumer implements ConsumerIF {
 						break;
 
 					case Message:
-						if (m.getType() != MessageType.Message)
-							throw new RuntimeException("Falscher Payload in GetMessage");
 						System.out.println("Sie haben eine neue Push-Mitteilung:");
 						// er schreibt ja jetzt einfach raus ... vlt funktioniert dies nicht, weil im hauptthread er gerade auf ne Eingabe wartet ... vlt muss
 						// man dann hier den Hauptthread einschläfern und nach der Ausgabe wieder aufwecken?!
