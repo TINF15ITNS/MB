@@ -195,16 +195,20 @@ public class MessageServer implements MessageServerIF {
 		 * 
 		 * @param m
 		 *            sended message
-		 * @return response-message
+		 * @return response-message, Payload-attribut success is true, if the operation was successful
 		 */
 		private Message deregisterProducer(Message m) {
 			PayloadProducer pdp = (PayloadProducer) m.getPayload();
-			dataProducer.remove(pdp.getName());
-			DatagramPacket dp = Message.getMessageAsDatagrammPacket(new Message(MessageType.DeregisterProducer, new PayloadProducer(pdp.getName())),
-					multicastadr, serverPort);
-			sendMulticastMessage(dp);
-			// TODO was soll hier zur�ckgesendet werden
-			return new Message(MessageType.DeregisterProducer, null);
+			PayloadProducer answerPayload = new PayloadProducer(pdp.getName());
+			if (dataProducer.remove(pdp.getName())) {
+				DatagramPacket dp = Message.getMessageAsDatagrammPacket(new Message(MessageType.DeregisterProducer, new PayloadProducer(pdp.getName())),
+						multicastadr, serverPort);
+				sendMulticastMessage(dp);
+				answerPayload.setSuccess();
+				return new Message(MessageType.DeregisterProducer, answerPayload);
+			} else {
+				return new Message(MessageType.DeregisterProducer, answerPayload);
+			}
 		}
 
 		/**
