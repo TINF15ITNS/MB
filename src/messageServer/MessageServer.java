@@ -10,20 +10,15 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.HashSet;
-import java.util.Scanner;
 
 import message.*;
 
-public class MessageServer {
-
-	// nicht das gleihe Objekt zur�cksenden! Wird iwie die gleiche Referenz zur�ckgesendet, dann erkennt das der Client und nimmt das alte Objekt warum auch
-	// immer und nicht das neuen mit den veränderten Variablenwerten ... Quelle Internet
+public class MessageServer implements MessageServerIF {
 
 	public final int serverPort;
 	private static int numberOfCustomers = 0;
 	HashSet<Integer> dataConsumer;
 	HashSet<String> dataProducer;
-	Scanner scanner;
 	InetAddress multicastadr;
 
 	public MessageServer(int sp) {
@@ -38,10 +33,11 @@ public class MessageServer {
 	}
 
 	/**
-	 * waits for Messages from Producers or Consumers
+	 * waits for Messages from Producers or Consumers and response them
 	 */
 	// TODO MessageServer beendbar machen
-	public void initialisingForwardingMessages() {
+	@Override
+	public void responseOnMessages() {
 		try (ServerSocket serverSo = new ServerSocket(55555); MulticastSocket udpSocket = new MulticastSocket();) {
 
 			udpSocket.setTimeToLive(1);
@@ -181,13 +177,17 @@ public class MessageServer {
 		 * 
 		 * @param m
 		 *            sended message
-		 * @return response-message
+		 * @return response-message, the payload is the consumer-id if the consumer cannot be deregistered and is 0 if he can.
 		 */
 		private Message deregisterConsumer(Message m) {
 			PayloadDeregisterConsumer pdc = (PayloadDeregisterConsumer) m.getPayload();
-			dataConsumer.remove(pdc.getSenderID());
-			// TODO: soll bzw. was soll zu�ckgesendet werden
-			return new Message(MessageType.DeregisterConsumer, new PayloadDeregisterConsumer(0));
+			// if the removing-operation
+			if (dataConsumer.remove(pdc.getSenderID())) {
+				return new Message(MessageType.DeregisterConsumer, new PayloadDeregisterConsumer(0));
+			} else {
+				return new Message(MessageType.DeregisterConsumer, new PayloadDeregisterConsumer(pdc.getSenderID()));
+			}
+
 		}
 
 		/**
