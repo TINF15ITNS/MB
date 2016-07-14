@@ -36,10 +36,19 @@ public class ProducerCLI {
 			switch (input) {
 			// TODO: Implement confirmation routines and error messages for the user
 			case 1:
-				prod.registerOnServer();
+				if (prod.registerOnServer()) {
+					System.out.println("Der Registrierungsprozess war erfolgreich");
+				} else {
+					System.out.println("Der Registrierungsprozess war leider nicht erfolgreich");
+				}
 				break;
 			case 2:
-				prod.deregisterFromServer();
+				if (prod.deregisterFromServer()) {
+					System.out.println("Der Deregistrierungsprozess war erfolgreich");
+				} else {
+					System.out.println("Der Deregistrierungsprozess war leider nicht erfolgreich");
+				}
+
 				break;
 			case 3:
 				System.out.println("Geben Sie im bitte Ihre neue Nachricht ein und beenden Sie die Eingabe mit nur '#end' in der letzten Zeile");
