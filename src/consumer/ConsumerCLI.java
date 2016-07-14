@@ -30,7 +30,11 @@ public class ConsumerCLI {
 			scanner.nextLine(); // Absolutely necessary because nextInt() reads only one int and does not finish the line.
 			switch (input) {
 			case 1:
-				user.registerOnServer();
+				if (user.registerOnServer()) {
+					System.out.println("Der Registrierungprozess war erfolgreich");
+				} else {
+					System.out.println("Der Registrierungprozess war leider nicht erfolgreich");
+				}
 				break;
 			case 2:
 				user.deregisterFromServer();
@@ -43,6 +47,7 @@ public class ConsumerCLI {
 				break;
 			case 4:
 				System.out.print("Welche Produzenten (bitte mit Kommatas trennen) sollen abonniert werden ? ");
+				// TODO Die folgende Zeile funktioniert leider nicht ... habe es mal getestet und kam ne ArrayOutOfBoundsException ...
 				String[] s1 = user.subscribeToProducers(scanner.nextLine().replaceAll("\\s+", "").split(","));
 				if (s1[0] != null)
 					System.out.println("Es war nicht möglich, sich für die folgenden Produzenten zu abonnieren: ");

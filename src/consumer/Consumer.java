@@ -35,7 +35,7 @@ public class Consumer implements ConsumerIF {
 	}
 
 	@Override
-	public void registerOnServer() {
+	public boolean registerOnServer() {
 
 		Message answer = Util.sendAndGetMessage(new Message(MessageType.RegisterConsumer, null), serverAddress, serverPort);
 
@@ -50,10 +50,12 @@ public class Consumer implements ConsumerIF {
 		} catch (IOException e) {
 			System.out.println("IOFehler beim Erstellen des MulticastSockets oder beim Einschreiben in die Multicast-Gruppe");
 			e.printStackTrace();
+			return false;
 		}
 
 		Thread t = new Thread(new WaitForMessage(udpSocket));
 		t.start();
+		return true;
 	}
 
 	@Override
@@ -142,11 +144,11 @@ public class Consumer implements ConsumerIF {
 		@Override
 		public void run() {
 			// TODO Idee mit Pipes zu arbeiten und dem User ne Möglichkeit zu geben, abzufragen, ob es neue Nachrichten gibt...
-			DatagramPacket dp = null;
+			DatagramPacket dp = Message.getMessageAsDatagrammPacket(new Message(MessageType.Message, new PayloadMessage("", "")), serverAddress, serverPort);
 			while (true) {
 				try {
 					udps.receive(dp);
-					Message m = Message.getMessageFromDatagramPacket(dp);
+					Message m = Message.getMessageOutOfDatagramPacket(dp);
 
 					switch (m.getType()) {
 					case DeregisterProducer:

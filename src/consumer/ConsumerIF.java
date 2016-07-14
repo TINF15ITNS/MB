@@ -4,8 +4,10 @@ public interface ConsumerIF {
 
 	/**
 	 * Registers the user on the server and starts this user receiving messages from the server
+	 * 
+	 * @return if the operation was successful
 	 */
-	public void registerOnServer();
+	public boolean registerOnServer();
 
 	/**
 	 * Fetches all available producers
