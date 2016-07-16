@@ -128,7 +128,7 @@ public class Consumer implements ConsumerIF {
 	 *
 	 */
 	private class WaitForMessage implements Runnable {
-		MulticastSocket udps;
+		private MulticastSocket udps;
 
 		public WaitForMessage(MulticastSocket udps) {
 			this.udps = udps;
