@@ -146,7 +146,6 @@ public class MessageServer implements MessageServerIF {
 			if (!dataProducer.contains(pp.getName())) {
 				dataProducer.add(pp.getName());
 				ppresp.setSuccess();
-				// TODO ich glaube das ist mit diesem Payload nicht so sch�n!!! mit dem aufruf setSuccess ...
 			}
 			return new Message(MessageType.RegisterProducer, ppresp);
 		}
@@ -167,7 +166,6 @@ public class MessageServer implements MessageServerIF {
 						new Message(MessageType.Message, new PayloadMessage("Server", pm.getSender() + "meldet: \n" + pm.getMessage())), multicastadr,
 						serverPort);
 				sendMulticastMessage(dp);
-				// TODO: soll bzw. was soll zurückgesendet werden
 				PayloadMessage pmresp = new PayloadMessage("Server", "ok");
 				return new Message(MessageType.Message, pmresp);
 			}
@@ -219,7 +217,7 @@ public class MessageServer implements MessageServerIF {
 		 * @param dp
 		 *            the message-object as DatagramPacket
 		 */
-		public void sendMulticastMessage(DatagramPacket dp) {
+		private void sendMulticastMessage(DatagramPacket dp) {
 			try {
 				udpSocket.send(dp);
 			} catch (IOException e) {
