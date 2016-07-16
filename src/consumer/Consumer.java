@@ -46,7 +46,7 @@ public class Consumer implements ConsumerIF {
 
 		try {
 			udpSocket = new MulticastSocket();
-			joinMulticastGroup();
+			udpSocket.joinGroup(mcastadr);
 		} catch (IOException e) {
 			System.out.println("IOFehler beim Erstellen des MulticastSockets oder beim Einschreiben in die Multicast-Gruppe");
 			e.printStackTrace();
@@ -112,21 +112,14 @@ public class Consumer implements ConsumerIF {
 		PayloadDeregisterConsumer answerPayload = (PayloadDeregisterConsumer) answer.getPayload();
 
 		try {
-			leaveMulticastGroup();
+
+			udpSocket.leaveGroup(mcastadr);
 		} catch (IOException e) {
 			System.out.println("IOFehler beim Verlassen der Mutlicast-Gruppe");
 			e.printStackTrace();
 		}
 
 		return answerPayload.getSenderID() != 0;
-	}
-
-	private void joinMulticastGroup() throws IOException {
-		udpSocket.joinGroup(mcastadr);
-	}
-
-	private void leaveMulticastGroup() throws IOException {
-		udpSocket.leaveGroup(mcastadr);
 	}
 
 	/**
