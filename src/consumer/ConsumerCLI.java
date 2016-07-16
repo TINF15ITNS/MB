@@ -5,10 +5,12 @@ import java.util.Scanner;
 
 public class ConsumerCLI {
 
+	private static ConsumerIF user = null;
+
 	public static void main(String[] args) {
 
 		Scanner scanner = new Scanner(System.in);
-		ConsumerIF user = null;
+
 		boolean exit = false;
 
 		while (true) {
