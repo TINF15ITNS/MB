@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.2.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>50</x>
+      <y>40</y>
+      <w>410</w>
+      <h>170</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;interace&gt;&gt;
+ConsumerIF
+--
+--
++ public registerOnServer(): boolean
++ public getProducers(): String[]
++ public subscribeToProducers(String[] producers): String[]
++ public getSubscriptions(): String[] 
++ public unsubscribeFromProducers(String[] producers): String[] 
++ public deregisterFromServer(): boolean
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>120</x>
+      <y>280</y>
+      <w>240</w>
+      <h>270</h>
+    </coordinates>
+    <panel_attributes>Consumer
+--
+- serverPort: static int
+- consumerID: int 
+- mcastadr: InetAddress
+- serverAddress: InetAddress 
+- subscriptions: HashSet&lt;String&gt;
+- producerList: HashSet&lt;String&gt; 
+- udpSocket: MulticastSocket 
+--
+&lt;&lt; constructor &gt;&gt;
++ Consumer(String address)
+&lt;&lt; method &gt;&gt;
+--
+{innerclass
+WaitForMessage
+--
+- udps: MulticastSocket
+--
++ run: void
+innerclass}
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>230</x>
+      <y>200</y>
+      <w>30</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;80.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>500</x>
+      <y>230</y>
+      <w>230</w>
+      <h>270</h>
+    </coordinates>
+    <panel_attributes>ConsumerCLI
+--
+- user: ConsumerIF 
+
+
+
+
+
+--
++ main(String[] args): static void</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
