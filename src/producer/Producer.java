@@ -2,12 +2,16 @@ package producer;
 
 import java.io.*;
 import java.net.*;
-
 import message.*;
 
+/**
+ * @author Nikolai Seip, Sebastian Mattheis, Fabian Hinz
+ *
+ */
 public class Producer implements ProducerIF {
 	private static int serverPort = 55555;
 	private String name;
+	private boolean registered = false;
 	private InetAddress serverAddress;
 
 	public Producer(String name, String address) throws Exception, IOException {
@@ -22,22 +26,20 @@ public class Producer implements ProducerIF {
 		this.name = name;
 	}
 
-	@Override
 	public boolean registerOnServer() {
 		Message answer = Util.sendAndGetMessage(MessageFactory.createRegisterProducerMsg(name), serverAddress, serverPort);
 		PayloadProducer answerPayload = (PayloadProducer) answer.getPayload();
-		return answerPayload.getSuccess();
+		registered = answerPayload.getSuccess();
+		return registered;
 	}
 
-	@Override
 	public boolean deregisterFromServer() {
 		Message answer = Util.sendAndGetMessage(MessageFactory.createDeregisterProducerMsg(name), serverAddress, serverPort);
 		PayloadProducer answerPayload = (PayloadProducer) answer.getPayload();
-		return answerPayload.getSuccess();
-
+		if (answerPayload.getSuccess() == true) { registered = false; return true; }
+		else return false;
 	}
 
-	@Override
 	public boolean sendMessage(String msg) {
 		Message answer = Util.sendAndGetMessage(MessageFactory.createBroadcastMessage(name, msg), serverAddress, serverPort);
 		PayloadMessage pm = (PayloadMessage) answer.getPayload();
@@ -49,6 +51,10 @@ public class Producer implements ProducerIF {
 		default:
 			throw new RuntimeException("Test in Antwortmessage nicht interpretierbar");
 		}
+	}
+	
+	public boolean isRegistered() {
+		return registered;
 	}
 
 	private String[] getProducers() {
