@@ -6,11 +6,12 @@ import java.util.Scanner;
 public class ConsumerCLI {
 
 	private static ConsumerIF user = null;
+	private static Scanner scanner;
+	private static boolean registered = false;
 
 	public static void main(String[] args) {
 
-		Scanner scanner = new Scanner(System.in);
-
+		scanner = new Scanner(System.in);
 		boolean exit = false;
 
 		while (true) {
@@ -30,23 +31,46 @@ public class ConsumerCLI {
 
 			int input = scanner.nextInt();
 			scanner.nextLine(); // Absolutely necessary because nextInt() reads only one int and does not finish the line.
+
 			switch (input) {
 			case 1:
-				if (user.registerOnServer())
+				if(registered)
+				{
+					System.out.println("Sie sind bereits angemeldet.");
+					break;
+				}
+				if (user.registerOnServer()) {
 					System.out.println("Der Registrierungprozess war erfolgreich");
-				else
+					registered = true;
+				} else {
 					System.out.println("Der Registrierungprozess war leider nicht erfolgreich");
+					registered = false;
+				}
 				break;
+
 			case 2:
+				if(!registered)
+				{
+					System.out.println("Sie sind bereits abgemeldet.");
+					break;
+				}
 				user.deregisterFromServer();
+				registered = false;
 				break;
+
 			case 3:
 				System.out.println("Verfügbare Produzenten:");
 				for (String p : user.getProducers()) {
 					System.out.println("\t" + p);
 				}
 				break;
+
 			case 4:
+				if(!registered)
+				{
+					System.out.println("Sie müssen sich erst anmelden.");
+					break;
+				}
 				System.out.print("Welche Produzenten (bitte mit Kommatas trennen) sollen abonniert werden? ");
 				String[] failedSubscriptions = user.subscribeToProducers(scanner.nextLine().replaceAll("\\s+", "").split(","));
 				if (failedSubscriptions.length != 0)
@@ -55,7 +79,13 @@ public class ConsumerCLI {
 					System.out.println("\t" + producer);
 				}
 				break;
+
 			case 5:
+				if(!registered)
+				{
+					System.out.println("Sie müssen sich erst anmelden.");
+					break;
+				}
 				System.out.print("Welche Produzenten (bitte mit Kommatas trennen) sollen deabonniert werden? ");
 				String[] failedUnsubscriptions = user.unsubscribeFromProducers(scanner.nextLine().replaceAll("\\s+", "").split(","));
 				if (failedUnsubscriptions.length != 0)
@@ -64,12 +94,19 @@ public class ConsumerCLI {
 					System.out.println("\t" + producer);
 				}
 				break;
+
 			case 6:
+				if(!registered)
+				{
+					System.out.println("Sie müssen sich erst anmelden.");
+					break;
+				}
 				System.out.println("Ihre Abos:");
 				for (String s3 : user.getSubscriptions()) {
 					System.out.println("\t" + s3);
 				}
 				break;
+
 			case 7:
 				// ich habe jetzt den neuen Thread nicht iwie beendet ... ich gehe mal davon aus, da es auch ein Objekt ist, wird er gelöscht, wenn nichts
 				// mehr auf ihn referenziert
