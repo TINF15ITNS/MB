@@ -2,26 +2,31 @@ package producer;
 
 public interface ProducerIF {
 	/**
-	 * registers the producer on the server and checks if this producer name exits yet or not
+	 * sends a message to the server with the producer name, to be registered
 	 * 
-	 * @return if the operation was successful
+	 * @return a boolean indicating success or failure of the method
 	 */
 	public boolean registerOnServer();
 
 	/**
-	 * deregisters the producer on the server
+	 * Sends a message to server asking to be removed from the list of registered producers
 	 * 
-	 * @return if the operation was successful
+	 * @return a boolean indicating success or failure of the method
 	 */
 	public boolean deregisterFromServer();
 
 	/**
-	 * sends a message to the Server
+	 * Advice the producer to send a message to the given Server
 	 * 
-	 * @param msg
-	 *            messagetext
-	 * @return if the operation was successful
+	 * @param msg the message to be sent
+	 * @return a boolean indicating success or failure of the method
 	 */
 	public boolean sendMessage(String msg);
+	
+	/**
+	 * 
+	 * @return true if the producer is registered, false otherwise
+	 */
+	public boolean isRegistered();
 
 }
