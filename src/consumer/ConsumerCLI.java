@@ -32,11 +32,10 @@ public class ConsumerCLI {
 			scanner.nextLine(); // Absolutely necessary because nextInt() reads only one int and does not finish the line.
 			switch (input) {
 			case 1:
-				if (user.registerOnServer()) {
+				if (user.registerOnServer())
 					System.out.println("Der Registrierungprozess war erfolgreich");
-				} else {
+				else
 					System.out.println("Der Registrierungprozess war leider nicht erfolgreich");
-				}
 				break;
 			case 2:
 				user.deregisterFromServer();
@@ -48,19 +47,19 @@ public class ConsumerCLI {
 				}
 				break;
 			case 4:
-				System.out.print("Welche Produzenten (bitte mit Kommatas trennen) sollen abonniert werden ? ");
+				System.out.print("Welche Produzenten (bitte mit Kommatas trennen) sollen abonniert werden? ");
 				String[] failedSubscriptions = user.subscribeToProducers(scanner.nextLine().replaceAll("\\s+", "").split(","));
 				if (failedSubscriptions.length != 0)
-					System.out.println("Es war nicht möglich, sich für die folgenden Produzenten zu abonnieren: ");
+					System.out.println("Es war nicht möglich, sich für die folgenden Produzenten zu abonnieren:");
 				for (String producer : failedSubscriptions) {
 					System.out.println("\t" + producer);
 				}
 				break;
 			case 5:
-				System.out.print("Welche Produzenten (bitte mit Kommatas trennen) sollen deabonniert werden ? ");
+				System.out.print("Welche Produzenten (bitte mit Kommatas trennen) sollen deabonniert werden? ");
 				String[] failedUnsubscriptions = user.unsubscribeFromProducers(scanner.nextLine().replaceAll("\\s+", "").split(","));
 				if (failedUnsubscriptions.length != 0)
-					System.out.println("Sie konnten sich nicht für die folgenden Produzenten deabonnieren: ");
+					System.out.println("Sie konnten sich nicht für die folgenden Produzenten deabonnieren:");
 				for (String producer : failedUnsubscriptions) {
 					System.out.println("\t" + producer);
 				}
