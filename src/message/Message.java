@@ -1,7 +1,6 @@
 package message;
 
 import java.io.*;
-import java.net.*;
 
 public class Message implements Serializable {
 	/**
@@ -33,69 +32,6 @@ public class Message implements Serializable {
 	public Message(MessageType type, Payload payload) {
 		this.type = type;
 		this.payload = payload;
-	}
-
-	// sollte man dann an dieser Stelle auch ne Methode implementieren, die für das versenden von Messages sorgt, wie die MEthode sendAndGetMessages() in
-	// Consumer? Rein aus schönheitsgründen, da hier auch die Methode getMessageAsDatagramPacket liegt?
-
-	/**
-	 * wraps the message to a DatagramPacket
-	 * 
-	 * @param iadr
-	 *            the InetAddress of the recipient
-	 * @param port
-	 *            port of the recipient
-	 * @return a DatagramPacket
-	 */
-	public static DatagramPacket getMessageAsDatagrammPacket(Message m, InetAddress iadr, int port) {
-		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		ObjectOutputStream objOut = null;
-		try {
-			objOut = new ObjectOutputStream(bout);
-			objOut.writeObject(m);
-			objOut.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		byte[] buf = bout.toByteArray();
-
-		DatagramPacket dp = new DatagramPacket(buf, buf.length, iadr, port);
-		dp.setData(buf);
-		return dp;
-	}
-
-	/**
-	 * wraps the data out of the DatagramPacket to a Message-Object
-	 * 
-	 * @param dp
-	 *            the DatagramPacket
-	 * @return message-object
-	 */
-	public static Message getMessageOutOfDatagramPacket(DatagramPacket dp) {
-		byte[] buf = dp.getData();
-		ByteArrayInputStream bin = new ByteArrayInputStream(buf); // von Datagram
-		ObjectInputStream objIn = null;
-		Message m = null;
-		try {
-			objIn = new ObjectInputStream(bin);
-			m = (Message) objIn.readObject();
-		} catch (ClassNotFoundException e) {
-			System.out.println("Beim Lesen des Objektes ist ein fehler aufgetreten");
-			e.printStackTrace();
-		} catch (IOException e) {
-			System.out.println("IOFehler beim ermitteln der Message ausm DatagramPacket");
-			e.printStackTrace();
-		} finally {
-			if (objIn != null)
-				try {
-					objIn.close();
-				} catch (IOException e) {
-					System.out.println("Fehler beim closen vonm ObjectInputStream");
-					e.printStackTrace();
-				}
-		}
-		return m;
 	}
 
 	/**

@@ -137,11 +137,11 @@ public class Consumer implements ConsumerIF {
 		@Override
 		public void run() {
 			// TODO Idee mit Pipes zu arbeiten und dem User ne Möglichkeit zu geben, abzufragen, ob es neue Nachrichten gibt...
-			DatagramPacket dp = Message.getMessageAsDatagrammPacket(new Message(MessageType.Message, new PayloadMessage("", "")), serverAddress, serverPort);
+			DatagramPacket dp = Util.getMessageAsDatagrammPacket(new Message(MessageType.Message, new PayloadMessage("", "")), serverAddress, serverPort);
 			while (true) {
 				try {
 					udps.receive(dp);
-					Message m = Message.getMessageOutOfDatagramPacket(dp);
+					Message m = Util.getMessageOutOfDatagramPacket(dp);
 
 					switch (m.getType()) {
 					case DeregisterProducer:

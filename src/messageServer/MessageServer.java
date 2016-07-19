@@ -162,7 +162,7 @@ public class MessageServer implements MessageServerIF {
 			PayloadMessage pm = (PayloadMessage) m.getPayload();
 			// schauen, ob der Absender sich beim Server auch angemeldet hat
 			if (dataProducer.contains(pm.getSender())) {
-				DatagramPacket dp = Message.getMessageAsDatagrammPacket(
+				DatagramPacket dp = Util.getMessageAsDatagrammPacket(
 						new Message(MessageType.Message, new PayloadMessage("Server", pm.getSender() + "meldet: \n" + pm.getMessage())), multicastadr,
 						serverPort);
 				sendMulticastMessage(dp);
@@ -201,7 +201,7 @@ public class MessageServer implements MessageServerIF {
 			PayloadProducer pdp = (PayloadProducer) m.getPayload();
 			PayloadProducer answerPayload = new PayloadProducer(pdp.getName());
 			if (dataProducer.remove(pdp.getName())) {
-				DatagramPacket dp = Message.getMessageAsDatagrammPacket(new Message(MessageType.DeregisterProducer, new PayloadProducer(pdp.getName())),
+				DatagramPacket dp = Util.getMessageAsDatagrammPacket(new Message(MessageType.DeregisterProducer, new PayloadProducer(pdp.getName())),
 						multicastadr, serverPort);
 				sendMulticastMessage(dp);
 				answerPayload.setSuccess();
