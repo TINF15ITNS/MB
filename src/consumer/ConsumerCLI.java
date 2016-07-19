@@ -49,20 +49,19 @@ public class ConsumerCLI {
 				break;
 			case 4:
 				System.out.print("Welche Produzenten (bitte mit Kommatas trennen) sollen abonniert werden ? ");
-				// TODO Die folgende Zeile funktioniert leider nicht ... habe es mal getestet und kam ne ArrayOutOfBoundsException ...
-				String[] s1 = user.subscribeToProducers(scanner.nextLine().replaceAll("\\s+", "").split(","));
-				if (s1[0] != null)
+				String[] failedSubscriptions = user.subscribeToProducers(scanner.nextLine().replaceAll("\\s+", "").split(","));
+				if (failedSubscriptions.length != 0)
 					System.out.println("Es war nicht möglich, sich für die folgenden Produzenten zu abonnieren: ");
-				for (String producer : s1) {
+				for (String producer : failedSubscriptions) {
 					System.out.println("\t" + producer);
 				}
 				break;
 			case 5:
 				System.out.print("Welche Produzenten (bitte mit Kommatas trennen) sollen deabonniert werden ? ");
-				String[] s2 = user.unsubscribeFromProducers(scanner.nextLine().replaceAll("\\s+", "").split(","));
-				if (s2[0] != null)
+				String[] failedUnsubscriptions = user.unsubscribeFromProducers(scanner.nextLine().replaceAll("\\s+", "").split(","));
+				if (failedUnsubscriptions.length != 0)
 					System.out.println("Sie konnten sich nicht für die folgenden Produzenten deabonnieren: ");
-				for (String producer : s2) {
+				for (String producer : failedUnsubscriptions) {
 					System.out.println("\t" + producer);
 				}
 				break;
