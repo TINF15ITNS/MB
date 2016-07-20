@@ -7,7 +7,6 @@ public class ConsumerCLI {
 
 	private static ConsumerIF user = null;
 	private static Scanner scanner;
-	private static boolean registered = false;
 
 	public static void main(String[] args) {
 
@@ -34,28 +33,25 @@ public class ConsumerCLI {
 
 			switch (input) {
 			case 1:
-				if(registered)
+				if(user.isRegistered())
 				{
 					System.out.println("Sie sind bereits angemeldet.");
 					break;
 				}
 				if (user.registerOnServer()) {
 					System.out.println("Der Registrierungprozess war erfolgreich");
-					registered = true;
 				} else {
 					System.out.println("Der Registrierungprozess war leider nicht erfolgreich");
-					registered = false;
 				}
 				break;
 
 			case 2:
-				if(!registered)
+				if(!user.isRegistered())
 				{
 					System.out.println("Sie sind bereits abgemeldet.");
 					break;
 				}
 				user.deregisterFromServer();
-				registered = false;
 				break;
 
 			case 3:
@@ -66,7 +62,7 @@ public class ConsumerCLI {
 				break;
 
 			case 4:
-				if(!registered)
+				if(!user.isRegistered())
 				{
 					System.out.println("Sie müssen sich erst anmelden.");
 					break;
@@ -81,7 +77,7 @@ public class ConsumerCLI {
 				break;
 
 			case 5:
-				if(!registered)
+				if(!user.isRegistered())
 				{
 					System.out.println("Sie müssen sich erst anmelden.");
 					break;
@@ -96,7 +92,7 @@ public class ConsumerCLI {
 				break;
 
 			case 6:
-				if(!registered)
+				if(!user.isRegistered())
 				{
 					System.out.println("Sie müssen sich erst anmelden.");
 					break;

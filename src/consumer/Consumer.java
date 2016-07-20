@@ -11,6 +11,7 @@ import message.*;
 public class Consumer implements ConsumerIF {
 	private static int serverPort = 55555;
 	private int consumerID;
+	private boolean registered = false;
 	private InetAddress mcastadr;
 	private InetAddress serverAddress;
 	private HashSet<String> subscriptions;
@@ -50,11 +51,13 @@ public class Consumer implements ConsumerIF {
 		} catch (IOException e) {
 			System.out.println("IOFehler beim Erstellen des MulticastSockets oder beim Einschreiben in die Multicast-Gruppe");
 			e.printStackTrace();
+			registered = false;
 			return false;
 		}
 
 		Thread t = new Thread(new WaitForMessage(udpSocket));
 		t.start();
+		registered = answerPayload.getSuccess();
 		return true;
 	}
 
@@ -116,10 +119,14 @@ public class Consumer implements ConsumerIF {
 			udpSocket.leaveGroup(mcastadr);
 		} catch (IOException e) {
 			System.out.println("IOFehler beim Verlassen der Mutlicast-Gruppe");
-			e.printStackTrace();
+			e.printStackTrace();//TODO Don't print anything outside of the CLI
 		}
-
-		return answerPayload.getSenderID() != 0;
+		registered = !answerPayload.getSuccess();
+		return answerPayload.getSuccess();
+	}
+	
+	public boolean isRegistered() {
+		return registered;
 	}
 
 	/**

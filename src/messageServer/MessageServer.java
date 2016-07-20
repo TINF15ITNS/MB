@@ -130,7 +130,7 @@ public class MessageServer implements MessageServerIF {
 		private Message registerConsumer(Message m) {
 			numberOfCustomers++;
 			dataConsumer.add(new Integer(numberOfCustomers));
-			return new Message(MessageType.RegisterConsumer, new PayloadRegisterConsumer(numberOfCustomers, multicastadr));
+			return new Message(MessageType.RegisterConsumer, new PayloadRegisterConsumer(numberOfCustomers, multicastadr, true));
 		}
 
 		/**
@@ -177,15 +177,15 @@ public class MessageServer implements MessageServerIF {
 		 * 
 		 * @param m
 		 *            sended message
-		 * @return response-message, the payload is the consumer-id if the consumer cannot be deregistered and is 0 if he can.
+		 * @return response-message
 		 */
 		private Message deregisterConsumer(Message m) {
 			PayloadDeregisterConsumer pdc = (PayloadDeregisterConsumer) m.getPayload();
 			// if the removing-operation
 			if (dataConsumer.remove(pdc.getSenderID())) {
-				return new Message(MessageType.DeregisterConsumer, new PayloadDeregisterConsumer(0));
+				return new Message(MessageType.DeregisterConsumer, new PayloadDeregisterConsumer(true));
 			} else {
-				return new Message(MessageType.DeregisterConsumer, new PayloadDeregisterConsumer(pdc.getSenderID()));
+				return new Message(MessageType.DeregisterConsumer, new PayloadDeregisterConsumer(false));
 			}
 
 		}
