@@ -89,8 +89,9 @@ public class Util {
 	 * @param serverPort
 	 *            The open port of the target server
 	 * @return The Message response of the server
+	 * @throws IOException 
 	 */
-	public static Message sendAndGetMessage(Message message, InetAddress address, int serverPort) {
+	public static Message sendAndGetMessage(Message message, InetAddress address, int serverPort) throws IOException {
 
 		try (Socket server = new Socket(address, serverPort);
 				ObjectOutputStream out = new ObjectOutputStream(server.getOutputStream());
@@ -99,7 +100,7 @@ public class Util {
 			out.writeObject(message);
 			return (Message) in.readObject();
 		} catch (Exception e) {
-			return null;
+			throw new IOException();
 		}
 	}
 
