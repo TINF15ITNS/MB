@@ -15,7 +15,7 @@ public class ProducerCLI {
 
 		while (true) {
 			try {
-				System.out.println("Bitte geben Sie den gewünschten Namen für den Produzenten ein:");
+				System.out.println("Bitte geben Sie den Produzentennamenein:");
 				String n = scanner.nextLine();
 				System.out.print("Bitte geben Sie die Adresse des Servers ein (ohne Port): ");
 				String addr = scanner.nextLine();
@@ -25,58 +25,82 @@ public class ProducerCLI {
 			} catch (IOException e) {
 				System.out.println("Kein Server unter der angegebenen Adresse erreichbar.");
 			} catch (Exception e) {
-				System.out.println("Leider ist dieser Name schon belegt.");
+				System.out.println("Leider ist dieser Name schon belegt, bitte wählen Sie einen anderen.");
 			}
 		}
 
 		while (!exit) {
-			System.out.println("'1' Anmeldung, '2' Abmeldung, '3' Sende Nachricht, '4' Beenden");
+			System.out.println("Bitte wählen Sie durch Eingabe einer Zahl:");
+			if (!prod.isRegistered()) {
+				System.out.println("(1) Registrierung beim Server\n"
+								 + "(2) Beenden der CLI");
+				int input = scanner.nextInt();
+				scanner.nextLine(); // Absolutely necessary because nextInt() reads only one int and does not finish the line.
+				switch (input) {
+				// TODO: Implement confirmation routines and error messages for the user
+				case 1:
+					if (prod.registerOnServer()) {
+						System.out.println("Der Registrierungsprozess war erfolgreich");
+					} else {
+						System.out.println("Der Registrierungsprozess war leider nicht erfolgreich");
+					}
+					break;
+				case 2:
+					exit = true;
+					break;
+				default:
+					System.out.println("Bitte wählen Sie eine der Optionen.");
+					break;
+				}
 
-			int input = scanner.nextInt();
-			scanner.nextLine(); // Absolutely necessary because nextInt() reads only one int and does not finish the line.
-			switch (input) {
-			// TODO: Implement confirmation routines and error messages for the user
-			case 1:
-				if (prod.registerOnServer()) {
-					System.out.println("Der Registrierungsprozess war erfolgreich");
-				} else {
-					System.out.println("Der Registrierungsprozess war leider nicht erfolgreich");
-				}
-				break;
-			case 2:
-				if (prod.deregisterFromServer()) {
-					System.out.println("Der Deregistrierungsprozess war erfolgreich");
-				} else {
-					System.out.println("Der Deregistrierungsprozess war leider nicht erfolgreich");
-				}
-
-				break;
-			case 3:
-				System.out.println(
-						"Geben Sie im bitte Ihre neue Nachricht ein (mehrzeilige Eingabe mit Enter möglich) und beenden Sie die Eingabe mit nur '#end' in der letzten Zeile");
-				StringBuffer m = new StringBuffer();
-				while (scanner.hasNext()) {
-					String tmp = scanner.nextLine();
-					if (tmp.equals("#end"))
-						break;
-					m.append(tmp);
-					m.append(new String("\n"));
-				}
-				if (prod.sendMessage(m.toString())) {
-					System.out.println("Die Nachrichtübermittlung war erfolgreich");
-				} else {
-					System.out.println("Der Produzent wurde noch nicht am Server registriert");
-				}
-				break;
-
-			case 4:
-				exit = true;
-				break;
-			default:
-				System.out.println("Ihre Eingabe war leider nicht interpretierbar :( .");
-				break;
 			}
+			
+			else {
+				System.out.println("(1) Abmeldung vom Server\n"
+								 + "(2) Sende Nachricht\n"
+								 + "(3) Beenden der CLI");
+				int input = scanner.nextInt();
+				scanner.nextLine(); // Absolutely necessary because nextInt() reads only one int and does not finish the line.
+				switch (input) {
+				// TODO: Implement confirmation routines and error messages for the user
+				case 1:
+					if (prod.deregisterFromServer()) {
+						System.out.println("Der Deregistrierungsprozess war erfolgreich");
+					} else {
+						System.out.println("Der Deregistrierungsprozess war leider nicht erfolgreich");
+					}
+
+					break;
+				case 2:
+					System.out.println(
+							"Geben Sie im bitte Ihre neue Nachricht ein (mehrzeilige Eingabe mit Enter möglich) und beenden Sie die Eingabe mit nur 'EOF' in der letzten Zeile");
+					StringBuffer m = new StringBuffer();
+					while (scanner.hasNext()) {
+						String tmp = scanner.nextLine();
+						if (tmp.equals("EOF"))
+							break;
+						m.append(tmp);
+						m.append(new String("\n"));
+					}
+					if (prod.sendMessage(m.toString())) {
+						System.out.println("Die Nachrichtübermittlung war erfolgreich");
+					} else {
+						System.out.println("Der Produzent wurde noch nicht am Server registriert");
+					}
+					break;
+				case 3:
+					exit = true;
+					break;
+				default:
+					System.out.println("Bitte wählen Sie eine der Optionen.");
+					break;
+				}
+
+			}
+			
+
 		}
+		//clean up on exit
 		prod.deregisterFromServer();
 		scanner.close();
 	}
