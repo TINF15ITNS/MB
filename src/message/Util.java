@@ -102,6 +102,7 @@ public class Util {
 		} catch (Exception e) {
 			throw new IOException();
 		}
+		
 	}
 
 	/**
@@ -119,6 +120,9 @@ public class Util {
 
 		try (Socket server = new Socket();) {
 			server.connect(new InetSocketAddress(adress, serverPort), timeout);
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) { }
 			return true;
 		} catch (IOException e) {
 			return false;

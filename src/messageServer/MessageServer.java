@@ -15,16 +15,16 @@ import message.*;
 
 public class MessageServer implements MessageServerIF {
 
-	public final int serverPort;
+	private final int serverPort;
 	private static int numberOfCustomers = 0;
 	HashSet<Integer> dataConsumer;
 	HashSet<String> dataProducer;
 	InetAddress multicastadr;
 
-	public MessageServer(int sp) {
+	public MessageServer(int serverPort) {
 		dataConsumer = new HashSet<>();
 		dataProducer = new HashSet<>();
-		serverPort = sp;
+		this.serverPort = serverPort;
 		try {
 			multicastadr = InetAddress.getByName("225.225.225.225");
 		} catch (UnknownHostException e) {
@@ -32,12 +32,17 @@ public class MessageServer implements MessageServerIF {
 		}
 	}
 
+	@Override
+	public int getServerPort() {
+		return serverPort;
+	}
+
 	/**
 	 * waits for Messages from Producers or Consumers
 	 */
 	// TODO MessageServer beendbar machen
 	@Override
-	public void responseOnMessages() {
+	public void respondOnMessages() {
 		try (ServerSocket serverSo = new ServerSocket(55555); MulticastSocket udpSocket = new MulticastSocket();) {
 
 			udpSocket.setTimeToLive(1);
@@ -66,9 +71,7 @@ public class MessageServer implements MessageServerIF {
 
 		@Override
 		public void run() {
-			try (Socket client = s;
-					ObjectOutputStream out = new ObjectOutputStream(client.getOutputStream());
-					ObjectInputStream in = new ObjectInputStream(client.getInputStream());) {
+			try (Socket client = s; ObjectOutputStream out = new ObjectOutputStream(client.getOutputStream()); ObjectInputStream in = new ObjectInputStream(client.getInputStream());) {
 
 				Message m = (Message) in.readObject();
 				Message answer = null;
@@ -162,9 +165,7 @@ public class MessageServer implements MessageServerIF {
 			PayloadMessage pm = (PayloadMessage) m.getPayload();
 			// schauen, ob der Absender sich beim Server auch angemeldet hat
 			if (dataProducer.contains(pm.getSender())) {
-				DatagramPacket dp = Util.getMessageAsDatagrammPacket(
-						new Message(MessageType.Message, new PayloadMessage("Server", pm.getSender() + "meldet: \n" + pm.getMessage())), multicastadr,
-						serverPort);
+				DatagramPacket dp = Util.getMessageAsDatagrammPacket(new Message(MessageType.Message, new PayloadMessage("Server", pm.getSender() + "meldet: \n" + pm.getMessage())), multicastadr, serverPort);
 				sendMulticastMessage(dp);
 				PayloadMessage pmresp = new PayloadMessage("Server", "ok");
 				return new Message(MessageType.Message, pmresp);
@@ -195,14 +196,14 @@ public class MessageServer implements MessageServerIF {
 		 * 
 		 * @param m
 		 *            sended message
-		 * @return response-message, Payload-attribut success is true, if the operation was successful
+		 * @return response-message, Payload-attribut success is true, if the
+		 *         operation was successful
 		 */
 		private Message deregisterProducer(Message m) {
 			PayloadProducer pdp = (PayloadProducer) m.getPayload();
 			PayloadProducer answerPayload = new PayloadProducer(pdp.getName());
 			if (dataProducer.remove(pdp.getName())) {
-				DatagramPacket dp = Util.getMessageAsDatagrammPacket(new Message(MessageType.DeregisterProducer, new PayloadProducer(pdp.getName())),
-						multicastadr, serverPort);
+				DatagramPacket dp = Util.getMessageAsDatagrammPacket(new Message(MessageType.DeregisterProducer, new PayloadProducer(pdp.getName())), multicastadr, serverPort);
 				sendMulticastMessage(dp);
 				answerPayload.setSuccess();
 				return new Message(MessageType.DeregisterProducer, answerPayload);
