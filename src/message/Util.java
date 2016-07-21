@@ -3,15 +3,8 @@
  */
 package message;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.Socket;
+import java.io.*;
+import java.net.*;
 
 /**
  * @author Nikolai Seip, Sebastian Mattheis, Fabian Hinz
