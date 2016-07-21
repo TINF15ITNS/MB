@@ -14,14 +14,14 @@ public class Producer implements ProducerIF {
 	private boolean registered = false;
 	private InetAddress serverAddress;
 
-	public Producer(String name, String address) throws Exception, IOException {
+	public Producer(String name, String address) throws IllegalArgumentException, IOException {
 		this.serverAddress = InetAddress.getByName(address);
 		if (!Util.testConnection(serverAddress, serverPort, 1000))
 			throw new IOException("There is no server at the given address");
 		String[] producers = getProducers();
 		for (String n : producers) {
 			if (n.equalsIgnoreCase(name))
-				throw new Exception("This producer name is already taken");
+				throw new IllegalArgumentException("This producer name is already taken");
 		}
 		this.name = name;
 	}

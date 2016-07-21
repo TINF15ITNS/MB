@@ -29,7 +29,7 @@ public class ProducerCLI {
 				break;
 			} catch (IOException e) {
 				System.out.println("Kein Server unter der angegebenen Adresse erreichbar.");
-			} catch (Exception e) {
+			} catch (IllegalArgumentException e) {
 				System.out.println("Leider ist dieser Name schon belegt, bitte wählen Sie einen anderen.");
 			}
 		}
