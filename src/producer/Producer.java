@@ -29,8 +29,8 @@ public class Producer implements ProducerIF {
 	public boolean registerOnServer() {
 		Message answer = Util.sendAndGetMessage(MessageFactory.createRegisterProducerMsg(name), serverAddress, serverPort);
 		PayloadProducer answerPayload = (PayloadProducer) answer.getPayload();
-		registered = answerPayload.getSuccess();
-		return registered;
+		if (answerPayload.getSuccess() == true) { registered = true; return true; }
+		else return false;
 	}
 
 	public boolean deregisterFromServer() {

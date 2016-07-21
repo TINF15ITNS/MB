@@ -40,16 +40,16 @@ public class ProducerCLI {
 				// TODO: Implement confirmation routines and error messages for the user
 				case 1:
 					if (prod.registerOnServer()) {
-						System.out.println("Der Registrierungsprozess war erfolgreich");
+						System.out.println("Die Registrierung war erfolgreich.");
 					} else {
-						System.out.println("Der Registrierungsprozess war leider nicht erfolgreich");
+						System.out.println("Die Registrierung ist leider fehlgeschlagen.");
 					}
 					break;
 				case 2:
 					exit = true;
 					break;
 				default:
-					System.out.println("Bitte wählen Sie eine der Optionen.");
+					System.out.println("Bitte wählen Sie eine der gegebenen Optionen.");
 					break;
 				}
 
@@ -65,15 +65,16 @@ public class ProducerCLI {
 				// TODO: Implement confirmation routines and error messages for the user
 				case 1:
 					if (prod.deregisterFromServer()) {
-						System.out.println("Der Deregistrierungsprozess war erfolgreich");
+						System.out.println("Die Abmeldung war erfolgreich.");
 					} else {
-						System.out.println("Der Deregistrierungsprozess war leider nicht erfolgreich");
+						System.out.println("Die Abmeldung ist leider fehlgeschlagen.");
 					}
 
 					break;
 				case 2:
-					System.out.println(
-							"Geben Sie im bitte Ihre neue Nachricht ein (mehrzeilige Eingabe mit Enter möglich) und beenden Sie die Eingabe mit nur 'EOF' in der letzten Zeile");
+					System.out.println("Geben Sie im bitte Ihre neue Nachricht ein.\n"
+							+ "Eine mehrzeilige Eingabe ist hierbei möglich."
+							+ "Signalisieren Sie das Ende der Nachricht bitte mit 'EOF' in einer neuen Zeile.");
 					StringBuffer m = new StringBuffer();
 					while (scanner.hasNext()) {
 						String tmp = scanner.nextLine();
@@ -83,7 +84,7 @@ public class ProducerCLI {
 						m.append(new String("\n"));
 					}
 					if (prod.sendMessage(m.toString())) {
-						System.out.println("Die Nachrichtübermittlung war erfolgreich");
+						System.out.println("Die Nachricht ist beim Server eingegangen.");
 					} else {
 						System.out.println("Der Produzent wurde noch nicht am Server registriert");
 					}
