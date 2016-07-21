@@ -3,6 +3,11 @@ package producer;
 import java.io.IOException;
 import java.util.Scanner;
 
+/**
+ * 
+ * @author Nikolai Seip, Sebastian Mattheis, Fabian Hinz
+ *
+ */
 public class ProducerCLI {
 
 	public static void main(String[] args) {
