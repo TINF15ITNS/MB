@@ -78,7 +78,7 @@ public class ProducerCLI {
 					break;
 				case 2:
 					System.out.println("Geben Sie im bitte Ihre neue Nachricht ein.\n"
-						    		 + "Eine mehrzeilige Eingabe ist hierbei möglich."
+						    		 + "Eine mehrzeilige Eingabe ist hierbei möglich.\n"
 						    		 + "Signalisieren Sie das Ende der Nachricht bitte mit 'EOF' in einer neuen Zeile.");
 					StringBuffer m = new StringBuffer();
 					while (scanner.hasNext()) {
