@@ -47,4 +47,5 @@ public interface ConsumerIF {
 	 * @return if the operation was successful
 	 */
 	public boolean deregisterFromServer();
+	public boolean isRegistered();
 }

@@ -7,17 +7,16 @@ public class ConsumerCLI {
 
 	private static ConsumerIF user = null;
 	private static Scanner scanner;
-	private static boolean registered = false;
 
 	public static void main(String[] args) {
 
 		scanner = new Scanner(System.in);
 		boolean exit = false;
-		
+
 		System.out.println("Willkommen zum Consumer Command Line Interface\n"
 						 + "==============================================\n");
 
-		while (true) {
+    while (true) {
 			try {
 				System.out.print("Bitte geben Sie die Adresse des Servers ein (ohne Port): ");
 				user = new Consumer(scanner.nextLine());
@@ -30,35 +29,32 @@ public class ConsumerCLI {
 		}
 
 		while (!exit) {
-			System.out.println("'1' Anmeldung, '2' Abmeldung, '3' Produzentenliste, '4' Abonnieren, '5' Deabonnieren, '6' Liste der Anmeldungen, '7' Beenden");
+  		System.out.println("'1' Anmeldung, '2' Abmeldung, '3' Produzentenliste, '4' Abonnieren, '5' Deabonnieren, '6' Liste der Anmeldungen, '7' Beenden");
 
 			int input = scanner.nextInt();
 			scanner.nextLine(); // Absolutely necessary because nextInt() reads only one int and does not finish the line.
 
 			switch (input) {
 			case 1:
-				if(registered)
+				if(user.isRegistered())
 				{
 					System.out.println("Sie sind bereits angemeldet.");
 					break;
 				}
 				if (user.registerOnServer()) {
 					System.out.println("Der Registrierungprozess war erfolgreich");
-					registered = true;
 				} else {
 					System.out.println("Der Registrierungprozess war leider nicht erfolgreich");
-					registered = false;
 				}
 				break;
 
 			case 2:
-				if(!registered)
+				if(!user.isRegistered())
 				{
 					System.out.println("Sie sind bereits abgemeldet.");
 					break;
 				}
 				user.deregisterFromServer();
-				registered = false;
 				break;
 
 			case 3:
@@ -69,7 +65,7 @@ public class ConsumerCLI {
 				break;
 
 			case 4:
-				if(!registered)
+				if(!user.isRegistered())
 				{
 					System.out.println("Sie müssen sich erst anmelden.");
 					break;
@@ -84,7 +80,7 @@ public class ConsumerCLI {
 				break;
 
 			case 5:
-				if(!registered)
+				if(!user.isRegistered())
 				{
 					System.out.println("Sie müssen sich erst anmelden.");
 					break;
@@ -99,7 +95,7 @@ public class ConsumerCLI {
 				break;
 
 			case 6:
-				if(!registered)
+				if(!user.isRegistered())
 				{
 					System.out.println("Sie müssen sich erst anmelden.");
 					break;
@@ -115,7 +111,7 @@ public class ConsumerCLI {
 				// mehr auf ihn referenziert
 				exit = true;
 				break;
-			default:
+			default;
 				break;
 			}
 		}

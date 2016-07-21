@@ -12,6 +12,7 @@ import java.net.InetAddress;
 
 public class PayloadRegisterConsumer implements Payload, Serializable {
 
+	private boolean success = false;
 	/**
 	 * 
 	 */
@@ -30,9 +31,10 @@ public class PayloadRegisterConsumer implements Payload, Serializable {
 
 	// der Server brauch den namen des Consumers ja gar nicht zu wissen ... kann dem egal sein, wenns ne eindeutige ID gibt
 
-	public PayloadRegisterConsumer(int id, InetAddress multi) {
+	public PayloadRegisterConsumer(int id, InetAddress multi, boolean success) {
 		this.id = id;
 		this.multicastAddress = multi;
+		this.success = success;
 	}
 
 	/**
@@ -41,7 +43,13 @@ public class PayloadRegisterConsumer implements Payload, Serializable {
 	public int getId() {
 		return id;
 	}
+	public boolean getSuccess() {
+		return success;
+	}
 
+	public void setSuccess() {
+		success = true;
+	}
 	/**
 	 * @return the multicastAddress
 	 */
