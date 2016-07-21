@@ -10,7 +10,8 @@ public class ProducerCLI {
 		ProducerIF prod = null;
 		boolean exit = false;
 
-		System.out.println("Herzlich Willkommen\n\n");
+		System.out.println("Willkommen zum Producer Command Line Interface\n"
+						 + "==============================================\n");
 
 		while (true) {
 			try {

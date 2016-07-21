@@ -13,6 +13,9 @@ public class ConsumerCLI {
 
 		scanner = new Scanner(System.in);
 		boolean exit = false;
+		
+		System.out.println("Willkommen zum Consumer Command Line Interface\n"
+						 + "==============================================\n");
 
 		while (true) {
 			try {
