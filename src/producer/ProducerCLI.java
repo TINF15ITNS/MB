@@ -46,6 +46,7 @@ public class ProducerCLI {
 					}
 					break;
 				case 2:
+					System.out.println("Beenden...\n");
 					exit = true;
 					break;
 				default:
@@ -69,12 +70,11 @@ public class ProducerCLI {
 					} else {
 						System.out.println("Die Abmeldung ist leider fehlgeschlagen.");
 					}
-
 					break;
 				case 2:
 					System.out.println("Geben Sie im bitte Ihre neue Nachricht ein.\n"
-							+ "Eine mehrzeilige Eingabe ist hierbei möglich."
-							+ "Signalisieren Sie das Ende der Nachricht bitte mit 'EOF' in einer neuen Zeile.");
+						    		 + "Eine mehrzeilige Eingabe ist hierbei möglich."
+						    		 + "Signalisieren Sie das Ende der Nachricht bitte mit 'EOF' in einer neuen Zeile.");
 					StringBuffer m = new StringBuffer();
 					while (scanner.hasNext()) {
 						String tmp = scanner.nextLine();
@@ -86,24 +86,21 @@ public class ProducerCLI {
 					if (prod.sendMessage(m.toString())) {
 						System.out.println("Die Nachricht ist beim Server eingegangen.");
 					} else {
-						System.out.println("Der Produzent wurde noch nicht am Server registriert");
+						System.out.println("Das Senden der Nachricht ist leider fehlgeschlagen.");
 					}
 					break;
 				case 3:
+					System.out.println("Beenden...\n");
 					exit = true;
 					break;
 				default:
-					System.out.println("Bitte wählen Sie eine der Optionen.");
+					System.out.println("Bitte wählen Sie eine der gegebenen Optionen.");
 					break;
 				}
-
 			}
-			
-
 		}
 		//clean up on exit
 		prod.deregisterFromServer();
 		scanner.close();
 	}
-
 }
