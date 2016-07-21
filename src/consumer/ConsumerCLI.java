@@ -111,7 +111,7 @@ public class ConsumerCLI {
 				// mehr auf ihn referenziert
 				exit = true;
 				break;
-			default;
+			default:
 				break;
 			}
 		}
