@@ -70,7 +70,7 @@ public class Producer implements ProducerIF {
 		} catch (IOException e) {
 			return false;
 		}
-		PayloadMessage pm = (PayloadMessage) answer.getPayload();
+		PayloadBroadcast pm = (PayloadBroadcast) answer.getPayload();
 		if (!pm.getSuccess()) {
 			return false;
 		}

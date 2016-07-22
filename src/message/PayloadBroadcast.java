@@ -2,7 +2,7 @@ package message;
 
 import java.io.Serializable;
 
-public class PayloadMessage implements Payload, Serializable {
+public class PayloadBroadcast implements Payload, Serializable {
 
 	/**
 	 * 
@@ -13,18 +13,18 @@ public class PayloadMessage implements Payload, Serializable {
 	private boolean success = false;
 	
 	
-	public PayloadMessage(String sender, String message) {
+	public PayloadBroadcast(String sender, String message) {
 		this.sender = sender;
 		this.message = message;
 	}
 	
-	public PayloadMessage(String sender, String message, boolean success) {
+	public PayloadBroadcast(String sender, String message, boolean success) {
 		this.sender = sender;
 		this.message = message;
 		this.success = success;
 	}
 	
-	public PayloadMessage(boolean success) {
+	public PayloadBroadcast(boolean success) {
 		this.sender = null;
 		this.message = null;
 		this.success = success;

@@ -168,7 +168,7 @@ public class Consumer implements ConsumerIF {
 		@Override
 		public void run() {
 			// TODO Idee mit Pipes zu arbeiten und dem User ne Möglichkeit zu geben, abzufragen, ob es neue Nachrichten gibt...
-			DatagramPacket dp = Util.getMessageAsDatagrammPacket(new Message(MessageType.Broadcast, new PayloadMessage("", "")), serverAddress, serverPort);
+			DatagramPacket dp = Util.getMessageAsDatagrammPacket(MessageFactory.createBroadcastMessage("", ""), serverAddress, serverPort);
 			while (true) {
 				try {
 					udps.receive(dp);
@@ -186,7 +186,7 @@ public class Consumer implements ConsumerIF {
 						System.out.println("Sie haben eine neue Push-Mitteilung:");
 						// er schreibt ja jetzt einfach raus ... vlt funktioniert dies nicht, weil im hauptthread er gerade auf ne Eingabe wartet ... vlt muss
 						// man dann hier den Hauptthread einschläfern und nach der Ausgabe wieder aufwecken?!
-						PayloadMessage payload = (PayloadMessage) m.getPayload();
+						PayloadBroadcast payload = (PayloadBroadcast) m.getPayload();
 						if (subscriptions.contains(payload.getSender()))
 							System.out.println(payload.getSender() + " meldet: \n" + payload.getMessage());
 						break;

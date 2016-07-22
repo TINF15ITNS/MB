@@ -163,14 +163,14 @@ public class MessageServer implements MessageServerIF {
 		 */
 
 		private Message receiveMessageFromProducer(Message m) {
-			PayloadMessage pm = (PayloadMessage) m.getPayload();
+			PayloadBroadcast pm = (PayloadBroadcast) m.getPayload();
 			// schauen, ob der Absender sich beim Server auch angemeldet hat
 			if (dataProducer.contains(pm.getSender())) {
 				DatagramPacket dp = Util.getMessageAsDatagrammPacket(new Message(MessageType.Broadcast, pm), multicastadr, serverPort);
 				sendMulticastMessage(dp);
-				return new Message(MessageType.Broadcast, new PayloadMessage("Server", null, true));
+				return new Message(MessageType.Broadcast, new PayloadBroadcast("Server", null, true));
 			}
-			return new Message(MessageType.Broadcast, new PayloadMessage("Server", null, false));
+			return new Message(MessageType.Broadcast, new PayloadBroadcast("Server", null, false));
 		}
 
 		/**
@@ -202,8 +202,7 @@ public class MessageServer implements MessageServerIF {
 			PayloadProducer pdp = (PayloadProducer) m.getPayload();
 			PayloadProducer answerPayload = new PayloadProducer(pdp.getName());
 			if (dataProducer.remove(pdp.getName())) {
-				DatagramPacket dp = Util.getMessageAsDatagrammPacket(new Message(MessageType.DeregisterProducer, new PayloadProducer(pdp.getName())),
-						multicastadr, serverPort);
+				DatagramPacket dp = Util.getMessageAsDatagrammPacket(MessageFactory.createDeregisterProducerMsg(pdp.getName()), multicastadr, serverPort);
 				sendMulticastMessage(dp);
 				answerPayload.setSuccess(true);
 				return new Message(MessageType.DeregisterProducer, answerPayload);
