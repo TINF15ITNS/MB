@@ -66,7 +66,9 @@ public class MessageServer implements MessageServerIF {
 
 		@Override
 		public void run() {
-			try (Socket client = s; ObjectOutputStream out = new ObjectOutputStream(client.getOutputStream()); ObjectInputStream in = new ObjectInputStream(client.getInputStream());) {
+			try (Socket client = s;
+					ObjectOutputStream out = new ObjectOutputStream(client.getOutputStream());
+					ObjectInputStream in = new ObjectInputStream(client.getInputStream());) {
 
 				Message m = (Message) in.readObject();
 				Message answer = null;
@@ -113,8 +115,7 @@ public class MessageServer implements MessageServerIF {
 		 * @return response-message
 		 */
 		private Message getProducerList(Message m) {
-			PayloadGetProducerList payload = new PayloadGetProducerList(dataProducer.toArray(new String[0]));
-			return new Message(MessageType.getProducerList, payload);
+			return new Message(MessageType.getProducerList, new PayloadGetProducerList(dataProducer.toArray(new String[0]), true));
 
 		}
 
@@ -160,12 +161,11 @@ public class MessageServer implements MessageServerIF {
 			PayloadMessage pm = (PayloadMessage) m.getPayload();
 			// schauen, ob der Absender sich beim Server auch angemeldet hat
 			if (dataProducer.contains(pm.getSender())) {
-				DatagramPacket dp = Util.getMessageAsDatagrammPacket(new Message(MessageType.Message, new PayloadMessage("Server", pm.getSender() + "meldet: \n" + pm.getMessage())), multicastadr, serverPort);
+				DatagramPacket dp = Util.getMessageAsDatagrammPacket(new Message(MessageType.Message, pm), multicastadr, serverPort);
 				sendMulticastMessage(dp);
-				PayloadMessage pmresp = new PayloadMessage("Server", "ok");
-				return new Message(MessageType.Message, pmresp);
+				return new Message(MessageType.Message, new PayloadMessage("Server", null, true));
 			}
-			return new Message(MessageType.Message, new PayloadMessage("Server", "not registered"));
+			return new Message(MessageType.Message, new PayloadMessage("Server", null, false));
 		}
 
 		/**
@@ -191,14 +191,14 @@ public class MessageServer implements MessageServerIF {
 		 * 
 		 * @param m
 		 *            sended message
-		 * @return response-message, Payload-attribut success is true, if the
-		 *         operation was successful
+		 * @return response-message, Payload-attribut success is true, if the operation was successful
 		 */
 		private Message deregisterProducer(Message m) {
 			PayloadProducer pdp = (PayloadProducer) m.getPayload();
 			PayloadProducer answerPayload = new PayloadProducer(pdp.getName());
 			if (dataProducer.remove(pdp.getName())) {
-				DatagramPacket dp = Util.getMessageAsDatagrammPacket(new Message(MessageType.DeregisterProducer, new PayloadProducer(pdp.getName())), multicastadr, serverPort);
+				DatagramPacket dp = Util.getMessageAsDatagrammPacket(new Message(MessageType.DeregisterProducer, new PayloadProducer(pdp.getName())),
+						multicastadr, serverPort);
 				sendMulticastMessage(dp);
 				answerPayload.setSuccess(true);
 				return new Message(MessageType.DeregisterProducer, answerPayload);
