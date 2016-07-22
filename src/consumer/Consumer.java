@@ -38,22 +38,27 @@ public class Consumer implements ConsumerIF {
 	@Override
 	public boolean registerOnServer() {
 		Message answer;
+
 		try {
 			answer = Util.sendAndGetMessage(new Message(MessageType.RegisterConsumer, null), serverAddress, serverPort);
 		} catch (IOException e) {
-			return false;
+			registered = false;
+			return false; //If there is no connection to the server, the consumer cannot be registered.
 		}
+
 		PayloadRegisterConsumer answerPayload = (PayloadRegisterConsumer) answer.getPayload();
+		if (!answerPayload.getSuccess()) {
+			registered = false;
+			return false; //If the process was unsuccessful the consumer cannot be registered.
+		}
 		this.consumerID = answerPayload.getId();
 		this.mcastadr = answerPayload.getMulticastAddress();
-		// TODO Operation successful?
+		try
 
-		try {
+		{
 			udpSocket = new MulticastSocket();
 			udpSocket.joinGroup(mcastadr);
 		} catch (IOException e) {
-			System.out.println("IOFehler beim Erstellen des MulticastSockets oder beim Einschreiben in die Multicast-Gruppe");
-			e.printStackTrace();
 			registered = false;
 			return false;
 		}
@@ -72,36 +77,38 @@ public class Consumer implements ConsumerIF {
 		} catch (IOException e) {
 			return null;
 		}
-
-		return ((PayloadGetProducerList) answer.getPayload()).getProducers();
+		PayloadGetProducerList answerPayload = (PayloadGetProducerList) answer.getPayload();
+		if (!answerPayload.getSuccess())
+			return null;
+		return (answerPayload.getProducers());
 	}
 
 	@Override
 	public String[] subscribeToProducers(String[] producers) {
 		if (producers == null)
-			throw new IllegalArgumentException("'producers' may not be null");
-
-		List<String> list = new LinkedList<>();
+			return new String[0]; //There are no producers to be subscribed to, so there are none where it was not possible
+		
+		//TODO passt das so?
+		List<String> unsuccessfulProducers = new LinkedList<>();
 		for (String s : producers) {
 			// existiert dieser Producer?
 			if (this.producerList.contains(s)) {
 				subscriptions.add(s);
 			} else {
-				list.add(s);
+				unsuccessfulProducers.add(s);
 			}
 		}
-		return list.toArray(new String[0]);
+		return unsuccessfulProducers.toArray(new String[0]);
 	}
 
 	@Override
 	public String[] getSubscriptions() {
-		return subscriptions.toArray(new String[0]);
+		return subscriptions.toArray(new String[subscriptions.size()]);
 	}
 
 	@Override
 	public String[] unsubscribeFromProducers(String[] producers) {
-		if (producers == null)
-			throw new IllegalArgumentException("'producers' may not be null");
+		if (producers == null) return new String[0]; //There are no producers to be unsubscribed from, so there are none where it was not possible
 
 		List<String> list = new LinkedList<>();
 		for (String s : producers) {
@@ -120,16 +127,14 @@ public class Consumer implements ConsumerIF {
 		} catch (IOException e) {
 			return false;
 		}
-		
 
 		PayloadDeregisterConsumer answerPayload = (PayloadDeregisterConsumer) answer.getPayload();
+		if(!answerPayload.getSuccess()) return false;
 
 		try {
-
 			udpSocket.leaveGroup(mcastadr);
 		} catch (IOException e) {
-			System.out.println("IOFehler beim Verlassen der Mutlicast-Gruppe");
-			e.printStackTrace();//TODO Don't print anything outside of the CLI
+			//TODO return true/false?
 		}
 		registered = !answerPayload.getSuccess();
 		return answerPayload.getSuccess();
