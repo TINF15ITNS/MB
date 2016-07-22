@@ -116,7 +116,7 @@ public class MessageServer implements MessageServerIF {
 		 * In this method the MessageServer offers the available producers
 		 * 
 		 * @param m
-		 *            sended message
+		 *            sent message
 		 * @return response-message
 		 */
 		private Message getProducerList(Message m) {
@@ -128,7 +128,7 @@ public class MessageServer implements MessageServerIF {
 		 * This Method registers the consumers.
 		 * 
 		 * @param m
-		 *            sended message
+		 *            sent message
 		 * @return response-message
 		 */
 		private Message registerConsumer(Message m) {
@@ -177,7 +177,7 @@ public class MessageServer implements MessageServerIF {
 		 * unsubscribes the Consumer, who sent the message, on the server
 		 * 
 		 * @param m
-		 *            sended message
+		 *            sent message
 		 * @return response-message
 		 */
 		private Message deregisterConsumer(Message m) {
@@ -195,7 +195,7 @@ public class MessageServer implements MessageServerIF {
 		 * unsubscribes the producer, who sent the message, on the server
 		 * 
 		 * @param m
-		 *            sended message
+		 *            sent message
 		 * @return response-message, Payload-attribut success is true, if the operation was successful
 		 */
 		private Message deregisterProducer(Message m) {
