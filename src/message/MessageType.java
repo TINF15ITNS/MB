@@ -9,7 +9,7 @@ public enum MessageType {
 	RegisterConsumer,
 	DeregisterConsumer,
 	getProducerList,
-	Message,
+	Broadcast,
 	RegisterProducer,
 	DeregisterProducer
 }

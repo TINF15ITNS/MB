@@ -85,7 +85,7 @@ public class MessageServer implements MessageServerIF {
 				case DeregisterProducer:
 					answer = deregisterProducer(m);
 					break;
-				case Message:
+				case Broadcast:
 					answer = receiveMessageFromProducer(m);
 					break;
 				case RegisterConsumer:
@@ -166,11 +166,11 @@ public class MessageServer implements MessageServerIF {
 			PayloadMessage pm = (PayloadMessage) m.getPayload();
 			// schauen, ob der Absender sich beim Server auch angemeldet hat
 			if (dataProducer.contains(pm.getSender())) {
-				DatagramPacket dp = Util.getMessageAsDatagrammPacket(new Message(MessageType.Message, pm), multicastadr, serverPort);
+				DatagramPacket dp = Util.getMessageAsDatagrammPacket(new Message(MessageType.Broadcast, pm), multicastadr, serverPort);
 				sendMulticastMessage(dp);
-				return new Message(MessageType.Message, new PayloadMessage("Server", null, true));
+				return new Message(MessageType.Broadcast, new PayloadMessage("Server", null, true));
 			}
-			return new Message(MessageType.Message, new PayloadMessage("Server", null, false));
+			return new Message(MessageType.Broadcast, new PayloadMessage("Server", null, false));
 		}
 
 		/**
