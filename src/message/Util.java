@@ -56,17 +56,17 @@ public class Util {
 			m = (Message) objIn.readObject();
 		} catch (ClassNotFoundException e) {
 			System.out.println("Beim Lesen des Objektes ist ein fehler aufgetreten");
-			e.printStackTrace();
+			e.printStackTrace(); //TODO remove/replace
 		} catch (IOException e) {
 			System.out.println("IOFehler beim ermitteln der Message ausm DatagramPacket");
-			e.printStackTrace();
+			e.printStackTrace(); //TODO remove/replace
 		} finally {
 			if (objIn != null)
 				try {
 					objIn.close();
 				} catch (IOException e) {
 					System.out.println("Fehler beim closen vonm ObjectInputStream");
-					e.printStackTrace();
+					e.printStackTrace(); //TODO remove/replace
 				}
 		}
 		return m;
