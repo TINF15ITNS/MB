@@ -142,7 +142,7 @@ public class Consumer implements ConsumerIF {
 		try {
 			udpSocket.leaveGroup(mcastadr);
 		} catch (IOException e) {
-			//TODO return true/false?
+			return false;
 		}
 		registered = !answerPayload.getSuccess();
 		return answerPayload.getSuccess();
