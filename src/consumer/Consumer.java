@@ -37,9 +37,12 @@ public class Consumer implements ConsumerIF {
 
 	@Override
 	public boolean registerOnServer() {
-
-		Message answer = Util.sendAndGetMessage(new Message(MessageType.RegisterConsumer, null), serverAddress, serverPort);
-
+		Message answer;
+		try {
+			answer = Util.sendAndGetMessage(new Message(MessageType.RegisterConsumer, null), serverAddress, serverPort);
+		} catch (IOException e) {
+			return false;
+		}
 		PayloadRegisterConsumer answerPayload = (PayloadRegisterConsumer) answer.getPayload();
 		this.consumerID = answerPayload.getId();
 		this.mcastadr = answerPayload.getMulticastAddress();
@@ -63,12 +66,14 @@ public class Consumer implements ConsumerIF {
 
 	@Override
 	public String[] getProducers() {
-
-		Message answer = Util.sendAndGetMessage(MessageFactory.createRequestProducerListMsg(), serverAddress, serverPort);
-		for (String s : ((PayloadGetProducerList) answer.getPayload()).getProducers()) {
-			producerList.add(s);
+		Message answer;
+		try {
+			answer = Util.sendAndGetMessage(MessageFactory.createRequestProducerListMsg(), serverAddress, serverPort);
+		} catch (IOException e) {
+			return null;
 		}
-		return producerList.toArray(new String[0]);
+
+		return ((PayloadGetProducerList) answer.getPayload()).getProducers();
 	}
 
 	@Override
@@ -109,8 +114,13 @@ public class Consumer implements ConsumerIF {
 
 	@Override
 	public boolean deregisterFromServer() {
-		Message answer = Util.sendAndGetMessage(new Message(MessageType.DeregisterConsumer, new PayloadDeregisterConsumer(consumerID)), serverAddress,
-				serverPort);
+		Message answer;
+		try {
+			answer = Util.sendAndGetMessage(new Message(MessageType.DeregisterConsumer, new PayloadDeregisterConsumer(consumerID)), serverAddress, serverPort);
+		} catch (IOException e) {
+			return false;
+		}
+		
 
 		PayloadDeregisterConsumer answerPayload = (PayloadDeregisterConsumer) answer.getPayload();
 
@@ -124,14 +134,15 @@ public class Consumer implements ConsumerIF {
 		registered = !answerPayload.getSuccess();
 		return answerPayload.getSuccess();
 	}
-	
+
 	public boolean isRegistered() {
 		return registered;
 	}
 
 	/**
 	 * 
-	 * The class is listening for messages from the server and prints them on the console
+	 * The class is listening for messages from the server and prints them on
+	 * the console
 	 *
 	 */
 	private class WaitForMessage implements Runnable {
@@ -153,8 +164,7 @@ public class Consumer implements ConsumerIF {
 					switch (m.getType()) {
 					case DeregisterProducer:
 						PayloadProducer pp = (PayloadProducer) m.getPayload();
-						System.out.println("Der Producer " + pp.getName()
-								+ " hat den Dienst eingestellt. Sie können leider keine Push-Nachrichten mehr von ihm erhalten...");
+						System.out.println("Der Producer " + pp.getName() + " hat den Dienst eingestellt. Sie können leider keine Push-Nachrichten mehr von ihm erhalten...");
 						producerList.remove(pp.getName());
 						subscriptions.remove(pp.getName());
 						break;

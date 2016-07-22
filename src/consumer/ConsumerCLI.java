@@ -59,7 +59,10 @@ public class ConsumerCLI {
 
 			case 3:
 				System.out.println("Verfügbare Produzenten:");
-				for (String p : user.getProducers()) {
+				
+				String[] producers = user.getProducers();
+				
+				for (String p : producers) {
 					System.out.println("\t" + p);
 				}
 				break;
