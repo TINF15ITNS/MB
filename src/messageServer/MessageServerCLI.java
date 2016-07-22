@@ -1,5 +1,13 @@
+/**
+ * 
+ */
 package messageServer;
 
+/**
+ * 
+ * @author Nikolai Seip, Sebastian Mattheis, Fabian Hinz
+ *
+ */
 public class MessageServerCLI {
 	
 	public static void main(String[] args) {

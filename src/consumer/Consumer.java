@@ -1,3 +1,6 @@
+/**
+ * 
+ */
 package consumer;
 
 import java.io.*;
@@ -8,6 +11,11 @@ import java.util.List;
 
 import message.*;
 
+/**
+ * 
+ * @author Nikolai Seip, Sebastian Mattheis, Fabian Hinz
+ *
+ */
 public class Consumer implements ConsumerIF {
 	private static int serverPort = 55555;
 	private int consumerID;

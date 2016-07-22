@@ -1,3 +1,6 @@
+/**
+ * 
+ */
 package messageServer;
 
 import java.io.IOException;
@@ -8,6 +11,11 @@ import java.util.HashSet;
 
 import message.*;
 
+/**
+ * 
+ * @author Nikolai Seip, Sebastian Mattheis, Fabian Hinz
+ *
+ */
 public class MessageServer implements MessageServerIF {
 
 	private final int serverPort;
