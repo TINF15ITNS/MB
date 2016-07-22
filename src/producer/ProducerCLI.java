@@ -1,3 +1,6 @@
+/**
+ * 
+ */
 package producer;
 
 import java.io.IOException;
@@ -9,10 +12,13 @@ import java.util.Scanner;
  *
  */
 public class ProducerCLI {
+	
+	private static ProducerIF prod = null;
+	private static Scanner scanner;
 
 	public static void main(String[] args) {
-		Scanner scanner = new Scanner(System.in);
-		ProducerIF prod = null;
+		
+		scanner = new Scanner(System.in);
 		boolean exit = false;
 
 		System.out.println("Willkommen zum Producer Command Line Interface\n"
@@ -58,9 +64,7 @@ public class ProducerCLI {
 					System.out.println("Bitte wählen Sie eine der gegebenen Optionen.");
 					break;
 				}
-
 			}
-			
 			else {
 				System.out.println("(1) Abmeldung vom Server\n"
 								 + "(2) Sende Nachricht\n"
