@@ -102,34 +102,35 @@ public class ConsumerCLI {
 					else {
 						System.out.println("Verfügbare Produzenten:");
 						for (String p : producers) {
-							System.out.println("\t" + p);
+							System.out.println("* " + p + "\n");
 						}
 					}
 					break;
 				case 3:
-					System.out.print("Welche Produzenten (bitte mit Kommatas trennen) sollen abonniert werden? ");
+					System.out.print("Welche Produzenten möchten Sie abonnieren?\n"
+								   + "(Bei mehreren bitte mit Komma trennen.)");
 					String[] failedSubscriptions = user.subscribeToProducers(scanner.nextLine().trim().replaceAll(" +", "").split(","));
 					if (failedSubscriptions.length > 0) {
-						System.out.println("Es war nicht möglich, sich für die folgenden Produzenten zu abonnieren:");
+						System.out.println("Es war nicht möglich, die folgenden Produzenten zu abonnieren:");
 						for (String producer : failedSubscriptions) {
-							System.out.println("\t" + producer);
+							System.out.println("* " + producer + "\n");
 						}
 					}
 					break;
 				case 4:
-					System.out.print("Welche Produzenten (bitte mit Kommatas trennen) sollen deabonniert werden? ");
+					System.out.print("Welchen Produzenten soll das Abonnement gekündigt werden?");
 					String[] failedUnsubscriptions = user.unsubscribeFromProducers(scanner.nextLine().trim().replaceAll(" +", "").split(","));
 					if (failedUnsubscriptions.length > 0) {
-						System.out.println("Sie konnten sich nicht für die folgenden Produzenten deabonnieren:");
+						System.out.println("Sie konnten folgenden Produzenten nicht kündigen:");
 						for (String producer : failedUnsubscriptions) {
-							System.out.println("\t" + producer);
+							System.out.println("* " + producer + "\n");
 						}
 					}
 					break;
 				case 5:
 					System.out.println("Ihre Abos:");
 					for (String s3 : user.getSubscriptions()) {
-						System.out.println("\t" + s3);
+						System.out.println("* " + s3 + "\n");
 					}
 					break;
 				case 6:
