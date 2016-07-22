@@ -4,6 +4,10 @@ import java.io.Serializable;
 
 public class PayloadProducer implements Payload, Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private final String name;
 	private boolean success = false;
 
