@@ -12,11 +12,9 @@ import java.net.InetAddress;
 
 public class PayloadRegisterConsumer implements Payload, Serializable {
 
-	private boolean success = false;
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
+
+	private boolean success = false;
 
 	/**
 	 * The consumer requests an id from the server. At the request-message the ID-attribut of consumer hasn't been set yet. But with the response-Message the
@@ -29,14 +27,12 @@ public class PayloadRegisterConsumer implements Payload, Serializable {
 	 */
 	private final InetAddress multicastAddress;
 
-	// der Server brauch den namen des Consumers ja gar nicht zu wissen ... kann dem egal sein, wenns ne eindeutige ID gibt
-
 	public PayloadRegisterConsumer(int id, InetAddress multi, boolean success) {
 		this.id = id;
 		this.multicastAddress = multi;
 		this.success = success;
 	}
-	
+
 	public PayloadRegisterConsumer(boolean success) {
 		this.id = 0;
 		this.multicastAddress = null;
@@ -61,10 +57,10 @@ public class PayloadRegisterConsumer implements Payload, Serializable {
 	public boolean getSuccess() {
 		return success;
 	}
-	
+
 	@Override
 	public void setSuccess(boolean success) {
-		this.success = success;		
+		this.success = success;
 	}
 
 }
