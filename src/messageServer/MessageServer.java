@@ -38,7 +38,7 @@ public class MessageServer implements MessageServerIF {
 	}
 
 	/**
-	 * waits for Messages from Producers or Consumers
+	 * waits for messages from producers or consumers
 	 */
 	// TODO MessageServer beendbar machen
 	@Override
@@ -111,7 +111,7 @@ public class MessageServer implements MessageServerIF {
 		}
 
 		/**
-		 * In this Method the MessageServer offers the available Producers
+		 * In this method the MessageServer offers the available producers
 		 * 
 		 * @param m
 		 *            sended message
@@ -137,10 +137,10 @@ public class MessageServer implements MessageServerIF {
 		}
 
 		/**
-		 * This Method accepts the register-messages and saves the producer.
+		 * This method accepts the register-messages and saves the producer.
 		 * 
 		 * @param m
-		 *            sended message
+		 *            sent message
 		 * @return response-message
 		 */
 		private Message registerProducer(Message m) {
@@ -154,10 +154,10 @@ public class MessageServer implements MessageServerIF {
 		}
 
 		/**
-		 * this method forwards the messages of the Producers to the Consumers
+		 * This method forwards the messages of the producers to the consumers.
 		 * 
 		 * @param m
-		 *            sended message
+		 *            sent message
 		 * @return response-message
 		 */
 
