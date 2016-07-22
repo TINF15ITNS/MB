@@ -13,10 +13,9 @@ public class ConsumerCLI {
 		scanner = new Scanner(System.in);
 		boolean exit = false;
 
-		System.out.println("Willkommen zum Consumer Command Line Interface\n"
-						 + "==============================================\n");
+		System.out.println("Willkommen zum Consumer Command Line Interface\n" + "==============================================\n");
 
-    while (true) {
+		while (true) {
 			try {
 				System.out.print("Bitte geben Sie die Adresse des Servers ein (ohne Port): ");
 				user = new Consumer(scanner.nextLine());
@@ -29,15 +28,14 @@ public class ConsumerCLI {
 		}
 
 		while (!exit) {
-  		System.out.println("'1' Anmeldung, '2' Abmeldung, '3' Produzentenliste, '4' Abonnieren, '5' Deabonnieren, '6' Liste der Anmeldungen, '7' Beenden");
+			System.out.println("'1' Anmeldung, '2' Abmeldung, '3' Produzentenliste, '4' Abonnieren, '5' Deabonnieren, '6' Liste der Anmeldungen, '7' Beenden");
 
 			int input = scanner.nextInt();
 			scanner.nextLine(); // Absolutely necessary because nextInt() reads only one int and does not finish the line.
 
 			switch (input) {
 			case 1:
-				if(user.isRegistered())
-				{
+				if (user.isRegistered()) {
 					System.out.println("Sie sind bereits angemeldet.");
 					break;
 				}
@@ -49,8 +47,7 @@ public class ConsumerCLI {
 				break;
 
 			case 2:
-				if(!user.isRegistered())
-				{
+				if (!user.isRegistered()) {
 					System.out.println("Sie sind bereits abgemeldet.");
 					break;
 				}
@@ -58,48 +55,52 @@ public class ConsumerCLI {
 				break;
 
 			case 3:
-				System.out.println("Verfügbare Produzenten:");
-				
 				String[] producers = user.getProducers();
-				
-				for (String p : producers) {
-					System.out.println("\t" + p);
+
+				if (producers == null)
+					System.out.println("Felhler bei der Abfrage der Produzenten");
+				else if (producers.length == 0)
+					System.out.println("Keine Produzenten verfügbar.");
+				else {
+					System.out.println("Verfügbare Produzenten:");
+					for (String p : producers) {
+						System.out.println("\t" + p);
+					}
 				}
 				break;
 
 			case 4:
-				if(!user.isRegistered())
-				{
+				if (!user.isRegistered()) {
 					System.out.println("Sie müssen sich erst anmelden.");
 					break;
 				}
 				System.out.print("Welche Produzenten (bitte mit Kommatas trennen) sollen abonniert werden? ");
-				String[] failedSubscriptions = user.subscribeToProducers(scanner.nextLine().replaceAll("\\s+", "").split(","));
-				if (failedSubscriptions.length != 0)
+				String[] failedSubscriptions = user.subscribeToProducers(scanner.nextLine().replaceAll("\\s+", "").split(",")); //TODO Passt die Eingabe hier wirklich?
+				if (failedSubscriptions.length > 0) {
 					System.out.println("Es war nicht möglich, sich für die folgenden Produzenten zu abonnieren:");
-				for (String producer : failedSubscriptions) {
-					System.out.println("\t" + producer);
+					for (String producer : failedSubscriptions) {
+						System.out.println("\t" + producer);
+					}
 				}
 				break;
 
 			case 5:
-				if(!user.isRegistered())
-				{
+				if (!user.isRegistered()) {
 					System.out.println("Sie müssen sich erst anmelden.");
 					break;
 				}
 				System.out.print("Welche Produzenten (bitte mit Kommatas trennen) sollen deabonniert werden? ");
-				String[] failedUnsubscriptions = user.unsubscribeFromProducers(scanner.nextLine().replaceAll("\\s+", "").split(","));
-				if (failedUnsubscriptions.length != 0)
+				String[] failedUnsubscriptions = user.unsubscribeFromProducers(scanner.nextLine().replaceAll("\\s+", "").split(",")); //TODO Passt die Eingabe hier wirklich?
+				if (failedUnsubscriptions.length > 0) {
 					System.out.println("Sie konnten sich nicht für die folgenden Produzenten deabonnieren:");
-				for (String producer : failedUnsubscriptions) {
-					System.out.println("\t" + producer);
+					for (String producer : failedUnsubscriptions) {
+						System.out.println("\t" + producer);
+					}
 				}
 				break;
 
 			case 6:
-				if(!user.isRegistered())
-				{
+				if (!user.isRegistered()) {
 					System.out.println("Sie müssen sich erst anmelden.");
 					break;
 				}
