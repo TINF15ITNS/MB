@@ -11,27 +11,27 @@ public class PayloadDeregisterConsumer implements Payload, Serializable {
 	/**
 	 * ID of the sender of this message
 	 */
-	private final int senderID;
+	private final int id;
 
-	public PayloadDeregisterConsumer(int senderID) {
-		this.senderID = senderID;
+	public PayloadDeregisterConsumer(int id) {
+		this.id = id;
 	}
 
-	public PayloadDeregisterConsumer(int senderID, boolean success) {
-		this.senderID = senderID;
+	public PayloadDeregisterConsumer(int id, boolean success) {
+		this.id = id;
 		this.success = success;
 	}
 
 	public PayloadDeregisterConsumer(boolean success) {
-		this.senderID = 0;
+		this.id = 0;
 		this.success = success;
 	}
 
 	/**
-	 * @return the senderID
+	 * @return the ID
 	 */
-	public int getSenderID() {
-		return senderID;
+	public int getID() {
+		return id;
 	}
 
 	@Override
