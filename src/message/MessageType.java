@@ -6,5 +6,10 @@ package message;
  *
  */
 public enum MessageType {
-	RegisterConsumer, DeregisterConsumer, getProducerList, Message, RegisterProducer, DeregisterProducer
+	RegisterConsumer,
+	DeregisterConsumer,
+	getProducerList,
+	Message,
+	RegisterProducer,
+	DeregisterProducer
 }
