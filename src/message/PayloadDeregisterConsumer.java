@@ -3,16 +3,13 @@ package message;
 import java.io.Serializable;
 
 public class PayloadDeregisterConsumer implements Payload, Serializable {
-	private boolean success = false;
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
 
+	private boolean success = false;
+
 	/**
-	 * Bei der Antwort vom Server soll die Id 0 sein, da nicht mehr existent.
-	 * L�uft beim Server iwas schief, sprich er kann den konsument nicht
-	 * abmelden, dann sendet er als Antwort die bisher g�ltige ID zur�ck
+	 * ID of the sender of this message
 	 */
 	private final int senderID;
 
