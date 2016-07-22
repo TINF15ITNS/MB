@@ -19,46 +19,72 @@ public class Producer implements ProducerIF {
 		if (!Util.testConnection(serverAddress, serverPort, 1000))
 			throw new IOException("There is no server at the given address");
 		String[] producers = getProducers();
-		for (String n : producers) {
-			if (n.equalsIgnoreCase(name))
-				throw new IllegalArgumentException("This producer name is already taken");
+		if (producers != null) {
+			for (String n : producers) {
+				if (n.equalsIgnoreCase(name))
+					throw new IllegalArgumentException("This producer name is already taken");
+			}
+			this.name = name;
+		} else {
+			throw new IOException("No server reachable");
 		}
-		this.name = name;
 	}
 
 	public boolean registerOnServer() {
-		Message answer = Util.sendAndGetMessage(MessageFactory.createRegisterProducerMsg(name), serverAddress, serverPort);
+		Message answer;
+		try {
+			answer = Util.sendAndGetMessage(MessageFactory.createRegisterProducerMsg(name), serverAddress, serverPort);
+		} catch (IOException e) {
+			return false;
+		}
 		PayloadProducer answerPayload = (PayloadProducer) answer.getPayload();
-		if (answerPayload.getSuccess() == true) { registered = true; return true; }
-		else return false;
+		if (answerPayload.getSuccess() == true) {
+			registered = true;
+			return true;
+		} else
+			return false;
 	}
 
 	public boolean deregisterFromServer() {
-		Message answer = Util.sendAndGetMessage(MessageFactory.createDeregisterProducerMsg(name), serverAddress, serverPort);
+		Message answer;
+		try {
+			answer = Util.sendAndGetMessage(MessageFactory.createDeregisterProducerMsg(name), serverAddress, serverPort);
+		} catch (IOException e) {
+			return false;
+		}
 		PayloadProducer answerPayload = (PayloadProducer) answer.getPayload();
-		if (answerPayload.getSuccess() == true) { registered = false; return true; }
-		else return false;
+		if (answerPayload.getSuccess() == true) {
+			registered = false;
+			return true;
+		} else
+			return false;
 	}
 
 	public boolean sendMessage(String msg) {
-		Message answer = Util.sendAndGetMessage(MessageFactory.createBroadcastMessage(name, msg), serverAddress, serverPort);
-		PayloadMessage pm = (PayloadMessage) answer.getPayload();
-		switch (pm.getMessage()) {
-		case "not registered":
+		Message answer;
+		try {
+			answer = Util.sendAndGetMessage(MessageFactory.createBroadcastMessage(name, msg), serverAddress, serverPort);
+		} catch (IOException e) {
 			return false;
-		case "ok":
-			return true;
-		default:
-			throw new RuntimeException("Test in Antwortmessage nicht interpretierbar");
 		}
+		PayloadMessage pm = (PayloadMessage) answer.getPayload();
+		if (!pm.getSuccess()) {
+			return false;
+		}
+		return true;
 	}
-	
+
 	public boolean isRegistered() {
 		return registered;
 	}
 
 	private String[] getProducers() {
-		Message answer = Util.sendAndGetMessage(MessageFactory.createRequestProducerListMsg(), serverAddress, serverPort);
+		Message answer;
+		try {
+			answer = Util.sendAndGetMessage(MessageFactory.createRequestProducerListMsg(), serverAddress, serverPort);
+		} catch (IOException e) {
+			return null;
+		}
 		return ((PayloadGetProducerList) answer.getPayload()).getProducers();
 	}
 }
