@@ -7,7 +7,7 @@ import java.net.InetAddress;
  * 
  * a message of the type MessageType.registerOnServer contains as payload an object of this class
  * 
- * @author Nikolai
+ * @author Nikolai Seip, Sebastian Mattheis, Fabian Hinz
  */
 
 public class PayloadRegisterConsumer implements Payload, Serializable {
@@ -25,7 +25,7 @@ public class PayloadRegisterConsumer implements Payload, Serializable {
 	private final int id;
 
 	/**
-	 * Same as attribut id
+	 * Same as attribute id
 	 */
 	private final InetAddress multicastAddress;
 
@@ -36,6 +36,12 @@ public class PayloadRegisterConsumer implements Payload, Serializable {
 		this.multicastAddress = multi;
 		this.success = success;
 	}
+	
+	public PayloadRegisterConsumer(boolean success) {
+		this.id = 0;
+		this.multicastAddress = null;
+		this.success = success;
+	}
 
 	/**
 	 * @return the id. This is the information carried by this message.
@@ -43,18 +49,22 @@ public class PayloadRegisterConsumer implements Payload, Serializable {
 	public int getId() {
 		return id;
 	}
-	public boolean getSuccess() {
-		return success;
-	}
 
-	public void setSuccess() {
-		success = true;
-	}
 	/**
 	 * @return the multicastAddress
 	 */
 	public InetAddress getMulticastAddress() {
 		return multicastAddress;
+	}
+
+	@Override
+	public boolean getSuccess() {
+		return success;
+	}
+	
+	@Override
+	public void setSuccess(boolean success) {
+		this.success = success;		
 	}
 
 }

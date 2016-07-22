@@ -143,7 +143,7 @@ public class MessageServer implements MessageServerIF {
 			PayloadProducer ppresp = new PayloadProducer(pp.getName());
 			if (!dataProducer.contains(pp.getName())) {
 				dataProducer.add(pp.getName());
-				ppresp.setSuccess();
+				ppresp.setSuccess(true);
 			}
 			return new Message(MessageType.RegisterProducer, ppresp);
 		}
@@ -200,7 +200,7 @@ public class MessageServer implements MessageServerIF {
 			if (dataProducer.remove(pdp.getName())) {
 				DatagramPacket dp = Util.getMessageAsDatagrammPacket(new Message(MessageType.DeregisterProducer, new PayloadProducer(pdp.getName())), multicastadr, serverPort);
 				sendMulticastMessage(dp);
-				answerPayload.setSuccess();
+				answerPayload.setSuccess(true);
 				return new Message(MessageType.DeregisterProducer, answerPayload);
 			} else {
 				return new Message(MessageType.DeregisterProducer, answerPayload);

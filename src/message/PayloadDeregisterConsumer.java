@@ -2,8 +2,7 @@ package message;
 
 import java.io.Serializable;
 
-public class PayloadDeregisterConsumer implements Payload, Serializable
-{
+public class PayloadDeregisterConsumer implements Payload, Serializable {
 	private boolean success = false;
 	/**
 	 * 
@@ -17,19 +16,16 @@ public class PayloadDeregisterConsumer implements Payload, Serializable
 	 */
 	private final int senderID;
 
-	public PayloadDeregisterConsumer(int senderID)
-	{
+	public PayloadDeregisterConsumer(int senderID) {
 		this.senderID = senderID;
 	}
 
-	public PayloadDeregisterConsumer(int senderID, boolean success)
-	{
+	public PayloadDeregisterConsumer(int senderID, boolean success) {
 		this.senderID = senderID;
 		this.success = success;
 	}
 
-	public PayloadDeregisterConsumer(boolean success)
-	{
+	public PayloadDeregisterConsumer(boolean success) {
 		this.senderID = 0;
 		this.success = success;
 	}
@@ -37,18 +33,18 @@ public class PayloadDeregisterConsumer implements Payload, Serializable
 	/**
 	 * @return the senderID
 	 */
-	public int getSenderID()
-	{
+	public int getSenderID() {
 		return senderID;
 	}
 
-	public boolean getSuccess()
-	{
+	@Override
+	public boolean getSuccess() {
 		return success;
 	}
 
-	public void setSuccess()
-	{
-		success = true;
+	@Override
+	public void setSuccess(boolean success) {
+		this.success = success;
 	}
+
 }
