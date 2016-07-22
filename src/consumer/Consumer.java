@@ -21,6 +21,7 @@ public class Consumer implements ConsumerIF {
 	private InetAddress serverAddress;
 	private HashSet<String> subscriptions;
 	MulticastSocket udpSocket = null;
+	PipedReader pr;
 
 	/**
 	 * Used to interact with a MessageServer
@@ -46,13 +47,13 @@ public class Consumer implements ConsumerIF {
 			answer = Util.sendAndGetMessage(new Message(MessageType.RegisterConsumer, null), serverAddress, serverPort);
 		} catch (IOException e) {
 			registered = false;
-			return false; //If there is no connection to the server, the consumer cannot be registered.
+			return false; // If there is no connection to the server, the consumer cannot be registered.
 		}
 
 		PayloadRegisterConsumer answerPayload = (PayloadRegisterConsumer) answer.getPayload();
 		if (!answerPayload.getSuccess()) {
 			registered = false;
-			return false; //If the process was unsuccessful the consumer cannot be registered.
+			return false; // If the process was unsuccessful the consumer cannot be registered.
 		}
 		this.consumerID = answerPayload.getId();
 		this.mcastadr = answerPayload.getMulticastAddress();
@@ -66,6 +67,7 @@ public class Consumer implements ConsumerIF {
 			return false;
 		}
 
+		pr = new PipedReader();
 		Thread t = new Thread(new WaitForMessage(udpSocket));
 		t.start();
 		registered = answerPayload.getSuccess();
@@ -89,9 +91,9 @@ public class Consumer implements ConsumerIF {
 	@Override
 	public String[] subscribeToProducers(String[] producers) {
 		if (producers == null)
-			return new String[0]; //There are no producers to be subscribed to, so there are none where it was not possible
-		
-		//TODO passt das so?
+			return new String[0]; // There are no producers to be subscribed to, so there are none where it was not possible
+
+		// TODO passt das so?
 		List<String> unsuccessfulProducers = new LinkedList<>();
 		HashSet<String> actualProducers = getProducers();
 		for (String s : producers) {
@@ -112,7 +114,8 @@ public class Consumer implements ConsumerIF {
 
 	@Override
 	public String[] unsubscribeFromProducers(String[] producers) {
-		if (producers == null) return new String[0]; //There are no producers to be unsubscribed from, so there are none where it was not possible
+		if (producers == null)
+			return new String[0]; // There are no producers to be unsubscribed from, so there are none where it was not possible
 
 		List<String> list = new LinkedList<>();
 		for (String s : producers) {
@@ -133,7 +136,8 @@ public class Consumer implements ConsumerIF {
 		}
 
 		PayloadDeregisterConsumer answerPayload = (PayloadDeregisterConsumer) answer.getPayload();
-		if(!answerPayload.getSuccess()) return false;
+		if (!answerPayload.getSuccess())
+			return false;
 
 		try {
 			udpSocket.leaveGroup(mcastadr);
@@ -148,22 +152,45 @@ public class Consumer implements ConsumerIF {
 		return registered;
 	}
 
+	@Override
+	public String getNewBroadcasts() {
+		StringBuffer s = new StringBuffer("Ihre neuen Nachrichten: \n\n");
+		try {
+			while (pr.ready()) {
+				s.append((char) pr.read());
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		s.append("\n\n");
+		return s.toString();
+	}
+
 	/**
 	 * 
-	 * The class is listening for messages from the server and prints them on
-	 * the console
+	 * The class is listening for messages from the server and prints them on the console
 	 *
 	 */
 	private class WaitForMessage implements Runnable {
 		private MulticastSocket udps;
 
+		private PipedWriter pw;
+
 		public WaitForMessage(MulticastSocket udps) {
 			this.udps = udps;
+			pw = new PipedWriter();
+			try {
+				pw.connect(pr);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				// kann nicht auftreten
+				e.printStackTrace();
+			}
 		}
 
 		@Override
 		public void run() {
-			// TODO Idee mit Pipes zu arbeiten und dem User ne Möglichkeit zu geben, abzufragen, ob es neue Nachrichten gibt...
 			DatagramPacket dp = Util.getMessageAsDatagrammPacket(MessageFactory.createBroadcastMessage("", ""), serverAddress, serverPort);
 			while (true) {
 				try {
@@ -173,16 +200,16 @@ public class Consumer implements ConsumerIF {
 					switch (m.getType()) {
 					case DeregisterProducer:
 						PayloadProducer pp = (PayloadProducer) m.getPayload();
-						System.out.println("Der Producer " + pp.getName() + " hat den Dienst eingestellt. Sie können leider keine Push-Nachrichten mehr von ihm erhalten...");
+						pw.write("Der Producer " + pp.getName()
+								+ " hat den Dienst eingestellt. Sie können leider keine Push-Nachrichten mehr von ihm erhalten...");
 						subscriptions.remove(pp.getName());
 						break;
 					case Broadcast:
-						System.out.println("Sie haben eine neue Push-Mitteilung:");
-						// er schreibt ja jetzt einfach raus ... vlt funktioniert dies nicht, weil im hauptthread er gerade auf ne Eingabe wartet ... vlt muss
-						// man dann hier den Hauptthread einschläfern und nach der Ausgabe wieder aufwecken?!
 						PayloadBroadcast payload = (PayloadBroadcast) m.getPayload();
-						if (subscriptions.contains(payload.getSender()))
-							System.out.println(payload.getSender() + " meldet: \n" + payload.getMessage());
+						if (subscriptions.contains(payload.getSender())) {
+							pw.write("Sie haben eine neue Push-Mitteilung:");
+							pw.write(payload.getSender() + " meldet: \n" + payload.getMessage());
+						}
 						break;
 
 					default:
