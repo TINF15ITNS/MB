@@ -15,7 +15,7 @@ public class Producer implements ProducerIF {
 	private InetAddress serverAddress;
 
 	public Producer(String name, String address) throws IllegalArgumentException, IOException {
-		this.serverAddress = InetAddress.getByName(address);
+		this.serverAddress = InetAddress.getByName(address.trim());
 		if (!Util.testConnection(serverAddress, serverPort, 1000))
 			throw new IOException("There is no server at the given address");
 		String[] producers = getProducers();

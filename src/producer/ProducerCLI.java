@@ -27,7 +27,7 @@ public class ProducerCLI {
 		while (true) {
 			try {
 				System.out.println("Bitte geben Sie den Produzentennamen ein:");
-				String n = scanner.nextLine();
+				String n = scanner.nextLine().trim();
 				System.out.print("Bitte geben Sie die Adresse des Servers ein (ohne Port): ");
 				String addr = scanner.nextLine();
 				prod = new Producer(n, addr);

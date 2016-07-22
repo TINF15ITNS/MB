@@ -108,7 +108,7 @@ public class ConsumerCLI {
 					break;
 				case 3:
 					System.out.print("Welche Produzenten (bitte mit Kommatas trennen) sollen abonniert werden? ");
-					String[] failedSubscriptions = user.subscribeToProducers(scanner.nextLine().trim().replaceAll(" +", "").split(",")); //TODO Passt die Eingabe hier wirklich?
+					String[] failedSubscriptions = user.subscribeToProducers(scanner.nextLine().trim().replaceAll(" +", "").split(","));
 					if (failedSubscriptions.length > 0) {
 						System.out.println("Es war nicht möglich, sich für die folgenden Produzenten zu abonnieren:");
 						for (String producer : failedSubscriptions) {
@@ -118,7 +118,7 @@ public class ConsumerCLI {
 					break;
 				case 4:
 					System.out.print("Welche Produzenten (bitte mit Kommatas trennen) sollen deabonniert werden? ");
-					String[] failedUnsubscriptions = user.unsubscribeFromProducers(scanner.nextLine().replaceAll("\\s+", "").split(",")); //TODO Passt die Eingabe hier wirklich?
+					String[] failedUnsubscriptions = user.unsubscribeFromProducers(scanner.nextLine().trim().replaceAll(" +", "").split(","));
 					if (failedUnsubscriptions.length > 0) {
 						System.out.println("Sie konnten sich nicht für die folgenden Produzenten deabonnieren:");
 						for (String producer : failedUnsubscriptions) {
