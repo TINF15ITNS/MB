@@ -183,7 +183,7 @@ public class MessageServer implements MessageServerIF {
 		private Message deregisterConsumer(Message m) {
 			PayloadDeregisterConsumer pdc = (PayloadDeregisterConsumer) m.getPayload();
 			// if the removing-operation
-			if (dataConsumer.remove(pdc.getSenderID())) {
+			if (dataConsumer.remove(pdc.getID())) {
 				return new Message(MessageType.DeregisterConsumer, new PayloadDeregisterConsumer(true));
 			} else {
 				return new Message(MessageType.DeregisterConsumer, new PayloadDeregisterConsumer(false));
