@@ -5,10 +5,7 @@ package consumer;
 
 import java.io.*;
 import java.net.*;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-
+import java.util.*;
 import message.*;
 
 /**
@@ -23,7 +20,6 @@ public class Consumer implements ConsumerIF {
 	private InetAddress mcastadr;
 	private InetAddress serverAddress;
 	private HashSet<String> subscriptions;
-	private HashSet<String> producerList;
 	MulticastSocket udpSocket = null;
 
 	/**
@@ -36,7 +32,6 @@ public class Consumer implements ConsumerIF {
 	 */
 	public Consumer(String address) throws IOException {
 		subscriptions = new HashSet<>();
-		producerList = new HashSet<>();
 		this.serverAddress = InetAddress.getByName(address);
 		if (!Util.testConnection(serverAddress, serverPort, 1000))
 			throw new IOException("There ist no server on the specified address");
@@ -78,7 +73,7 @@ public class Consumer implements ConsumerIF {
 	}
 
 	@Override
-	public String[] getProducers() {
+	public HashSet<String> getProducers() {
 		Message answer;
 		try {
 			answer = Util.sendAndGetMessage(MessageFactory.createRequestProducerListMsg(), serverAddress, serverPort);
@@ -98,9 +93,10 @@ public class Consumer implements ConsumerIF {
 		
 		//TODO passt das so?
 		List<String> unsuccessfulProducers = new LinkedList<>();
+		HashSet<String> actualProducers = getProducers();
 		for (String s : producers) {
 			// existiert dieser Producer?
-			if (this.producerList.contains(s)) {
+			if (actualProducers.contains(s)) {
 				subscriptions.add(s);
 			} else {
 				unsuccessfulProducers.add(s);
@@ -178,10 +174,8 @@ public class Consumer implements ConsumerIF {
 					case DeregisterProducer:
 						PayloadProducer pp = (PayloadProducer) m.getPayload();
 						System.out.println("Der Producer " + pp.getName() + " hat den Dienst eingestellt. Sie können leider keine Push-Nachrichten mehr von ihm erhalten...");
-						producerList.remove(pp.getName());
 						subscriptions.remove(pp.getName());
 						break;
-
 					case Broadcast:
 						System.out.println("Sie haben eine neue Push-Mitteilung:");
 						// er schreibt ja jetzt einfach raus ... vlt funktioniert dies nicht, weil im hauptthread er gerade auf ne Eingabe wartet ... vlt muss

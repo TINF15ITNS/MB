@@ -5,6 +5,8 @@ package producer;
 
 import java.io.*;
 import java.net.*;
+import java.util.HashSet;
+
 import message.*;
 
 /**
@@ -21,7 +23,7 @@ public class Producer implements ProducerIF {
 		this.serverAddress = InetAddress.getByName(address.trim());
 		if (!Util.testConnection(serverAddress, serverPort, 1000))
 			throw new IOException("There is no server at the given address");
-		String[] producers = getProducers();
+		HashSet<String> producers = getProducers();
 		if (producers != null) {
 			for (String n : producers) {
 				if (n.equalsIgnoreCase(name))
@@ -81,7 +83,7 @@ public class Producer implements ProducerIF {
 		return registered;
 	}
 
-	private String[] getProducers() {
+	private HashSet<String> getProducers() {
 		Message answer;
 		try {
 			answer = Util.sendAndGetMessage(MessageFactory.createRequestProducerListMsg(), serverAddress, serverPort);

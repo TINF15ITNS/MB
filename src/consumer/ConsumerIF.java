@@ -1,5 +1,7 @@
 package consumer;
 
+import java.util.HashSet;
+
 public interface ConsumerIF {
 
 	/**
@@ -16,7 +18,7 @@ public interface ConsumerIF {
 	 * @return all available producers, an empty string array if there are none,
 	 *         null if the operation was unsuccessful
 	 */
-	public String[] getProducers();
+	public HashSet<String> getProducers();
 
 	/**
 	 * Subscribes this user to the given producers

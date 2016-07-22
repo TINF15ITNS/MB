@@ -120,7 +120,7 @@ public class MessageServer implements MessageServerIF {
 		 * @return response-message
 		 */
 		private Message getProducerList(Message m) {
-			return new Message(MessageType.getProducerList, new PayloadGetProducerList(dataProducer.toArray(new String[0]), true));
+			return new Message(MessageType.getProducerList, new PayloadGetProducerList(dataProducer, true));
 
 		}
 

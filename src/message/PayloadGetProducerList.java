@@ -1,6 +1,7 @@
 package message;
 
 import java.io.Serializable;
+import java.util.HashSet;
 
 public class PayloadGetProducerList implements Payload, Serializable {
 
@@ -10,13 +11,13 @@ public class PayloadGetProducerList implements Payload, Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private final String[] producers;
+	private final HashSet<String> producers;
 
-	public PayloadGetProducerList(String[] producers) {
+	public PayloadGetProducerList(HashSet<String> producers) {
 		this.producers = producers;
 	}
 	
-	public PayloadGetProducerList(String[] producers, boolean success) {
+	public PayloadGetProducerList(HashSet<String> producers, boolean success) {
 		this.producers = producers;
 		this.success = success;
 	}
@@ -29,7 +30,7 @@ public class PayloadGetProducerList implements Payload, Serializable {
 	/**
 	 * @return the producers
 	 */
-	public String[] getProducers() {
+	public HashSet<String> getProducers() {
 		return producers;
 	}
 

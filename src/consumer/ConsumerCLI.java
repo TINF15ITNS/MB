@@ -53,7 +53,7 @@ public class ConsumerCLI {
 					}
 					break;
 				case 2:
-					String[] producers = user.getProducers();
+					String[] producers = user.getProducers().toArray(new String[0]);
 					if (producers == null)
 						System.out.println("Fehler bei der Abfrage der Produzenten");
 					else if (producers.length == 0)
@@ -61,7 +61,7 @@ public class ConsumerCLI {
 					else {
 						System.out.println("Verfügbare Produzenten:");
 						for (String p : producers) {
-							System.out.println("\t" + p);
+							System.out.println("* " + p + "\n");
 						}
 					}
 					break;
@@ -94,7 +94,7 @@ public class ConsumerCLI {
 					}
 					break;
 				case 2:
-					String[] producers = user.getProducers();
+					String[] producers = user.getProducers().toArray(new String[0]);
 					if (producers == null)
 						System.out.println("Fehler bei der Abfrage der Produzenten.");
 					else if (producers.length == 0)
