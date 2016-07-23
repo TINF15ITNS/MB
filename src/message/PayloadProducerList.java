@@ -3,7 +3,7 @@ package message;
 import java.io.Serializable;
 import java.util.HashSet;
 
-public class PayloadGetProducerList implements Payload, Serializable {
+public class PayloadProducerList implements Payload, Serializable {
 
 	private boolean success = false;
 	/**
@@ -13,16 +13,16 @@ public class PayloadGetProducerList implements Payload, Serializable {
 
 	private final HashSet<String> producers;
 
-	public PayloadGetProducerList(HashSet<String> producers) {
+	public PayloadProducerList(HashSet<String> producers) {
 		this.producers = producers;
 	}
 	
-	public PayloadGetProducerList(HashSet<String> producers, boolean success) {
+	public PayloadProducerList(HashSet<String> producers, boolean success) {
 		this.producers = producers;
 		this.success = success;
 	}
 	
-	public PayloadGetProducerList(boolean success) {
+	public PayloadProducerList(boolean success) {
 		this.success = success;
 		this.producers = null;
 	}

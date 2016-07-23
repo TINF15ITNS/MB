@@ -90,6 +90,6 @@ public class Producer implements ProducerIF {
 		} catch (IOException e) {
 			return null;
 		}
-		return ((PayloadGetProducerList) answer.getPayload()).getProducers();
+		return ((PayloadProducerList) answer.getPayload()).getProducers();
 	}
 }

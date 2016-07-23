@@ -82,7 +82,7 @@ public class Consumer implements ConsumerIF {
 		} catch (IOException e) {
 			return null;
 		}
-		PayloadGetProducerList answerPayload = (PayloadGetProducerList) answer.getPayload();
+		PayloadProducerList answerPayload = (PayloadProducerList) answer.getPayload();
 		if (!answerPayload.getSuccess())
 			return null;
 		return (answerPayload.getProducers());
