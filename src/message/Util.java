@@ -3,15 +3,22 @@
  */
 package message;
 
-import java.io.*;
-import java.net.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 
 /**
  * @author Nikolai Seip, Sebastian Mattheis, Fabian Hinz
  *
  */
 public class Util {
-	
+
 	/**
 	 * wraps the message to a DatagramPacket
 	 * 
@@ -23,17 +30,13 @@ public class Util {
 	 */
 	public static DatagramPacket getMessageAsDatagrammPacket(Message m, InetAddress iadr, int port) {
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		ObjectOutputStream objOut = null;
-		try {
-			objOut = new ObjectOutputStream(bout);
+		try (ObjectOutputStream objOut = new ObjectOutputStream(bout);) {
 			objOut.writeObject(m);
-			objOut.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		byte[] buf = bout.toByteArray();
-
 		DatagramPacket dp = new DatagramPacket(buf, buf.length, iadr, port);
 		dp.setData(buf);
 		return dp;
@@ -49,25 +52,16 @@ public class Util {
 	public static Message getMessageOutOfDatagramPacket(DatagramPacket dp) {
 		byte[] buf = dp.getData();
 		ByteArrayInputStream bin = new ByteArrayInputStream(buf); // von Datagram
-		ObjectInputStream objIn = null;
+
 		Message m = null;
-		try {
-			objIn = new ObjectInputStream(bin);
+		try (ObjectInputStream objIn = new ObjectInputStream(bin);) {
 			m = (Message) objIn.readObject();
 		} catch (ClassNotFoundException e) {
 			System.out.println("Beim Lesen des Objektes ist ein fehler aufgetreten");
-			e.printStackTrace(); //TODO remove/replace
+			e.printStackTrace(); // TODO remove/replace
 		} catch (IOException e) {
 			System.out.println("IOFehler beim ermitteln der Message ausm DatagramPacket");
-			e.printStackTrace(); //TODO remove/replace
-		} finally {
-			if (objIn != null)
-				try {
-					objIn.close();
-				} catch (IOException e) {
-					System.out.println("Fehler beim closen vonm ObjectInputStream");
-					e.printStackTrace(); //TODO remove/replace
-				}
+			e.printStackTrace(); // TODO remove/replace
 		}
 		return m;
 	}
@@ -82,7 +76,7 @@ public class Util {
 	 * @param serverPort
 	 *            The open port of the target server
 	 * @return The Message response of the server
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public static Message sendAndGetMessage(Message message, InetAddress address, int serverPort) throws IOException {
 
@@ -95,7 +89,7 @@ public class Util {
 		} catch (Exception e) {
 			throw new IOException();
 		}
-		
+
 	}
 
 	/**
@@ -115,7 +109,8 @@ public class Util {
 			server.connect(new InetSocketAddress(adress, serverPort), timeout);
 			try {
 				Thread.sleep(100);
-			} catch (InterruptedException e) { }
+			} catch (InterruptedException e) {
+			}
 			return true;
 		} catch (IOException e) {
 			return false;
