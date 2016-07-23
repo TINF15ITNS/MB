@@ -3,7 +3,6 @@
  */
 package messageServer;
 
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -85,7 +84,9 @@ public class MessageServer implements MessageServerIF {
 
 		@Override
 		public void run() {
-			try (Socket client = s; ObjectOutputStream out = new ObjectOutputStream(client.getOutputStream()); ObjectInputStream in = new ObjectInputStream(client.getInputStream());) {
+			try (Socket client = s;
+					ObjectOutputStream out = new ObjectOutputStream(client.getOutputStream());
+					ObjectInputStream in = new ObjectInputStream(client.getInputStream());) {
 
 				Message m = (Message) in.readObject();
 				Message answer = null;
@@ -113,14 +114,15 @@ public class MessageServer implements MessageServerIF {
 					throw new RuntimeException("Dieser Fall kann nicht eintreten");
 
 				}
-				//System.out.println("Antworte nun");
+				// System.out.println("Antworte nun");
 				out.writeObject(answer);
+				out.flush();
 
 			} catch (ClassNotFoundException e) {
 				System.out.println("Kann kein Objekt aus dem Stream lesen ... Klasse nicht auffindbar");
 				e.printStackTrace();
 			} catch (IOException e) {
-
+				e.printStackTrace();
 			}
 
 		}
@@ -148,7 +150,7 @@ public class MessageServer implements MessageServerIF {
 		private Message registerConsumer(Message m) {
 			numberOfCustomers++;
 			dataConsumer.add(new Integer(numberOfCustomers));
-			
+
 			return MessageFactory.createRegisterConsumerMsg(numberOfCustomers, multicastadr, true);
 		}
 
@@ -180,7 +182,8 @@ public class MessageServer implements MessageServerIF {
 			PayloadBroadcast pm = (PayloadBroadcast) m.getPayload();
 			// schauen, ob der Absender sich beim Server auch angemeldet hat
 			if (dataProducer.contains(pm.getSender())) {
-				DatagramPacket dp = Util.getMessageAsDatagrammPacket(MessageFactory.createBroadcastMessage(pm.getSender(), pm.getMessage()), multicastadr, serverPort);
+				DatagramPacket dp = Util.getMessageAsDatagrammPacket(MessageFactory.createBroadcastMessage(pm.getSender(), pm.getMessage()), multicastadr,
+						serverPort);
 				sendMulticastMessage(dp);
 				return MessageFactory.createBroadcastMessage("Server", true);
 			}
@@ -210,8 +213,7 @@ public class MessageServer implements MessageServerIF {
 		 * 
 		 * @param m
 		 *            sent message
-		 * @return response-message, Payload-attribut success is true, if the
-		 *         operation was successful
+		 * @return response-message, Payload-attribut success is true, if the operation was successful
 		 */
 		private Message deregisterProducer(Message m) {
 			PayloadProducer pdp = (PayloadProducer) m.getPayload();

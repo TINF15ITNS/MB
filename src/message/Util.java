@@ -79,12 +79,12 @@ public class Util {
 	 * @throws IOException
 	 */
 	public static Message sendAndGetMessage(Message message, InetAddress address, int serverPort) throws IOException {
-
 		try (Socket server = new Socket(address, serverPort);
 				ObjectOutputStream out = new ObjectOutputStream(server.getOutputStream());
 				ObjectInputStream in = new ObjectInputStream(server.getInputStream());) {
 
 			out.writeObject(message);
+			out.flush();
 			return (Message) in.readObject();
 		} catch (Exception e) {
 			throw new IOException();
