@@ -64,7 +64,7 @@ public class MessageServer implements MessageServerIF {
 			Socket clientSo = null;
 			while (true) {
 				clientSo = serverSo.accept();
-				System.out.println("Verbindung aufgebaut");
+				System.out.println("Verbindung mit" + clientSo.getRemoteSocketAddress().toString() + " aufgebaut. ");
 				Thread t = new Thread(new MessageHandler(clientSo, udpSocket));
 				t.start();
 			}
@@ -113,7 +113,7 @@ public class MessageServer implements MessageServerIF {
 					throw new RuntimeException("Dieser Fall kann nicht eintreten");
 
 				}
-				System.out.println("Antworte nun");
+				//System.out.println("Antworte nun");
 				out.writeObject(answer);
 
 			} catch (ClassNotFoundException e) {
@@ -133,6 +133,7 @@ public class MessageServer implements MessageServerIF {
 		 * @return response-message
 		 */
 		private Message getProducerList(Message m) {
+			System.out.println("Sende Produzentenliste an " + s.getRemoteSocketAddress().toString());
 			return MessageFactory.createProducerListMsg(dataProducer, true);
 
 		}
@@ -147,6 +148,7 @@ public class MessageServer implements MessageServerIF {
 		private Message registerConsumer(Message m) {
 			numberOfCustomers++;
 			dataConsumer.add(new Integer(numberOfCustomers));
+			
 			return MessageFactory.createRegisterConsumerMsg(numberOfCustomers, multicastadr, true);
 		}
 
