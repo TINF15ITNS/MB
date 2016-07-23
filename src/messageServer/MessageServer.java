@@ -122,7 +122,6 @@ public class MessageServer implements MessageServerIF {
 				System.out.println("Kann kein Objekt aus dem Stream lesen ... Klasse nicht auffindbar");
 				e.printStackTrace();
 			} catch (IOException e) {
-				e.printStackTrace();
 			}
 
 		}
