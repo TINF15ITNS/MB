@@ -1,7 +1,15 @@
+/**
+ * 
+ */
 package consumer;
 
 import java.util.HashSet;
 
+/**
+ * 
+ * @author Nikolai Seip, Sebastian Mattheis, Fabian Hinz
+ *
+ */
 public interface ConsumerIF {
 
 	/**
