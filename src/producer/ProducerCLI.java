@@ -76,17 +76,8 @@ public class ProducerCLI {
 					}
 					break;
 				case 2:
-					System.out.println("Geben Sie im bitte Ihre neue Nachricht ein.\n" + "Eine mehrzeilige Eingabe ist hierbei möglich.\n"
-							+ "Signalisieren Sie das Ende der Nachricht bitte mit 'EOT' in einer neuen Zeile.");
-					StringBuffer m = new StringBuffer();
-					while (scanner.hasNext()) {
-						String tmp = scanner.nextLine();
-						if (tmp.equals("EOT"))
-							break;
-						m.append(tmp);
-						m.append(new String("\n"));
-					}
-					if (prod.sendMessage(m.toString())) {
+					System.out.println("Geben Sie bitte Ihre neue Nachricht ein.\n");
+					if (prod.sendMessage(scanner.nextLine())) {
 						System.out.println("Die Nachricht ist beim Server eingegangen.");
 					} else {
 						System.out.println("Das Senden der Nachricht ist leider fehlgeschlagen.");
