@@ -28,7 +28,7 @@ public class ConsumerCLI {
 				System.out.print("Bitte geben Sie die Adresse des Servers ein (ohne Port): ");
 				String addr = scanner.nextLine();
 				user = new Consumer(addr);
-				System.out.println("\n");
+				System.out.print("\n");
 				break;
 			} catch (IOException e) {
 				System.out.println("Kein Server unter der angegebenen Adresse erreichbar.");
@@ -36,9 +36,9 @@ public class ConsumerCLI {
 		}
 
 		while (!exit) {
-			System.out.println("Bitte wählen Sie durch Eingabe einer Zahl:");
+			System.out.println("\nBitte wählen Sie durch Eingabe einer Zahl:");
 			if (!user.isRegistered()) {
-				System.out.println("(1) Registrierung beim Server\n" + "(2) Liste von Produzenten ansehen\n" + "(3) Beenden der CLI");
+				System.out.print("(1) Registrierung beim Server\n" + "(2) Liste von Produzenten ansehen\n" + "(3) Beenden der CLI\n" + "Eingabe: ");
 				int input = scanner.nextInt();
 				scanner.nextLine(); // Absolutely necessary because nextInt() reads only one int and does not finish the line.
 				switch (input) {
@@ -74,7 +74,8 @@ public class ConsumerCLI {
 				}
 			} else {
 				System.out.println("(1) Abmeldung vom Server\n" + "(2) Liste von Produzenten ansehen\n" + "(3) Abonnieren von Produzenten\n"
-						+ "(4) Produzentenabo kündigen\n" + "(5) Abonnements anzeigen\n" + "(6) erhaltene Nachrichten anzeigen\n" + "(7) Beenden der CLI");
+						+ "(4) Produzentenabo kündigen\n" + "(5) Abonnements anzeigen\n" + "(6) erhaltene Nachrichten anzeigen\n" + "(7) Beenden der CLI\n"
+						+ "Eingabe: ");
 				int input = scanner.nextInt();
 				scanner.nextLine(); // Absolutely necessary because nextInt() reads only one int and does not finish the line.
 				switch (input) {
@@ -94,13 +95,18 @@ public class ConsumerCLI {
 					else {
 						System.out.println("Verfügbare Produzenten:");
 						for (String p : producers) {
-							System.out.println("* " + p + "\n");
+							System.out.print("* " + p + "\n");
 						}
 					}
 					break;
 				case 3:
 					System.out.print("Welche Produzenten möchten Sie abonnieren?\n" + "(Bei mehreren bitte mit Komma trennen.)");
-					String[] failedSubscriptions = user.subscribeToProducers(scanner.nextLine().trim().replaceAll(" +", "").split(","));
+					String[] toSubscribe = scanner.nextLine().split(",");
+					for (int i = 0; i < toSubscribe.length; i++) {
+						toSubscribe[i] = toSubscribe[i].trim();
+					}
+					String[] failedSubscriptions = user.subscribeToProducers(toSubscribe);
+
 					if (failedSubscriptions.length > 0) {
 						System.out.println("Es war nicht möglich, die folgenden Produzenten zu abonnieren:");
 						for (String producer : failedSubscriptions) {
@@ -125,12 +131,16 @@ public class ConsumerCLI {
 					}
 					break;
 				case 6:
-					System.out.println(user.getNewBroadcasts());
+					String ausgabe = user.getNewBroadcasts();
+					if (!ausgabe.equals("")) {
+						System.out.println(ausgabe + "\n\n");
+					} else {
+						System.out.println("Sie haben keine neuen Nachrichten");
+					}
 					break;
 				case 7:
 					// ich habe jetzt den neuen Thread nicht iwie beendet ... ich gehe mal davon aus, da es auch ein Objekt ist, wird er gelöscht, wenn nichts
 					// mehr auf ihn referenziert
-					System.out.println("Beenden...\n");
 					exit = true;
 					break;
 				default:
@@ -143,5 +153,6 @@ public class ConsumerCLI {
 		// ist das hier notwendig? doch eigentlich nicht in dieser Variante
 		user.unsubscribeFromProducers(user.getSubscriptions());
 		user.deregisterFromServer();
+		System.out.println("Der Consumer wurde beendet");
 	}
 }

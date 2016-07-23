@@ -47,7 +47,7 @@ public class Consumer implements ConsumerIF {
 	 */
 	public Consumer(String address) throws IOException {
 		subscriptions = new HashSet<>();
-		this.serverAddress = InetAddress.getByName(address);
+		this.serverAddress = InetAddress.getByName(address.trim());
 		if (!Util.testConnection(serverAddress, serverPort, 1000))
 			throw new IOException("There ist no server on the specified address");
 
@@ -164,7 +164,7 @@ public class Consumer implements ConsumerIF {
 
 	@Override
 	public String getNewBroadcasts() {
-		StringBuffer s = new StringBuffer("Ihre neuen Nachrichten: \n\n");
+		StringBuffer s = new StringBuffer("");
 		try {
 			while (pr.ready()) {
 				s.append((char) pr.read());
@@ -173,7 +173,6 @@ public class Consumer implements ConsumerIF {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		s.append("\n\n");
 		return s.toString();
 	}
 
