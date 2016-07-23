@@ -73,8 +73,7 @@ public class ConsumerCLI {
 					break;
 				}
 			} else {
-				System.out.println("(1) Abmeldung vom Server\n" + "(2) Liste von Produzenten ansehen\n" + "(3) Abonnieren von Produzenten\n"
-						+ "(4) Produzentenabo kündigen\n" + "(5) Abonnements anzeigen\n" + "(6) erhaltene Nachrichten anzeigen\n" + "(7) Beenden der CLI");
+				System.out.println("(1) Abmeldung vom Server\n" + "(2) Liste von Produzenten ansehen\n" + "(3) Abonnieren von Produzenten\n" + "(4) Produzentenabo kündigen\n" + "(5) Abonnements anzeigen\n" + "(6) erhaltene Nachrichten anzeigen\n" + "(7) Beenden der CLI");
 				int input = scanner.nextInt();
 				scanner.nextLine(); // Absolutely necessary because nextInt() reads only one int and does not finish the line.
 				switch (input) {
@@ -100,7 +99,7 @@ public class ConsumerCLI {
 					break;
 				case 3:
 					System.out.print("Welche Produzenten möchten Sie abonnieren?\n" + "(Bei mehreren bitte mit Komma trennen.)");
-					String[] failedSubscriptions = user.subscribeToProducers(scanner.nextLine().trim().replaceAll(" +", "").split(","));
+					String[] failedSubscriptions = user.subscribeToProducers(scanner.nextLine().trim().replaceAll("[ ]*,[ ]*+", ",").split(","));
 					if (failedSubscriptions.length > 0) {
 						System.out.println("Es war nicht möglich, die folgenden Produzenten zu abonnieren:");
 						for (String producer : failedSubscriptions) {
@@ -110,7 +109,7 @@ public class ConsumerCLI {
 					break;
 				case 4:
 					System.out.print("Welchen Produzenten soll das Abonnement gekündigt werden?");
-					String[] failedUnsubscriptions = user.unsubscribeFromProducers(scanner.nextLine().trim().replaceAll(" +", "").split(","));
+					String[] failedUnsubscriptions = user.unsubscribeFromProducers(scanner.nextLine().trim().replaceAll("[ ]*,[ ]*+", ",").split(","));
 					if (failedUnsubscriptions.length > 0) {
 						System.out.println("Sie konnten folgenden Produzenten nicht kündigen:");
 						for (String producer : failedUnsubscriptions) {
