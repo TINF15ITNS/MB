@@ -18,11 +18,12 @@ public interface ProducerIF {
 	/**
 	 * Advice the producer to send a message to the given Server
 	 * 
-	 * @param msg the message to be sent
+	 * @param msg
+	 *            the message to be sent
 	 * @return a boolean indicating success or failure of the method
 	 */
 	public boolean sendMessage(String msg);
-	
+
 	/**
 	 * 
 	 * @return true if the producer is registered, false otherwise

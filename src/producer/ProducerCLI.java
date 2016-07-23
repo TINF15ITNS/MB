@@ -12,17 +12,16 @@ import java.util.Scanner;
  *
  */
 public class ProducerCLI {
-	
+
 	private static ProducerIF prod = null;
 	private static Scanner scanner;
 
 	public static void main(String[] args) {
-		
+
 		scanner = new Scanner(System.in);
 		boolean exit = false;
 
-		System.out.println("Willkommen zum Producer Command Line Interface\n"
-						 + "==============================================\n");
+		System.out.println("Willkommen zum Producer Command Line Interface\n" + "==============================================\n");
 
 		while (true) {
 			try {
@@ -43,8 +42,7 @@ public class ProducerCLI {
 		while (!exit) {
 			System.out.println("Bitte wählen Sie durch Eingabe einer Zahl:");
 			if (!prod.isRegistered()) {
-				System.out.println("(1) Registrierung beim Server\n"
-								 + "(2) Beenden der CLI");
+				System.out.println("(1) Registrierung beim Server\n" + "(2) Beenden der CLI");
 				int input = scanner.nextInt();
 				scanner.nextLine(); // Absolutely necessary because nextInt() reads only one int and does not finish the line.
 				switch (input) {
@@ -64,11 +62,8 @@ public class ProducerCLI {
 					System.out.println("Bitte wählen Sie eine der gegebenen Optionen.");
 					break;
 				}
-			}
-			else {
-				System.out.println("(1) Abmeldung vom Server\n"
-								 + "(2) Sende Nachricht\n"
-								 + "(3) Beenden der CLI");
+			} else {
+				System.out.println("(1) Abmeldung vom Server\n" + "(2) Sende Nachricht\n" + "(3) Beenden der CLI");
 				int input = scanner.nextInt();
 				scanner.nextLine(); // Absolutely necessary because nextInt() reads only one int and does not finish the line.
 				switch (input) {
@@ -81,9 +76,8 @@ public class ProducerCLI {
 					}
 					break;
 				case 2:
-					System.out.println("Geben Sie im bitte Ihre neue Nachricht ein.\n"
-						    		 + "Eine mehrzeilige Eingabe ist hierbei möglich.\n"
-						    		 + "Signalisieren Sie das Ende der Nachricht bitte mit 'EOT' in einer neuen Zeile.");
+					System.out.println("Geben Sie im bitte Ihre neue Nachricht ein.\n" + "Eine mehrzeilige Eingabe ist hierbei möglich.\n"
+							+ "Signalisieren Sie das Ende der Nachricht bitte mit 'EOT' in einer neuen Zeile.");
 					StringBuffer m = new StringBuffer();
 					while (scanner.hasNext()) {
 						String tmp = scanner.nextLine();
@@ -108,7 +102,7 @@ public class ProducerCLI {
 				}
 			}
 		}
-		//clean up on exit
+		// clean up on exit
 		prod.deregisterFromServer();
 		scanner.close();
 	}

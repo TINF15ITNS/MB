@@ -3,11 +3,16 @@
  */
 package producer;
 
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.net.InetAddress;
 import java.util.HashSet;
 
-import message.*;
+import message.Message;
+import message.MessageFactory;
+import message.PayloadBroadcast;
+import message.PayloadProducer;
+import message.PayloadProducerList;
+import message.Util;
 
 /**
  * @author Nikolai Seip, Sebastian Mattheis, Fabian Hinz
