@@ -3,10 +3,24 @@
  */
 package consumer;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import message.*;
+import java.io.IOException;
+import java.io.PipedReader;
+import java.io.PipedWriter;
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+
+import message.Message;
+import message.MessageFactory;
+import message.PayloadBroadcast;
+import message.PayloadDeregisterConsumer;
+import message.PayloadProducer;
+import message.PayloadProducerList;
+import message.PayloadRegisterConsumer;
+import message.Util;
 
 /**
  * 
@@ -57,8 +71,9 @@ public class Consumer implements ConsumerIF {
 		}
 		this.consumerID = answerPayload.getId();
 		this.mcastadr = answerPayload.getMulticastAddress();
+
 		try {
-			udpSocket = new MulticastSocket();
+			udpSocket = new MulticastSocket(serverPort);
 			udpSocket.joinGroup(mcastadr);
 		} catch (IOException e) {
 			registered = false;
@@ -186,7 +201,8 @@ public class Consumer implements ConsumerIF {
 
 		@Override
 		public void run() {
-			DatagramPacket dp = Util.getMessageAsDatagrammPacket(MessageFactory.createBroadcastMessage("", ""), serverAddress, serverPort);
+			byte[] buffer = new byte[65508];// max size of a DatagramPacket
+			DatagramPacket dp = new DatagramPacket(buffer, buffer.length, serverAddress, serverPort);
 			while (true) {
 				try {
 					udpSocket.receive(dp);
