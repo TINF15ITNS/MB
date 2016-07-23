@@ -127,8 +127,6 @@ public class ConsumerCLI {
 					System.out.println(user.getNewBroadcasts());
 					break;
 				case 7:
-					// ich habe jetzt den neuen Thread nicht iwie beendet ... ich gehe mal davon aus, da es auch ein Objekt ist, wird er gelöscht, wenn nichts
-					// mehr auf ihn referenziert
 					System.out.println("Beenden...\n");
 					exit = true;
 					break;
@@ -140,6 +138,7 @@ public class ConsumerCLI {
 		}
 		scanner.close();
 		// ist das hier notwendig? doch eigentlich nicht in dieser Variante
+		user.stopRecieving();
 		user.unsubscribeFromProducers(user.getSubscriptions());
 		user.deregisterFromServer();
 	}

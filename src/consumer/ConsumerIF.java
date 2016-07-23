@@ -65,9 +65,15 @@ public interface ConsumerIF {
 	public boolean isRegistered();
 
 	/**
-	 * if the user wants to read his received broadcasts, he calls this method to get them
+	 * When the user wants to read his received broadcasts, he calls this method to get them
 	 * 
 	 * @return a String with all of the broadcasts
 	 */
 	public String getNewBroadcasts();
+	
+	/**
+	 * Stops receiving new Broadcasts
+	 * @return true if the receiving has stopped, false if the receiving has already been stopped
+	 */
+	public boolean stopRecieving();
 }
