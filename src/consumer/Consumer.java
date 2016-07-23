@@ -36,7 +36,8 @@ public class Consumer implements ConsumerIF {
 	private HashSet<String> subscriptions;
 	MulticastSocket udpSocket = null;
 	PipedReader pr;
-
+	private WaitForMessage messageWaiter;
+	
 	/**
 	 * Used to interact with a MessageServer
 	 * 
@@ -80,7 +81,8 @@ public class Consumer implements ConsumerIF {
 			return false;
 		}
 		pr = new PipedReader();
-		Thread t = new Thread(new WaitForMessage(udpSocket));
+		messageWaiter =  new WaitForMessage(udpSocket);
+		Thread t = new Thread(messageWaiter);
 		t.start();
 		registered = answerPayload.getSuccess();
 		return true;
@@ -176,6 +178,12 @@ public class Consumer implements ConsumerIF {
 		return s.toString();
 	}
 
+
+	@Override
+	public boolean stopRecieving() {
+		return messageWaiter.stopThread();
+	}
+	
 	/**
 	 * 
 	 * The class is listening for messages from the server and prints them on the console
@@ -183,8 +191,8 @@ public class Consumer implements ConsumerIF {
 	 */
 	private class WaitForMessage implements Runnable {
 		private MulticastSocket udpSocket;
-
 		private PipedWriter pw;
+		private boolean isRunning = true;
 
 		public WaitForMessage(MulticastSocket udpSocket) {
 			this.udpSocket = udpSocket;
@@ -197,12 +205,27 @@ public class Consumer implements ConsumerIF {
 				e.printStackTrace();
 			}
 		}
+		
+		/**
+		 * Prevents the thread in run() to do another iteration of its action.
+		 * @return true if the thread has been stopped, false if the thread was already stopped
+		 */
+		public boolean stopThread()
+		{
+			if(isRunning)
+			{
+				isRunning = false;
+				
+				return true;
+			}
+			else return false;			
+		}
 
 		@Override
 		public void run() {
 			byte[] buffer = new byte[65508];// max size of a DatagramPacket
 			DatagramPacket dp = new DatagramPacket(buffer, buffer.length, serverAddress, serverPort);
-			while (true) {
+			while (isRunning) {
 				try {
 					udpSocket.receive(dp);
 					Message m = Util.getMessageOutOfDatagramPacket(dp);
