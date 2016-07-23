@@ -125,7 +125,7 @@ public class Consumer implements ConsumerIF {
 	public boolean deregisterFromServer() {
 		Message answer;
 		try {
-			answer = Util.sendAndGetMessage(new Message(MessageType.DeregisterConsumer, new PayloadDeregisterConsumer(consumerID)), serverAddress, serverPort);
+			answer = Util.sendAndGetMessage(MessageFactory.createDeregisterConsumerMsg(consumerID), serverAddress, serverPort);
 		} catch (IOException e) {
 			return false;
 		}
