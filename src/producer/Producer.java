@@ -6,15 +6,10 @@ package producer;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.HashSet;
-
-import message.Message;
-import message.MessageFactory;
-import message.PayloadBroadcast;
-import message.PayloadProducer;
-import message.PayloadProducerList;
-import message.Util;
+import message.*;
 
 /**
+ * 
  * @author Nikolai Seip, Sebastian Mattheis, Fabian Hinz
  *
  */
