@@ -1,26 +1,23 @@
+/**
+ * 
+ */
 package message;
 
 import java.io.*;
 
+/**
+ * 
+ * @author Nikolai Seip, Sebastian Mattheis, Fabian Hinz
+ *
+ */
 public class Message implements Serializable {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * payload of this message
 	 */
-	/*
-	 * private final String payload;
-	 */
 	private final Payload payload;
-	/*
-	 * 
-	 * id of the Producer or Consumer who sent this message
-	 * 
-	 * private final int senderID;
-	 */
 	/**
 	 * type of the message to indicate how to handle with this message
 	 */

@@ -1,3 +1,6 @@
+/**
+ * 
+ */
 package message;
 
 import java.io.Serializable;
@@ -5,9 +8,8 @@ import java.net.InetAddress;
 
 /**
  * 
- * a message of the type MessageType.registerOnServer contains as payload an object of this class
- * 
  * @author Nikolai Seip, Sebastian Mattheis, Fabian Hinz
+ * 
  */
 
 public class PayloadRegisterConsumer implements Payload, Serializable {

@@ -1,13 +1,19 @@
+/**
+ * 
+ */
 package message;
 
 import java.io.Serializable;
 
+/**
+ * 
+ * @author Nikolai Seip, Sebastian Mattheis, Fabian Hinz
+ *
+ */
 public class PayloadBroadcast implements Payload, Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
+	
 	private final String sender;
 	private final String message;
 	private boolean success = false;

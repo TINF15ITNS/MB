@@ -1,7 +1,15 @@
+/**
+ * 
+ */
 package message;
 
 import java.io.Serializable;
 
+/**
+ * 
+ * @author Nikolai Seip, Sebastian Mattheis, Fabian Hinz
+ *
+ */
 public class PayloadProducer implements Payload, Serializable {
 
 	private static final long serialVersionUID = 1L;

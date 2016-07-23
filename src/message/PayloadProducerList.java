@@ -1,16 +1,21 @@
+/**
+ * 
+ */
 package message;
 
 import java.io.Serializable;
 import java.util.HashSet;
 
+/**
+ * 
+ * @author Nikolai Seip, Sebastian Mattheis, Fabian Hinz
+ *
+ */
 public class PayloadProducerList implements Payload, Serializable {
-
-	private boolean success = false;
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = 1L;
 
+	private boolean success = false;
 	private final HashSet<String> producers;
 
 	public PayloadProducerList(HashSet<String> producers) {
