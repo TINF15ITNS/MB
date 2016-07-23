@@ -86,7 +86,7 @@ public class Producer implements ProducerIF {
 	private HashSet<String> getProducers() {
 		Message answer;
 		try {
-			answer = Util.sendAndGetMessage(MessageFactory.createRequestProducerListMsg(), serverAddress, serverPort);
+			answer = Util.sendAndGetMessage(MessageFactory.createProducerListMsg(), serverAddress, serverPort);
 		} catch (IOException e) {
 			return null;
 		}

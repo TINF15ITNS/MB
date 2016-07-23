@@ -120,7 +120,7 @@ public class MessageServer implements MessageServerIF {
 		 * @return response-message
 		 */
 		private Message getProducerList(Message m) {
-			return new Message(MessageType.getProducerList, new PayloadProducerList(dataProducer, true));
+			return MessageFactory.createProducerListMsg(dataProducer, true);
 
 		}
 
@@ -134,7 +134,7 @@ public class MessageServer implements MessageServerIF {
 		private Message registerConsumer(Message m) {
 			numberOfCustomers++;
 			dataConsumer.add(new Integer(numberOfCustomers));
-			return new Message(MessageType.RegisterConsumer, new PayloadRegisterConsumer(numberOfCustomers, multicastadr, true));
+			return MessageFactory.createRegisterConsumerMsg(numberOfCustomers, multicastadr, true);
 		}
 
 		/**
@@ -146,12 +146,11 @@ public class MessageServer implements MessageServerIF {
 		 */
 		private Message registerProducer(Message m) {
 			PayloadProducer pp = (PayloadProducer) m.getPayload();
-			PayloadProducer ppresp = new PayloadProducer(pp.getName());
 			if (!dataProducer.contains(pp.getName())) {
 				dataProducer.add(pp.getName());
-				ppresp.setSuccess(true);
+				return MessageFactory.createRegisterProducerMsg(pp.getName(), true);
 			}
-			return new Message(MessageType.RegisterProducer, ppresp);
+			return MessageFactory.createRegisterProducerMsg(pp.getName(), false);
 		}
 
 		/**
@@ -166,15 +165,15 @@ public class MessageServer implements MessageServerIF {
 			PayloadBroadcast pm = (PayloadBroadcast) m.getPayload();
 			// schauen, ob der Absender sich beim Server auch angemeldet hat
 			if (dataProducer.contains(pm.getSender())) {
-				DatagramPacket dp = Util.getMessageAsDatagrammPacket(new Message(MessageType.Broadcast, pm), multicastadr, serverPort);
+				DatagramPacket dp = Util.getMessageAsDatagrammPacket(MessageFactory.createBroadcastMessage(pm.getSender(), pm.getMessage()), multicastadr, serverPort);
 				sendMulticastMessage(dp);
-				return new Message(MessageType.Broadcast, new PayloadBroadcast("Server", null, true));
+				return MessageFactory.createBroadcastMessage("Server", true);
 			}
-			return new Message(MessageType.Broadcast, new PayloadBroadcast("Server", null, false));
+			return MessageFactory.createBroadcastMessage("Server", false);
 		}
 
 		/**
-		 * unsubscribes the Consumer, who sent the message, on the server
+		 * Removes the Consumer from the Subscriptionlist on the Server
 		 * 
 		 * @param m
 		 *            sent message
@@ -184,9 +183,9 @@ public class MessageServer implements MessageServerIF {
 			PayloadDeregisterConsumer pdc = (PayloadDeregisterConsumer) m.getPayload();
 			// if the removing-operation
 			if (dataConsumer.remove(pdc.getID())) {
-				return new Message(MessageType.DeregisterConsumer, new PayloadDeregisterConsumer(true));
+				return MessageFactory.createDeregisterConsumerMsg(true);
 			} else {
-				return new Message(MessageType.DeregisterConsumer, new PayloadDeregisterConsumer(false));
+				return MessageFactory.createDeregisterConsumerMsg(false);
 			}
 
 		}
@@ -200,14 +199,12 @@ public class MessageServer implements MessageServerIF {
 		 */
 		private Message deregisterProducer(Message m) {
 			PayloadProducer pdp = (PayloadProducer) m.getPayload();
-			PayloadProducer answerPayload = new PayloadProducer(pdp.getName());
 			if (dataProducer.remove(pdp.getName())) {
 				DatagramPacket dp = Util.getMessageAsDatagrammPacket(MessageFactory.createDeregisterProducerMsg(pdp.getName()), multicastadr, serverPort);
 				sendMulticastMessage(dp);
-				answerPayload.setSuccess(true);
-				return new Message(MessageType.DeregisterProducer, answerPayload);
+				return MessageFactory.createDeregisterProducerMsg(pdp.getName(), true);
 			} else {
-				return new Message(MessageType.DeregisterProducer, answerPayload);
+				return MessageFactory.createDeregisterProducerMsg(pdp.getName(), false);
 			}
 		}
 

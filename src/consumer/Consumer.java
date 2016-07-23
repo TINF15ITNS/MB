@@ -44,7 +44,7 @@ public class Consumer implements ConsumerIF {
 		Message answer;
 
 		try {
-			answer = Util.sendAndGetMessage(new Message(MessageType.RegisterConsumer, null), serverAddress, serverPort);
+			answer = Util.sendAndGetMessage(MessageFactory.createRegisterConsumerMsg(), serverAddress, serverPort);
 		} catch (IOException e) {
 			registered = false;
 			return false; // If there is no connection to the server, the consumer cannot be registered.
@@ -57,16 +57,13 @@ public class Consumer implements ConsumerIF {
 		}
 		this.consumerID = answerPayload.getId();
 		this.mcastadr = answerPayload.getMulticastAddress();
-		try
-
-		{
+		try {
 			udpSocket = new MulticastSocket();
 			udpSocket.joinGroup(mcastadr);
 		} catch (IOException e) {
 			registered = false;
 			return false;
 		}
-
 		pr = new PipedReader();
 		Thread t = new Thread(new WaitForMessage(udpSocket));
 		t.start();
@@ -78,7 +75,7 @@ public class Consumer implements ConsumerIF {
 	public HashSet<String> getProducers() {
 		Message answer;
 		try {
-			answer = Util.sendAndGetMessage(MessageFactory.createRequestProducerListMsg(), serverAddress, serverPort);
+			answer = Util.sendAndGetMessage(MessageFactory.createProducerListMsg(), serverAddress, serverPort);
 		} catch (IOException e) {
 			return null;
 		}
@@ -93,11 +90,9 @@ public class Consumer implements ConsumerIF {
 		if (producers == null)
 			return new String[0]; // There are no producers to be subscribed to, so there are none where it was not possible
 
-		// TODO passt das so?
 		List<String> unsuccessfulProducers = new LinkedList<>();
 		HashSet<String> actualProducers = getProducers();
 		for (String s : producers) {
-			// existiert dieser Producer?
 			if (actualProducers.contains(s)) {
 				subscriptions.add(s);
 			} else {
