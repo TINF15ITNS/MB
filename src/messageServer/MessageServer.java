@@ -3,10 +3,23 @@
  */
 package messageServer;
 
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.HashSet;
-import message.*;
+
+import message.Message;
+import message.MessageFactory;
+import message.PayloadBroadcast;
+import message.PayloadDeregisterConsumer;
+import message.PayloadProducer;
+import message.Util;
 
 /**
  * 
@@ -43,7 +56,7 @@ public class MessageServer implements MessageServerIF {
 	// TODO MessageServer beendbar machen
 	@Override
 	public void respondOnMessages() {
-		try (ServerSocket serverSo = new ServerSocket(55555); MulticastSocket udpSocket = new MulticastSocket();) {
+		try (ServerSocket serverSo = new ServerSocket(serverPort); MulticastSocket udpSocket = new MulticastSocket(serverPort);) {
 
 			udpSocket.setTimeToLive(1);
 
@@ -165,7 +178,8 @@ public class MessageServer implements MessageServerIF {
 			PayloadBroadcast pm = (PayloadBroadcast) m.getPayload();
 			// schauen, ob der Absender sich beim Server auch angemeldet hat
 			if (dataProducer.contains(pm.getSender())) {
-				DatagramPacket dp = Util.getMessageAsDatagrammPacket(MessageFactory.createBroadcastMessage(pm.getSender(), pm.getMessage()), multicastadr, serverPort);
+				DatagramPacket dp = Util.getMessageAsDatagrammPacket(MessageFactory.createBroadcastMessage(pm.getSender(), pm.getMessage()), multicastadr,
+						serverPort);
 				sendMulticastMessage(dp);
 				return MessageFactory.createBroadcastMessage("Server", true);
 			}
