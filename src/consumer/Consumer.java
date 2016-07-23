@@ -168,12 +168,12 @@ public class Consumer implements ConsumerIF {
 	 *
 	 */
 	private class WaitForMessage implements Runnable {
-		private MulticastSocket udps;
+		private MulticastSocket udpSocket;
 
 		private PipedWriter pw;
 
-		public WaitForMessage(MulticastSocket udps) {
-			this.udps = udps;
+		public WaitForMessage(MulticastSocket udpSocket) {
+			this.udpSocket = udpSocket;
 			pw = new PipedWriter();
 			try {
 				pw.connect(pr);
@@ -189,7 +189,7 @@ public class Consumer implements ConsumerIF {
 			DatagramPacket dp = Util.getMessageAsDatagrammPacket(MessageFactory.createBroadcastMessage("", ""), serverAddress, serverPort);
 			while (true) {
 				try {
-					udps.receive(dp);
+					udpSocket.receive(dp);
 					Message m = Util.getMessageOutOfDatagramPacket(dp);
 
 					switch (m.getType()) {
