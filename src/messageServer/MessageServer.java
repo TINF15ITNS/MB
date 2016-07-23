@@ -111,7 +111,7 @@ public class MessageServer implements MessageServerIF {
 					answer = getProducerList(m);
 					break;
 				default:
-					throw new RuntimeException("Dieser Fall kann nicht eintreten");
+					throw new RuntimeException("Invalid message type");
 
 				}
 				// System.out.println("Antworte nun");
@@ -150,7 +150,6 @@ public class MessageServer implements MessageServerIF {
 		private Message registerConsumer(Message m) {
 			numberOfCustomers++;
 			dataConsumer.add(new Integer(numberOfCustomers));
-
 			return MessageFactory.createRegisterConsumerMsg(numberOfCustomers, multicastadr, true);
 		}
 
@@ -205,7 +204,6 @@ public class MessageServer implements MessageServerIF {
 			} else {
 				return MessageFactory.createDeregisterConsumerMsg(false);
 			}
-
 		}
 
 		/**
