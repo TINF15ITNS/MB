@@ -48,9 +48,4 @@ public class PayloadBroadcast implements Payload, Serializable {
 	public boolean getSuccess() {
 		return this.success;
 	}
-
-	@Override
-	public void setSuccess(boolean success) {
-		this.success = success;
-	}
 }

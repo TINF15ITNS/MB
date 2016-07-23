@@ -38,10 +38,4 @@ public class PayloadDeregisterConsumer implements Payload, Serializable {
 	public boolean getSuccess() {
 		return success;
 	}
-
-	@Override
-	public void setSuccess(boolean success) {
-		this.success = success;
-	}
-
 }
