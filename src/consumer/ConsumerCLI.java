@@ -39,7 +39,13 @@ public class ConsumerCLI {
 			System.out.println("\nBitte wählen Sie durch Eingabe einer Zahl:");
 			if (!user.isRegistered()) {
 				System.out.print("(1) Registrierung beim Server\n" + "(2) Liste von Produzenten ansehen\n" + "(3) Beenden der CLI\n" + "Eingabe: ");
-				int input = scanner.nextInt();
+				int input;
+				try {
+					input = scanner.nextInt();
+				} catch (Exception e) {
+					continue;
+				}
+
 				scanner.nextLine(); // Absolutely necessary because nextInt() reads only one int and does not finish the line.
 				switch (input) {
 				case 1:
@@ -107,7 +113,7 @@ public class ConsumerCLI {
 					}
 					break;
 				case 3:
-					System.out.print("Welche Produzenten möchten Sie abonnieren?\n" + "(Bei mehreren bitte mit Komma trennen.)");
+					System.out.print("Welche Produzenten möchten Sie abonnieren?\n" + "(Bei mehreren bitte mit Komma trennen.) ");
 					String[] failedSubscriptions = user.subscribeToProducers(scanner.nextLine().trim().replaceAll("[ ]*,[ ]*+", ",").split(","));
 					if (failedSubscriptions.length > 0) {
 						System.out.println("Es war nicht möglich, die folgenden Produzenten zu abonnieren:");
@@ -117,7 +123,7 @@ public class ConsumerCLI {
 					}
 					break;
 				case 4:
-					System.out.print("Welchen Produzenten soll das Abonnement gekündigt werden?");
+					System.out.print("Welchen Produzenten soll das Abonnement gekündigt werden?\n" + "(Bei mehreren bitte mit Komma trennen.) ");
 					String[] failedUnsubscriptions = user.unsubscribeFromProducers(scanner.nextLine().trim().replaceAll("[ ]*,[ ]*+", ",").split(","));
 					if (failedUnsubscriptions.length > 0) {
 						System.out.println("Sie konnten folgenden Produzenten nicht kündigen:");
@@ -127,9 +133,14 @@ public class ConsumerCLI {
 					}
 					break;
 				case 5:
+					String[] subscriptions = user.getSubscriptions();
+					if (subscriptions.length == 0) {
+						System.out.println("Keine Abbonements vorhanden.");
+						break;
+					}
 					System.out.println("Ihre Abos:");
-					for (String s3 : user.getSubscriptions()) {
-						System.out.println("* " + s3 + "\n");
+					for (String s : subscriptions) {
+						System.out.println("* " + s);
 					}
 					break;
 				case 6:
