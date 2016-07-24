@@ -177,6 +177,15 @@ public class Consumer implements ConsumerIF {
 	public boolean stopReceiving() {
 		return messageWaiter.stopThread();
 	}
+	
+	@Override
+	public boolean hasNewMessages() {
+		try {
+			return pr.ready();
+		} catch (IOException e) {
+			return false;
+		}
+	}
 
 	/**
 	 * 

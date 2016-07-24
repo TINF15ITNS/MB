@@ -77,4 +77,11 @@ public interface ConsumerIF {
 	 * @return true if the receiving has stopped, false if the receiving has already been stopped
 	 */
 	public boolean stopReceiving();
+	
+	/**
+	 * Checks if there are new messages available for this consumer
+	 * 
+	 * @return true if there are new messages available for this consumer, false if not
+	 */
+	public boolean hasNewMessages();
 }
