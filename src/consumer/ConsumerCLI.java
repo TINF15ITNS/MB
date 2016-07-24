@@ -43,6 +43,7 @@ public class ConsumerCLI {
 				try {
 					input = scanner.nextInt();
 				} catch (Exception e) {
+					scanner.nextLine();
 					continue;
 				}
 
@@ -87,6 +88,7 @@ public class ConsumerCLI {
 				try {
 					input = scanner.nextInt();
 				} catch (Exception e) {
+					scanner.nextLine();
 					continue;
 				}
 
