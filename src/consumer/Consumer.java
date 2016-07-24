@@ -171,6 +171,7 @@ public class Consumer implements ConsumerIF {
 		return answerPayload.getSuccess();
 	}
 
+	@Override
 	public boolean isRegistered() {
 		return registered;
 	}
