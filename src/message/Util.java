@@ -33,8 +33,7 @@ public class Util {
 		try (ObjectOutputStream objOut = new ObjectOutputStream(byteArrOutStream);) {
 			objOut.writeObject(message);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new RuntimeException();
 		}
 		byte[] buffer = byteArrOutStream.toByteArray();
 		DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length, iadr, port);
@@ -57,18 +56,15 @@ public class Util {
 		try (ObjectInputStream objInStream = new ObjectInputStream(byteArrInStream);) {
 			message = (Message) objInStream.readObject();
 		} catch (ClassNotFoundException e) {
-			System.out.println("Beim Lesen des Objektes ist ein fehler aufgetreten");
-			e.printStackTrace(); // TODO remove/replace
+			throw new RuntimeException();
 		} catch (IOException e) {
-			System.out.println("IOFehler beim ermitteln der Message ausm DatagramPacket");
-			e.printStackTrace(); // TODO remove/replace
+			throw new RuntimeException();
 		}
 		return message;
 	}
 
 	/**
-	 * A method that opens a TCP connection with a server, sends a message,
-	 * waits for an answer and closes the connection
+	 * A method that opens a TCP connection with a server, sends a message, waits for an answer and closes the connection
 	 * 
 	 * @param message
 	 *            The message that is supposed to be sent
@@ -80,7 +76,9 @@ public class Util {
 	 * @throws IOException
 	 */
 	public static Message sendAndGetMessage(Message message, InetAddress address, int serverPort) throws IOException {
-		try (Socket server = new Socket(address, serverPort); ObjectOutputStream out = new ObjectOutputStream(server.getOutputStream()); ObjectInputStream in = new ObjectInputStream(server.getInputStream());) {
+		try (Socket server = new Socket(address, serverPort);
+				ObjectOutputStream out = new ObjectOutputStream(server.getOutputStream());
+				ObjectInputStream in = new ObjectInputStream(server.getInputStream());) {
 
 			out.writeObject(message);
 			out.flush();
@@ -92,8 +90,7 @@ public class Util {
 	}
 
 	/**
-	 * Checks if it is possible to establish a TCP connection to a server with
-	 * specified address and port
+	 * Checks if it is possible to establish a TCP connection to a server with specified address and port
 	 * 
 	 * @param address
 	 *            The address of the target server

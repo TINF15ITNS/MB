@@ -21,8 +21,7 @@ import message.PayloadRegisterConsumer;
 import message.Util;
 
 /**
- * An implementation of the interface ConsumerIF that sends messages using the
- * Util class and listens for UDP broadcasts containg the messages.
+ * An implementation of the interface ConsumerIF that sends messages using the Util class and listens for UDP broadcasts containg the messages.
  * 
  * @author Nikolai Seip, Sebastian Mattheis, Fabian Hinz
  *
@@ -66,7 +65,7 @@ public class Consumer implements ConsumerIF {
 			return false; // If there is no connection to the server, the consumer cannot be registered.
 		}
 
-		//Check the payload
+		// Check the payload
 		if (answer.getType() != MessageType.RegisterConsumer || !(answer.getPayload() instanceof PayloadRegisterConsumer)) {
 			throw new RuntimeException("Wrong Payload");
 		}
@@ -78,7 +77,7 @@ public class Consumer implements ConsumerIF {
 		this.consumerID = answerPayload.getId();
 		this.multicastAddress = answerPayload.getMulticastAddress();
 
-		//Join multicast group
+		// Join multicast group
 		try {
 			udpSocket = new MulticastSocket(serverPort);
 			udpSocket.joinGroup(multicastAddress);
@@ -104,7 +103,7 @@ public class Consumer implements ConsumerIF {
 			return null;
 		}
 
-		//Check the payload
+		// Check the payload
 		if (answer.getType() != MessageType.getProducerList || !(answer.getPayload() instanceof PayloadProducerList)) {
 			throw new RuntimeException("Wrong Payload");
 		}
@@ -211,8 +210,7 @@ public class Consumer implements ConsumerIF {
 
 	/**
 	 * 
-	 * The class is listening for messages from the server and writes them into
-	 * the Pipe
+	 * The class is listening for messages from the server and writes them into the Pipe
 	 *
 	 */
 	private class WaitForMessage implements Runnable {
@@ -233,8 +231,7 @@ public class Consumer implements ConsumerIF {
 		/**
 		 * Prevents the thread in run() to do another iteration of its action.
 		 * 
-		 * @return true if the thread has been stopped, false if the thread was
-		 *         already stopped
+		 * @return true if the thread has been stopped, false if the thread was already stopped
 		 */
 		public boolean stopThread() {
 			if (isRunning) {
@@ -261,7 +258,8 @@ public class Consumer implements ConsumerIF {
 						PayloadProducer payloadProducer = (PayloadProducer) recievedMessage.getPayload();
 
 						if (subscriptions.contains(payloadProducer.getName())) {
-							pipedMessageWriter.write("Der Producer " + payloadProducer.getName() + " hat den Dienst eingestellt. Sie können leider keine Push-Nachrichten mehr von ihm erhalten...");
+							pipedMessageWriter.write("Der Producer " + payloadProducer.getName()
+									+ " hat den Dienst eingestellt. Sie können leider keine Push-Nachrichten mehr von ihm erhalten...");
 							subscriptions.remove(payloadProducer.getName());
 
 						}
@@ -273,7 +271,8 @@ public class Consumer implements ConsumerIF {
 						PayloadBroadcast payload = (PayloadBroadcast) recievedMessage.getPayload();
 
 						if (subscriptions.contains(payload.getSender())) {
-							pipedMessageWriter.write("\nSie haben eine neue Push-Mitteilung, " + payload.getSender() + " meldet: \n" + payload.getMessage() + "\n");
+							pipedMessageWriter
+									.write("\nSie haben eine neue Push-Mitteilung, " + payload.getSender() + " meldet: \n" + payload.getMessage() + "\n");
 						}
 						break;
 
@@ -281,7 +280,6 @@ public class Consumer implements ConsumerIF {
 						throw new RuntimeException("Wrong MessageType");
 					}
 				} catch (IOException e) {
-					System.out.println("Fehler beim Bearbeiten der erhaltenen UDP-Message");
 				}
 			}
 		}
