@@ -1,9 +1,24 @@
 package consumer;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import message.*;
+import java.io.IOException;
+import java.io.PipedReader;
+import java.io.PipedWriter;
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+
+import message.Message;
+import message.MessageFactory;
+import message.MessageType;
+import message.PayloadBroadcast;
+import message.PayloadDeregisterConsumer;
+import message.PayloadProducer;
+import message.PayloadProducerList;
+import message.PayloadRegisterConsumer;
+import message.Util;
 
 /**
  * 
@@ -17,8 +32,8 @@ public class Consumer implements ConsumerIF {
 	private InetAddress mcastadr;
 	private InetAddress serverAddress;
 	private HashSet<String> subscriptions;
-	MulticastSocket udpSocket;
-	PipedReader pr;
+	private MulticastSocket udpSocket;
+	private PipedReader pr;
 	private WaitForMessage messageWaiter;
 
 	/**
@@ -177,7 +192,7 @@ public class Consumer implements ConsumerIF {
 	public boolean stopReceiving() {
 		return messageWaiter.stopThread();
 	}
-	
+
 	@Override
 	public boolean hasNewMessages() {
 		try {
@@ -189,8 +204,7 @@ public class Consumer implements ConsumerIF {
 
 	/**
 	 * 
-	 * The class is listening for messages from the server and writes them into
-	 * the Pipe
+	 * The class is listening for messages from the server and writes them into the Pipe
 	 *
 	 */
 	private class WaitForMessage implements Runnable {
@@ -212,8 +226,7 @@ public class Consumer implements ConsumerIF {
 		/**
 		 * Prevents the thread in run() to do another iteration of its action.
 		 * 
-		 * @return true if the thread has been stopped, false if the thread was
-		 *         already stopped
+		 * @return true if the thread has been stopped, false if the thread was already stopped
 		 */
 		public boolean stopThread() {
 			if (isRunning) {
@@ -240,7 +253,8 @@ public class Consumer implements ConsumerIF {
 						PayloadProducer pp = (PayloadProducer) m.getPayload();
 
 						if (subscriptions.contains(pp.getName())) {
-							pw.write("Der Producer " + pp.getName() + " hat den Dienst eingestellt. Sie können leider keine Push-Nachrichten mehr von ihm erhalten...");
+							pw.write("Der Producer " + pp.getName()
+									+ " hat den Dienst eingestellt. Sie können leider keine Push-Nachrichten mehr von ihm erhalten...");
 							subscriptions.remove(pp.getName());
 						}
 						break;
