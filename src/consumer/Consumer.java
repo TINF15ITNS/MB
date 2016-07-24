@@ -34,10 +34,10 @@ public class Consumer implements ConsumerIF {
 	private InetAddress mcastadr;
 	private InetAddress serverAddress;
 	private HashSet<String> subscriptions;
-	MulticastSocket udpSocket = null;
+	MulticastSocket udpSocket;
 	PipedReader pr;
 	private WaitForMessage messageWaiter;
-	
+
 	/**
 	 * Used to interact with a MessageServer
 	 * 
@@ -81,7 +81,7 @@ public class Consumer implements ConsumerIF {
 			return false;
 		}
 		pr = new PipedReader();
-		messageWaiter =  new WaitForMessage(udpSocket);
+		messageWaiter = new WaitForMessage(udpSocket);
 		Thread t = new Thread(messageWaiter);
 		t.start();
 		registered = answerPayload.getSuccess();
@@ -178,12 +178,11 @@ public class Consumer implements ConsumerIF {
 		return s.toString();
 	}
 
-
 	@Override
-	public boolean stopRecieving() {
+	public boolean stopReceiving() {
 		return messageWaiter.stopThread();
 	}
-	
+
 	/**
 	 * 
 	 * The class is listening for messages from the server and prints them on the console
@@ -205,20 +204,19 @@ public class Consumer implements ConsumerIF {
 				e.printStackTrace();
 			}
 		}
-		
+
 		/**
 		 * Prevents the thread in run() to do another iteration of its action.
+		 * 
 		 * @return true if the thread has been stopped, false if the thread was already stopped
 		 */
-		public boolean stopThread()
-		{
-			if(isRunning)
-			{
+		public boolean stopThread() {
+			if (isRunning) {
 				isRunning = false;
-				
+
 				return true;
-			}
-			else return false;			
+			} else
+				return false;
 		}
 
 		@Override
@@ -240,7 +238,7 @@ public class Consumer implements ConsumerIF {
 					case Broadcast:
 						PayloadBroadcast payload = (PayloadBroadcast) m.getPayload();
 						if (subscriptions.contains(payload.getSender())) {
-							pw.write("Sie haben eine neue Push-Mitteilung, "+ payload.getSender() + " meldet: \n" + payload.getMessage());
+							pw.write("Sie haben eine neue Push-Mitteilung, " + payload.getSender() + " meldet: \n" + payload.getMessage());
 						}
 						break;
 

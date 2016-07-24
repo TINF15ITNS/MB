@@ -145,7 +145,7 @@ public class ConsumerCLI {
 		}
 		scanner.close();
 		// ist das hier notwendig? doch eigentlich nicht in dieser Variante
-		user.stopRecieving();
+		user.stopReceiving();
 		user.unsubscribeFromProducers(user.getSubscriptions());
 		user.deregisterFromServer();
 		System.out.println("Der Consumer wurde beendet");
