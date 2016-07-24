@@ -4,6 +4,7 @@
 package message;
 
 /**
+ * All available message types
  * 
  * @author Nikolai Seip, Sebastian Mattheis, Fabian Hinz
  *

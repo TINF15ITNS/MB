@@ -7,6 +7,8 @@ import java.net.InetAddress;
 import java.util.HashSet;
 
 /**
+ * Factory class used to produce messages
+ * 
  * @author Nikolai Seip, Sebastian Mattheis, Fabian Hinz
  *
  */

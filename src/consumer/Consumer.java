@@ -49,7 +49,8 @@ public class Consumer implements ConsumerIF {
 			registered = false;
 			return false; // If there is no connection to the server, the consumer cannot be registered.
 		}
-
+		
+		//Check the payload
 		if (answer.getType() != MessageType.RegisterConsumer || !(answer.getPayload() instanceof PayloadRegisterConsumer)) {
 			throw new RuntimeException("Wrong Payload");
 		}
@@ -61,6 +62,7 @@ public class Consumer implements ConsumerIF {
 		this.consumerID = answerPayload.getId();
 		this.multicastAddress = answerPayload.getMulticastAddress();
 
+		//Join multicast group
 		try {
 			udpSocket = new MulticastSocket(serverPort);
 			udpSocket.joinGroup(multicastAddress);
@@ -85,6 +87,7 @@ public class Consumer implements ConsumerIF {
 			return null;
 		}
 
+		//Check the payload
 		if (answer.getType() != MessageType.getProducerList || !(answer.getPayload() instanceof PayloadProducerList)) {
 			throw new RuntimeException("Wrong Payload");
 		}

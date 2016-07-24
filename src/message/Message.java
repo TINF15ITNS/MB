@@ -6,6 +6,7 @@ package message;
 import java.io.Serializable;
 
 /**
+ * Container to be sent containing specific payloads
  * 
  * @author Nikolai Seip, Sebastian Mattheis, Fabian Hinz
  *
