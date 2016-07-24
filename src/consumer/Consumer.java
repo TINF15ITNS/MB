@@ -65,7 +65,7 @@ public class Consumer implements ConsumerIF {
 			registered = false;
 			return false; // If there is no connection to the server, the consumer cannot be registered.
 		}
-		
+
 		//Check the payload
 		if (answer.getType() != MessageType.RegisterConsumer || !(answer.getPayload() instanceof PayloadRegisterConsumer)) {
 			throw new RuntimeException("Wrong Payload");
@@ -100,6 +100,7 @@ public class Consumer implements ConsumerIF {
 		try {
 			answer = Util.sendAndGetMessage(MessageFactory.createProducerListMsg(), serverAddress, serverPort);
 		} catch (IOException e) {
+			registered = false;
 			return null;
 		}
 
@@ -155,6 +156,7 @@ public class Consumer implements ConsumerIF {
 		try {
 			answer = Util.sendAndGetMessage(MessageFactory.createDeregisterConsumerMsg(consumerID), serverAddress, serverPort);
 		} catch (IOException e) {
+			registered = false;
 			return false;
 		}
 
@@ -168,6 +170,7 @@ public class Consumer implements ConsumerIF {
 		try {
 			udpSocket.leaveGroup(multicastAddress);
 		} catch (IOException e) {
+			registered = false;
 			return false;
 		}
 		registered = !answerPayload.getSuccess();
@@ -187,7 +190,7 @@ public class Consumer implements ConsumerIF {
 				stringBuffer.append((char) pipedMessageReader.read());
 			}
 		} catch (IOException e) {
-			throw new RuntimeException("reading Pipe throws IOException");
+			throw new RuntimeException("Could not read from pipe");
 		}
 		return stringBuffer.toString();
 	}
@@ -208,7 +211,8 @@ public class Consumer implements ConsumerIF {
 
 	/**
 	 * 
-	 * The class is listening for messages from the server and writes them into the Pipe
+	 * The class is listening for messages from the server and writes them into
+	 * the Pipe
 	 *
 	 */
 	private class WaitForMessage implements Runnable {
@@ -222,14 +226,15 @@ public class Consumer implements ConsumerIF {
 			try {
 				pipedMessageWriter.connect(pipedMessageReader);
 			} catch (IOException e) {
-				throw new RuntimeException("Pipe is alredy connected");
+				throw new RuntimeException("Could not connect pipe");
 			}
 		}
 
 		/**
 		 * Prevents the thread in run() to do another iteration of its action.
 		 * 
-		 * @return true if the thread has been stopped, false if the thread was already stopped
+		 * @return true if the thread has been stopped, false if the thread was
+		 *         already stopped
 		 */
 		public boolean stopThread() {
 			if (isRunning) {
@@ -256,8 +261,7 @@ public class Consumer implements ConsumerIF {
 						PayloadProducer payloadProducer = (PayloadProducer) recievedMessage.getPayload();
 
 						if (subscriptions.contains(payloadProducer.getName())) {
-							pipedMessageWriter.write("Der Producer " + payloadProducer.getName()
-									+ " hat den Dienst eingestellt. Sie können leider keine Push-Nachrichten mehr von ihm erhalten...");
+							pipedMessageWriter.write("Der Producer " + payloadProducer.getName() + " hat den Dienst eingestellt. Sie können leider keine Push-Nachrichten mehr von ihm erhalten...");
 							subscriptions.remove(payloadProducer.getName());
 
 						}
@@ -269,8 +273,7 @@ public class Consumer implements ConsumerIF {
 						PayloadBroadcast payload = (PayloadBroadcast) recievedMessage.getPayload();
 
 						if (subscriptions.contains(payload.getSender())) {
-							pipedMessageWriter
-									.write("\nSie haben eine neue Push-Mitteilung, " + payload.getSender() + " meldet: \n" + payload.getMessage() + "\n");
+							pipedMessageWriter.write("\nSie haben eine neue Push-Mitteilung, " + payload.getSender() + " meldet: \n" + payload.getMessage() + "\n");
 						}
 						break;
 
