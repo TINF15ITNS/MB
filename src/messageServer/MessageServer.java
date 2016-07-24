@@ -54,7 +54,6 @@ public class MessageServer implements MessageServerIF {
 	/**
 	 * waits for messages from producers or consumers
 	 */
-	// TODO MessageServer beendbar machen
 	@Override
 	public void respondOnMessages() {
 		try (ServerSocket serverSo = new ServerSocket(serverPort); MulticastSocket udpSocket = new MulticastSocket(serverPort);) {
