@@ -74,7 +74,7 @@ public class ConsumerCLI {
 				}
 			} else {
 				System.out.println("(1) Abmeldung vom Server\n" + "(2) Liste von Produzenten ansehen\n" + "(3) Abonnieren von Produzenten\n"
-						+ "(4) Produzentenabo kündigen\n" + "(5) Abonnements anzeigen\n" + "(6) erhaltene Nachrichten anzeigen\n" + "(7) Beenden der CLI\n"
+						+ "(4) Produzentenabo kündigen\n" + "(5) Abonnements anzeigen\n" + "(6) Erhaltene Nachrichten anzeigen\n" + "(7) Beenden der CLI\n"
 						+ "Eingabe: ");
 
 				int input = scanner.nextInt();
