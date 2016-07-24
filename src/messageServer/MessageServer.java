@@ -31,9 +31,9 @@ public class MessageServer implements MessageServerIF {
 
 	private final int serverPort;
 	private static int numberOfCustomers = 0;
-	HashSet<Integer> dataConsumer;
-	HashSet<String> dataProducer;
-	InetAddress mcastadr;
+	private HashSet<Integer> dataConsumer;
+	private HashSet<String> dataProducer;
+	private InetAddress mcastadr;
 
 	public MessageServer(int serverPort) {
 		dataConsumer = new HashSet<>();
