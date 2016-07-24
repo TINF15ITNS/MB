@@ -71,8 +71,7 @@ public class ConsumerCLI {
 					break;
 				}
 			} else {
-				System.out.print("(1) Abmeldung vom Server\n" + "(2) Liste von Produzenten ansehen\n" + "(3) Abonnieren von Produzenten\n"
-						+ "(4) Produzentenabo kündigen\n" + "(5) Abonnements anzeigen\n" + "(6) Erhaltene Nachrichten anzeigen");
+				System.out.print("(1) Abmeldung vom Server\n" + "(2) Liste von Produzenten ansehen\n" + "(3) Abonnieren von Produzenten\n" + "(4) Produzentenabo kündigen\n" + "(5) Abonnements anzeigen\n" + "(6) Erhaltene Nachrichten anzeigen");
 				if (user.hasNewMessages()) {
 					System.out.print(" (neue Nachrichten vorhanden)");
 				}
@@ -102,7 +101,7 @@ public class ConsumerCLI {
 					}
 					break;
 				case 3:
-					System.out.print("Welche Produzenten möchten Sie abonnieren?\n" + "(Bei mehreren bitte mit Komma trennen.)");
+					System.out.print("Welche Produzenten möchten Sie abonnieren?\n" + "(Bei mehreren bitte mit Komma trennen.) ");
 					String[] failedSubscriptions = user.subscribeToProducers(scanner.nextLine().trim().replaceAll("[ ]*,[ ]*+", ",").split(","));
 					if (failedSubscriptions.length > 0) {
 						System.out.println("Es war nicht möglich, die folgenden Produzenten zu abonnieren:");
@@ -112,7 +111,7 @@ public class ConsumerCLI {
 					}
 					break;
 				case 4:
-					System.out.print("Welchen Produzenten soll das Abonnement gekündigt werden?");
+					System.out.print("Welchen Produzenten soll das Abonnement gekündigt werden?\n" + "(Bei mehreren bitte mit Komma trennen.) ");
 					String[] failedUnsubscriptions = user.unsubscribeFromProducers(scanner.nextLine().trim().replaceAll("[ ]*,[ ]*+", ",").split(","));
 					if (failedUnsubscriptions.length > 0) {
 						System.out.println("Sie konnten folgenden Produzenten nicht kündigen:");
@@ -122,9 +121,14 @@ public class ConsumerCLI {
 					}
 					break;
 				case 5:
+					String[] subscriptions = user.getSubscriptions();
+					if (subscriptions.length == 0) {
+						System.out.println("Keine Abbonements vorhanden.");
+						break;
+					}
 					System.out.println("Ihre Abos:");
-					for (String s3 : user.getSubscriptions()) {
-						System.out.println("* " + s3 + "\n");
+					for (String s : subscriptions) {
+						System.out.println("* " + s + "\n");
 					}
 					break;
 				case 6:
