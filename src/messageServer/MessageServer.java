@@ -16,6 +16,7 @@ import java.util.HashSet;
 
 import message.Message;
 import message.MessageFactory;
+import message.MessageType;
 import message.PayloadBroadcast;
 import message.PayloadDeregisterConsumer;
 import message.PayloadProducer;
@@ -160,7 +161,11 @@ public class MessageServer implements MessageServerIF {
 		 * @return response-message
 		 */
 		private Message registerProducer(Message m) {
+			if (m.getType() != MessageType.RegisterProducer || m.getPayload() instanceof PayloadProducer) {
+				throw new RuntimeException("Wrong Payload or MessageType");
+			}
 			PayloadProducer pp = (PayloadProducer) m.getPayload();
+
 			if (!dataProducer.contains(pp.getName())) {
 				dataProducer.add(pp.getName());
 				return MessageFactory.createRegisterProducerMsg(pp.getName(), true);
@@ -177,8 +182,11 @@ public class MessageServer implements MessageServerIF {
 		 */
 
 		private Message receiveMessageFromProducer(Message m) {
+			if (m.getType() != MessageType.Broadcast || m.getPayload() instanceof PayloadBroadcast) {
+				throw new RuntimeException("Wrong Payload or MessageType");
+			}
 			PayloadBroadcast pm = (PayloadBroadcast) m.getPayload();
-			// schauen, ob der Absender sich beim Server auch angemeldet hat
+
 			if (dataProducer.contains(pm.getSender())) {
 				DatagramPacket dp = Util.getMessageAsDatagrammPacket(MessageFactory.createBroadcastMessage(pm.getSender(), pm.getMessage()), mcastadr,
 						serverPort);
@@ -196,8 +204,11 @@ public class MessageServer implements MessageServerIF {
 		 * @return response-message
 		 */
 		private Message deregisterConsumer(Message m) {
+			if (m.getType() != MessageType.DeregisterConsumer || m.getPayload() instanceof PayloadDeregisterConsumer) {
+				throw new RuntimeException("Wrong Payload or MessageType");
+			}
 			PayloadDeregisterConsumer pdc = (PayloadDeregisterConsumer) m.getPayload();
-			// if the removing-operation
+
 			if (dataConsumer.remove(pdc.getID())) {
 				return MessageFactory.createDeregisterConsumerMsg(true);
 			} else {
@@ -213,7 +224,11 @@ public class MessageServer implements MessageServerIF {
 		 * @return response-message, Payload-attribut success is true, if the operation was successful
 		 */
 		private Message deregisterProducer(Message m) {
+			if (m.getType() != MessageType.DeregisterProducer || m.getPayload() instanceof PayloadProducer) {
+				throw new RuntimeException("Wrong Payload or MessageType");
+			}
 			PayloadProducer pdp = (PayloadProducer) m.getPayload();
+
 			if (dataProducer.remove(pdp.getName())) {
 				DatagramPacket dp = Util.getMessageAsDatagrammPacket(MessageFactory.createDeregisterProducerMsg(pdp.getName()), mcastadr, serverPort);
 				sendMulticastMessage(dp);
