@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.2.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>480</x>
+      <y>190</y>
+      <w>230</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>ConsumerCLI
+--
+- prod: ProducerIF
+- scanner: Scanner
+
+
+
+
+--
++ main(String[] args)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>90</x>
+      <y>210</y>
+      <w>240</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>Producer
+--
+- serverPort: int
+- name: String
+- registered: boolean
+- serverAddress: InetAddress
+--
+&lt;&lt; constructor &gt;&gt;
++ Producer(String name, String address)
+&lt;&lt; method &gt;&gt;
+- getProducers(): HashSet&lt;String&gt;
+--
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>20</x>
+      <y>20</y>
+      <w>410</w>
+      <h>130</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;interace&gt;&gt;
+ProducerIF
+--
+--
++ registerOnServer(): boolean
++ deregisterFromServer(): boolean
++ sendMessage(String msg): boolean
++ isRegistered(): boolean
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>200</x>
+      <y>140</y>
+      <w>30</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;70.0</additional_attributes>
+  </element>
+</diagram>
