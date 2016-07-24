@@ -111,8 +111,8 @@ public class ProducerCLI {
 				}
 			}
 		}
-		// clean up on exit
-		prod.deregisterFromServer();
+
+		if(prod.isRegistered()) prod.deregisterFromServer();
 		scanner.close();
 	}
 }
