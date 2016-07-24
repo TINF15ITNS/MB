@@ -41,6 +41,7 @@ public class Producer implements ProducerIF {
 		try {
 			answer = Util.sendAndGetMessage(MessageFactory.createRegisterProducerMsg(name), serverAddress, serverPort);
 		} catch (IOException e) {
+			registered = false;
 			return false;
 		}
 		if (answer.getType() != MessageType.RegisterProducer || !(answer.getPayload() instanceof PayloadProducer)) {
@@ -61,6 +62,7 @@ public class Producer implements ProducerIF {
 		try {
 			answer = Util.sendAndGetMessage(MessageFactory.createDeregisterProducerMsg(name), serverAddress, serverPort);
 		} catch (IOException e) {
+			registered = false;
 			return false;
 		}
 		if (answer.getType() != MessageType.DeregisterProducer || !(answer.getPayload() instanceof PayloadProducer)) {
@@ -81,6 +83,7 @@ public class Producer implements ProducerIF {
 		try {
 			answer = Util.sendAndGetMessage(MessageFactory.createBroadcastMessage(name, msg), serverAddress, serverPort);
 		} catch (IOException e) {
+			registered = false;
 			return false;
 		}
 		if (answer.getType() != MessageType.Broadcast || !(answer.getPayload() instanceof PayloadBroadcast)) {
@@ -104,6 +107,7 @@ public class Producer implements ProducerIF {
 		try {
 			answer = Util.sendAndGetMessage(MessageFactory.createProducerListMsg(), serverAddress, serverPort);
 		} catch (IOException e) {
+			registered = false;
 			return null;
 		}
 		if (answer.getType() != MessageType.getProducerList || !(answer.getPayload() instanceof PayloadProducerList)) {
