@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<diagram program="umlet" version="14.2">
+<diagram program="umlet" version="14.2.0">
   <zoom_level>10</zoom_level>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>240</x>
-      <y>140</y>
+      <x>40</x>
+      <y>80</y>
       <w>410</w>
       <h>210</h>
     </coordinates>
@@ -22,16 +22,17 @@ ConsumerIF
 + isRegistered(): boolean
 + getNewBroadcasts(): String
 + stopReceiving(): boolean
++ hasNewMessages(): boolean
 </panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>310</x>
-      <y>410</y>
+      <x>110</x>
+      <y>350</y>
       <w>240</w>
-      <h>290</h>
+      <h>320</h>
     </coordinates>
     <panel_attributes>Consumer
 --
@@ -42,6 +43,8 @@ ConsumerIF
 - subscriptions: HashSet&lt;String&gt;
 - producerList: HashSet&lt;String&gt; 
 - udpSocket: MulticastSocket 
+- pr: PipedReader
+- messageWaiter: WaitForMessage
 --
 &lt;&lt; constructor &gt;&gt;
 + Consumer(String address)
@@ -62,8 +65,8 @@ innerclass}
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>420</x>
-      <y>340</y>
+      <x>220</x>
+      <y>280</y>
       <w>30</w>
       <h>90</h>
     </coordinates>
@@ -73,16 +76,15 @@ innerclass}
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>780</x>
-      <y>140</y>
+      <x>580</x>
+      <y>80</y>
       <w>230</w>
-      <h>270</h>
+      <h>180</h>
     </coordinates>
     <panel_attributes>ConsumerCLI
 --
 - user: ConsumerIF 
 - scanner: Scanner
-
 
 
 
@@ -93,8 +95,8 @@ innerclass}
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>640</x>
-      <y>220</y>
+      <x>440</x>
+      <y>160</y>
       <w>160</w>
       <h>40</h>
     </coordinates>
@@ -104,8 +106,8 @@ innerclass}
   <element>
     <id>UMLPackage</id>
     <coordinates>
-      <x>220</x>
-      <y>100</y>
+      <x>20</x>
+      <y>40</y>
       <w>810</w>
       <h>620</h>
     </coordinates>
