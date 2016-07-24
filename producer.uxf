@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<diagram program="umlet" version="14.2.0">
+<diagram program="umlet" version="14.2">
   <zoom_level>10</zoom_level>
   <element>
     <id>UMLPackage</id>
@@ -30,7 +30,8 @@ ProducerIF
 + registerOnServer(): boolean
 + deregisterFromServer(): boolean
 + sendMessage(String msg): boolean
-+ isRegistered(): boolean</panel_attributes>
++ isRegistered(): boolean
+layer=1</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -51,7 +52,8 @@ ProducerIF
 &lt;&lt; constructor &gt;&gt;
 + Producer(String name, String address)
 &lt;&lt; method &gt;&gt;
--  getProducers(): HashSet&lt;String&gt;</panel_attributes>
+-  getProducers(): HashSet&lt;String&gt;
+layer=1</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -81,7 +83,8 @@ ProducerIF
 
 --
 + main(String[] args): void
-</panel_attributes>
+
+layer=1</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
