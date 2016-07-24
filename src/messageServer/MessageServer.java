@@ -151,7 +151,6 @@ public class MessageServer implements MessageServerIF {
 			numberOfCustomers++;
 			dataConsumer.add(new Integer(numberOfCustomers));
 			System.out.println("Neuanmeldung Consumer -> neue ID: " + numberOfCustomers);
-			;
 			return MessageFactory.createRegisterConsumerMsg(numberOfCustomers, mcastadr, true);
 		}
 

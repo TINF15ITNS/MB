@@ -4,8 +4,8 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>20</x>
-      <y>20</y>
+      <x>110</x>
+      <y>90</y>
       <w>410</w>
       <h>130</h>
     </coordinates>
@@ -21,8 +21,8 @@ MessageServerIF
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>200</x>
-      <y>140</y>
+      <x>290</x>
+      <y>210</y>
       <w>30</w>
       <h>90</h>
     </coordinates>
@@ -32,8 +32,8 @@ MessageServerIF
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>20</x>
-      <y>210</y>
+      <x>110</x>
+      <y>280</y>
       <w>380</w>
       <h>390</h>
     </coordinates>
@@ -72,8 +72,8 @@ innerclass}
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>480</x>
-      <y>190</y>
+      <x>610</x>
+      <y>90</y>
       <w>230</w>
       <h>190</h>
     </coordinates>
@@ -86,5 +86,29 @@ innerclass}
 --
 + main(String[] args)</panel_attributes>
     <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>90</x>
+      <y>50</y>
+      <w>770</w>
+      <h>630</h>
+    </coordinates>
+    <panel_attributes>messageServer
+--
+bg=orange</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>510</x>
+      <y>130</y>
+      <w>120</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes/>
+    <additional_attributes>10.0;20.0;100.0;20.0</additional_attributes>
   </element>
 </diagram>

@@ -29,11 +29,12 @@ public class Consumer implements ConsumerIF {
 	private static int serverPort = 55555;
 	private int consumerID;
 	private boolean registered = false;
-	private InetAddress mcastadr;
+	private InetAddress multicastAddress;
 	private InetAddress serverAddress;
 	private HashSet<String> subscriptions;
 	private MulticastSocket udpSocket;
-	private PipedReader pr;
+	private PipedReader pipedMessageReader;
+
 	private WaitForMessage messageWaiter;
 
 	/**
@@ -72,16 +73,16 @@ public class Consumer implements ConsumerIF {
 			return false; // If the process was unsuccessful the consumer cannot be registered.
 		}
 		this.consumerID = answerPayload.getId();
-		this.mcastadr = answerPayload.getMulticastAddress();
+		this.multicastAddress = answerPayload.getMulticastAddress();
 
 		try {
 			udpSocket = new MulticastSocket(serverPort);
-			udpSocket.joinGroup(mcastadr);
+			udpSocket.joinGroup(multicastAddress);
 		} catch (IOException e) {
 			registered = false;
 			return false;
 		}
-		pr = new PipedReader();
+		pipedMessageReader = new PipedReader();
 		messageWaiter = new WaitForMessage(udpSocket);
 		Thread t = new Thread(messageWaiter);
 		t.start();
@@ -114,11 +115,11 @@ public class Consumer implements ConsumerIF {
 
 		List<String> unsuccessfulProducers = new LinkedList<>();
 		HashSet<String> actualProducers = getProducers();
-		for (String s : producers) {
-			if (actualProducers.contains(s)) {
-				subscriptions.add(s);
+		for (String producer : producers) {
+			if (actualProducers.contains(producer)) {
+				subscriptions.add(producer);
 			} else {
-				unsuccessfulProducers.add(s);
+				unsuccessfulProducers.add(producer);
 			}
 		}
 		return unsuccessfulProducers.toArray(new String[0]);
@@ -135,9 +136,9 @@ public class Consumer implements ConsumerIF {
 			return new String[0]; // There are no producers to be unsubscribed from, so there are none where it was not possible
 
 		List<String> list = new LinkedList<>();
-		for (String s : producers) {
-			if (!subscriptions.remove(s)) {
-				list.add(s);
+		for (String producer : producers) {
+			if (!subscriptions.remove(producer)) {
+				list.add(producer);
 			}
 		}
 		return list.toArray(new String[list.size()]);
@@ -160,7 +161,7 @@ public class Consumer implements ConsumerIF {
 			return false;
 
 		try {
-			udpSocket.leaveGroup(mcastadr);
+			udpSocket.leaveGroup(multicastAddress);
 		} catch (IOException e) {
 			return false;
 		}
@@ -175,17 +176,17 @@ public class Consumer implements ConsumerIF {
 
 	@Override
 	public String getNewBroadcasts() {
-		StringBuffer s = new StringBuffer("");
+		StringBuffer stringBuffer = new StringBuffer("");
 		try {
-			while (pr.ready()) {
-				s.append((char) pr.read());
+			while (pipedMessageReader.ready()) {
+				stringBuffer.append((char) pipedMessageReader.read());
 			}
 		} catch (IOException e) {
 			// TODO überprüfen: tritt ein, wenn Pipe gebrochen/beendet, aber diese Methode kann nicht mehr aufgrufen werden, wenn PipedWriter = anderer Thread
 			// geschlossen ist
 			throw new RuntimeException("reading Pipe throws IOException");
 		}
-		return s.toString();
+		return stringBuffer.toString();
 	}
 
 	@Override
@@ -196,7 +197,7 @@ public class Consumer implements ConsumerIF {
 	@Override
 	public boolean hasNewMessages() {
 		try {
-			return pr.ready();
+			return pipedMessageReader.ready();
 		} catch (IOException e) {
 			return false;
 		}
@@ -209,14 +210,14 @@ public class Consumer implements ConsumerIF {
 	 */
 	private class WaitForMessage implements Runnable {
 		private MulticastSocket udpSocket;
-		private PipedWriter pw;
+		private PipedWriter pipedMessageWriter;
 		private boolean isRunning = true;
 
 		public WaitForMessage(MulticastSocket udpSocket) {
 			this.udpSocket = udpSocket;
-			pw = new PipedWriter();
+			pipedMessageWriter = new PipedWriter();
 			try {
-				pw.connect(pr);
+				pipedMessageWriter.connect(pipedMessageReader);
 			} catch (IOException e) {
 				// TODO überprüfen: kann nicht auftreten, da PipedReader nicht schon verheiratet sein kann
 				throw new RuntimeException("Pipe is alredy connected");
@@ -239,33 +240,35 @@ public class Consumer implements ConsumerIF {
 		@Override
 		public void run() {
 			byte[] buffer = new byte[65508];// max size of a DatagramPacket
-			DatagramPacket dp = new DatagramPacket(buffer, buffer.length, serverAddress, serverPort);
+			DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length, serverAddress, serverPort);
 			while (isRunning) {
 				try {
-					udpSocket.receive(dp);
-					Message m = Util.getMessageOutOfDatagramPacket(dp);
+					udpSocket.receive(datagramPacket);
+					Message recievedMessage = Util.getMessageOutOfDatagramPacket(datagramPacket);
 
-					switch (m.getType()) {
+					switch (recievedMessage.getType()) {
 					case DeregisterProducer:
-						if (m.getType() != MessageType.DeregisterProducer || !(m.getPayload() instanceof PayloadProducer)) {
+						if (recievedMessage.getType() != MessageType.DeregisterProducer || !(recievedMessage.getPayload() instanceof PayloadProducer)) {
 							throw new RuntimeException("Wrong Payload");
 						}
-						PayloadProducer pp = (PayloadProducer) m.getPayload();
+						PayloadProducer payloadProducer = (PayloadProducer) recievedMessage.getPayload();
 
-						if (subscriptions.contains(pp.getName())) {
-							pw.write("Der Producer " + pp.getName()
+						if (subscriptions.contains(payloadProducer.getName())) {
+							pipedMessageWriter.write("Der Producer " + payloadProducer.getName()
 									+ " hat den Dienst eingestellt. Sie können leider keine Push-Nachrichten mehr von ihm erhalten...");
-							subscriptions.remove(pp.getName());
+							subscriptions.remove(payloadProducer.getName());
+
 						}
 						break;
 					case Broadcast:
-						if (m.getType() != MessageType.Broadcast || !(m.getPayload() instanceof PayloadBroadcast)) {
+						if (recievedMessage.getType() != MessageType.Broadcast || !(recievedMessage.getPayload() instanceof PayloadBroadcast)) {
 							throw new RuntimeException("Wrong Payload");
 						}
-						PayloadBroadcast payload = (PayloadBroadcast) m.getPayload();
+						PayloadBroadcast payload = (PayloadBroadcast) recievedMessage.getPayload();
 
 						if (subscriptions.contains(payload.getSender())) {
-							pw.write("\nSie haben eine neue Push-Mitteilung, " + payload.getSender() + " meldet: \n" + payload.getMessage() + "\n");
+							pipedMessageWriter
+									.write("\nSie haben eine neue Push-Mitteilung, " + payload.getSender() + " meldet: \n" + payload.getMessage() + "\n");
 						}
 						break;
 

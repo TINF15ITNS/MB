@@ -4,8 +4,8 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>10</x>
-      <y>40</y>
+      <x>40</x>
+      <y>80</y>
       <w>410</w>
       <h>210</h>
     </coordinates>
@@ -29,8 +29,8 @@ ConsumerIF
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>80</x>
-      <y>310</y>
+      <x>110</x>
+      <y>350</y>
       <w>240</w>
       <h>320</h>
     </coordinates>
@@ -65,8 +65,8 @@ innerclass}
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>190</x>
-      <y>240</y>
+      <x>220</x>
+      <y>280</y>
       <w>30</w>
       <h>90</h>
     </coordinates>
@@ -76,8 +76,8 @@ innerclass}
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>460</x>
-      <y>230</y>
+      <x>580</x>
+      <y>80</y>
       <w>230</w>
       <h>180</h>
     </coordinates>
@@ -90,6 +90,30 @@ innerclass}
 
 --
 + main(String[] args)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>440</x>
+      <y>160</y>
+      <w>160</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes/>
+    <additional_attributes>10.0;20.0;140.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>20</x>
+      <y>40</y>
+      <w>810</w>
+      <h>620</h>
+    </coordinates>
+    <panel_attributes>consumer
+--
+bg=orange</panel_attributes>
     <additional_attributes/>
   </element>
 </diagram>

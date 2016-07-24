@@ -26,8 +26,8 @@ public class ConsumerCLI {
 		while (true) {
 			try {
 				System.out.print("Bitte geben Sie die Adresse des Servers ein (ohne Port): ");
-				String addr = scanner.nextLine();
-				user = new Consumer(addr);
+				String address = scanner.nextLine();
+				user = new Consumer(address);
 				System.out.println();
 				break;
 			} catch (IOException e) {
@@ -64,8 +64,8 @@ public class ConsumerCLI {
 						System.out.println("Es sind momentan keine Produzenten registriert.");
 					else {
 						System.out.println("Verfügbare Produzenten:");
-						for (String p : producers) {
-							System.out.println("* " + p + "\n");
+						for (String producer : producers) {
+							System.out.println("* " + producer + "\n");
 						}
 					}
 					break;
@@ -78,8 +78,7 @@ public class ConsumerCLI {
 					break;
 				}
 			} else {
-				System.out.print("(1) Abmeldung vom Server\n" + "(2) Liste von Produzenten ansehen\n" + "(3) Abonnieren von Produzenten\n"
-						+ "(4) Produzentenabo kündigen\n" + "(5) Abonnements anzeigen\n" + "(6) Erhaltene Nachrichten anzeigen");
+				System.out.print("(1) Abmeldung vom Server\n" + "(2) Liste von Produzenten ansehen\n" + "(3) Abonnieren von Produzenten\n" + "(4) Produzentenabo kündigen\n" + "(5) Abonnements anzeigen\n" + "(6) Erhaltene Nachrichten anzeigen");
 				if (user.hasNewMessages()) {
 					System.out.print(" (neue Nachrichten vorhanden)");
 				}
@@ -109,8 +108,8 @@ public class ConsumerCLI {
 						System.out.println("Es sind momentan keine Produzenten registriert.");
 					else {
 						System.out.println("Verfügbare Produzenten:");
-						for (String p : producers) {
-							System.out.print("* " + p + "\n");
+						for (String producer : producers) {
+							System.out.print("* " + producer + "\n");
 						}
 					}
 					break;
@@ -141,14 +140,14 @@ public class ConsumerCLI {
 						break;
 					}
 					System.out.println("\nIhre Abos:");
-					for (String s : subscriptions) {
-						System.out.println("* " + s);
+					for (String subscription : subscriptions) {
+						System.out.println("* " + subscription);
 					}
 					break;
 				case 6:
-					String ausgabe = user.getNewBroadcasts();
-					if (!ausgabe.equals("")) {
-						System.out.println(ausgabe);
+					String newBroadcasts = user.getNewBroadcasts();
+					if (!newBroadcasts.equals("")) {
+						System.out.println(newBroadcasts);
 					} else {
 						System.out.println("\nSie haben keine neuen Nachrichten");
 					}
