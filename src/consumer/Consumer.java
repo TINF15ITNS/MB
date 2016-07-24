@@ -6,6 +6,8 @@ import java.util.*;
 import message.*;
 
 /**
+ * An implementation of the interface ConsumerIF that sends messages using the
+ * Util class and listens for UDP broadcasts containg the messages.
  * 
  * @author Nikolai Seip, Sebastian Mattheis, Fabian Hinz
  *
@@ -166,8 +168,6 @@ public class Consumer implements ConsumerIF {
 				stringBuffer.append((char) pipedMessageReader.read());
 			}
 		} catch (IOException e) {
-			// TODO überprüfen: tritt ein, wenn Pipe gebrochen/beendet, aber diese Methode kann nicht mehr aufgrufen werden, wenn PipedWriter = anderer Thread
-			// geschlossen ist
 			throw new RuntimeException("reading Pipe throws IOException");
 		}
 		return stringBuffer.toString();
@@ -204,7 +204,6 @@ public class Consumer implements ConsumerIF {
 			try {
 				pipedMessageWriter.connect(pipedMessageReader);
 			} catch (IOException e) {
-				// TODO überprüfen: kann nicht auftreten, da PipedReader nicht schon verheiratet sein kann
 				throw new RuntimeException("Pipe is alredy connected");
 			}
 		}
@@ -260,7 +259,6 @@ public class Consumer implements ConsumerIF {
 					}
 				} catch (IOException e) {
 					System.out.println("Fehler beim Bearbeiten der erhaltenen UDP-Message");
-					e.printStackTrace();
 				}
 			}
 		}

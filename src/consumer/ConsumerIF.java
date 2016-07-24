@@ -6,6 +6,7 @@ package consumer;
 import java.util.HashSet;
 
 /**
+ * Specifies an interface to interact with a message server.
  * 
  * @author Nikolai Seip, Sebastian Mattheis, Fabian Hinz
  *
@@ -13,7 +14,8 @@ import java.util.HashSet;
 public interface ConsumerIF {
 
 	/**
-	 * Registers this consumer on the server and starts an new thread for receiving messages from the server
+	 * Registers this consumer on the server and starts an new thread for
+	 * receiving messages from the server
 	 * 
 	 * @return true if the operation was successful, false if not
 	 */
@@ -22,7 +24,8 @@ public interface ConsumerIF {
 	/**
 	 * Fetches all available producers
 	 * 
-	 * @return all available producers, an empty string array if there are none, null if the operation was unsuccessful
+	 * @return all available producers, an empty string array if there are none,
+	 *         null if the operation was unsuccessful
 	 */
 	public HashSet<String> getProducers();
 
@@ -65,7 +68,8 @@ public interface ConsumerIF {
 	public boolean isRegistered();
 
 	/**
-	 * When the user wants to read his received broadcasts, he calls this method to get them
+	 * When the user wants to read his received broadcasts, he calls this method
+	 * to get them
 	 * 
 	 * @return a String with all of the broadcasts
 	 */
@@ -74,14 +78,16 @@ public interface ConsumerIF {
 	/**
 	 * Stops receiving new Broadcasts
 	 * 
-	 * @return true if the receiving has stopped, false if the receiving has already been stopped
+	 * @return true if the receiving has stopped, false if the receiving has
+	 *         already been stopped
 	 */
 	public boolean stopReceiving();
-	
+
 	/**
 	 * Checks if there are new messages available for this consumer
 	 * 
-	 * @return true if there are new messages available for this consumer, false if not
+	 * @return true if there are new messages available for this consumer, false
+	 *         if not
 	 */
 	public boolean hasNewMessages();
 }
