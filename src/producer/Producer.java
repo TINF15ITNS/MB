@@ -42,6 +42,7 @@ public class Producer implements ProducerIF {
 		}
 	}
 
+	@Override
 	public boolean registerOnServer() {
 		Message answer;
 		try {
@@ -61,6 +62,7 @@ public class Producer implements ProducerIF {
 			return false;
 	}
 
+	@Override
 	public boolean deregisterFromServer() {
 		Message answer;
 		try {
@@ -80,6 +82,7 @@ public class Producer implements ProducerIF {
 			return false;
 	}
 
+	@Override
 	public boolean sendMessage(String msg) {
 		Message answer;
 		try {
@@ -98,6 +101,7 @@ public class Producer implements ProducerIF {
 		return true;
 	}
 
+	@Override
 	public boolean isRegistered() {
 		return registered;
 	}
