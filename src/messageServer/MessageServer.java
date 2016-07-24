@@ -3,24 +3,10 @@
  */
 package messageServer;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.net.MulticastSocket;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.io.*;
+import java.net.*;
 import java.util.HashSet;
-
-import message.Message;
-import message.MessageFactory;
-import message.MessageType;
-import message.PayloadBroadcast;
-import message.PayloadDeregisterConsumer;
-import message.PayloadProducer;
-import message.Util;
+import message.*;
 
 /**
  * 
@@ -161,7 +147,7 @@ public class MessageServer implements MessageServerIF {
 		 * @return response-message
 		 */
 		private Message registerProducer(Message m) {
-			if (m.getType() != MessageType.RegisterProducer || m.getPayload() instanceof PayloadProducer) {
+			if (m.getType() != MessageType.RegisterProducer || !(m.getPayload() instanceof PayloadProducer)) {
 				throw new RuntimeException("Wrong Payload or MessageType");
 			}
 			PayloadProducer pp = (PayloadProducer) m.getPayload();
@@ -182,7 +168,7 @@ public class MessageServer implements MessageServerIF {
 		 */
 
 		private Message receiveMessageFromProducer(Message m) {
-			if (m.getType() != MessageType.Broadcast || m.getPayload() instanceof PayloadBroadcast) {
+			if (m.getType() != MessageType.Broadcast || !(m.getPayload() instanceof PayloadBroadcast)) {
 				throw new RuntimeException("Wrong Payload or MessageType");
 			}
 			PayloadBroadcast pm = (PayloadBroadcast) m.getPayload();
@@ -197,14 +183,14 @@ public class MessageServer implements MessageServerIF {
 		}
 
 		/**
-		 * Removes the Consumer from the Subscriptionlist on the Server
+		 * Removes the Consumer from the list of subscriptions on the Server
 		 * 
 		 * @param m
 		 *            sent message
 		 * @return response-message
 		 */
 		private Message deregisterConsumer(Message m) {
-			if (m.getType() != MessageType.DeregisterConsumer || m.getPayload() instanceof PayloadDeregisterConsumer) {
+			if (m.getType() != MessageType.DeregisterConsumer || !(m.getPayload() instanceof PayloadDeregisterConsumer)) {
 				throw new RuntimeException("Wrong Payload or MessageType");
 			}
 			PayloadDeregisterConsumer pdc = (PayloadDeregisterConsumer) m.getPayload();
@@ -217,14 +203,14 @@ public class MessageServer implements MessageServerIF {
 		}
 
 		/**
-		 * unsubscribes the producer, who sent the message, on the server
+		 * removes the producer, who sent the message, from the list of producers
 		 * 
 		 * @param m
 		 *            sent message
-		 * @return response-message, Payload-attribut success is true, if the operation was successful
+		 * @return response-message, Payload-attribute success is true, if the operation was successful
 		 */
 		private Message deregisterProducer(Message m) {
-			if (m.getType() != MessageType.DeregisterProducer || m.getPayload() instanceof PayloadProducer) {
+			if (m.getType() != MessageType.DeregisterProducer || !(m.getPayload() instanceof PayloadProducer)) {
 				throw new RuntimeException("Wrong Payload or MessageType");
 			}
 			PayloadProducer pdp = (PayloadProducer) m.getPayload();
