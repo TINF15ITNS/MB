@@ -28,7 +28,7 @@ public class ConsumerCLI {
 				System.out.print("Bitte geben Sie die Adresse des Servers ein (ohne Port): ");
 				String addr = scanner.nextLine();
 				user = new Consumer(addr);
-				System.out.print("\n");
+				System.out.println();
 				break;
 			} catch (IOException e) {
 				System.out.println("Kein Server unter der angegebenen Adresse erreichbar.");
@@ -63,13 +63,11 @@ public class ConsumerCLI {
 					}
 					break;
 				case 3:
-					// ich habe jetzt den neuen Thread nicht iwie beendet ... ich gehe mal davon aus, da es auch ein Objekt ist, wird er gelöscht, wenn nichts
-					// mehr auf ihn referenziert
 					System.out.println("Beenden...\n");
 					exit = true;
 					break;
 				default:
-					System.out.println("Bitte wählen Sie eine der gegebenen Optionen.");
+					System.out.println("Bitte wählen Sie eine der gegebenen Optionen:");
 					break;
 				}
 			} else {
@@ -143,8 +141,8 @@ public class ConsumerCLI {
 				}
 			}
 		}
+		
 		scanner.close();
-		// ist das hier notwendig? doch eigentlich nicht in dieser Variante
 		user.stopReceiving();
 		user.unsubscribeFromProducers(user.getSubscriptions());
 		user.deregisterFromServer();
