@@ -6,7 +6,14 @@ package producer;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.HashSet;
-import message.*;
+
+import message.Message;
+import message.MessageFactory;
+import message.MessageType;
+import message.PayloadBroadcast;
+import message.PayloadProducer;
+import message.PayloadProducerList;
+import message.Util;
 
 /**
  * 
@@ -42,7 +49,11 @@ public class Producer implements ProducerIF {
 		} catch (IOException e) {
 			return false;
 		}
+		if (answer.getType() != MessageType.RegisterProducer || answer.getPayload() instanceof PayloadProducer) {
+			throw new RuntimeException("Wrong Payload or MessageType");
+		}
 		PayloadProducer answerPayload = (PayloadProducer) answer.getPayload();
+
 		if (answerPayload.getSuccess() == true) {
 			registered = true;
 			return true;
@@ -57,7 +68,11 @@ public class Producer implements ProducerIF {
 		} catch (IOException e) {
 			return false;
 		}
+		if (answer.getType() != MessageType.DeregisterProducer || answer.getPayload() instanceof PayloadProducer) {
+			throw new RuntimeException("Wrong Payload or MessageType");
+		}
 		PayloadProducer answerPayload = (PayloadProducer) answer.getPayload();
+
 		if (answerPayload.getSuccess() == true) {
 			registered = false;
 			return true;
@@ -72,7 +87,11 @@ public class Producer implements ProducerIF {
 		} catch (IOException e) {
 			return false;
 		}
+		if (answer.getType() != MessageType.Broadcast || answer.getPayload() instanceof PayloadBroadcast) {
+			throw new RuntimeException("Wrong Payload or MessageType");
+		}
 		PayloadBroadcast pm = (PayloadBroadcast) answer.getPayload();
+
 		if (!pm.getSuccess()) {
 			return false;
 		}
@@ -89,6 +108,9 @@ public class Producer implements ProducerIF {
 			answer = Util.sendAndGetMessage(MessageFactory.createProducerListMsg(), serverAddress, serverPort);
 		} catch (IOException e) {
 			return null;
+		}
+		if (answer.getType() != MessageType.getProducerList || answer.getPayload() instanceof PayloadProducerList) {
+			throw new RuntimeException("Wrong Payload or MessageType");
 		}
 		return ((PayloadProducerList) answer.getPayload()).getProducers();
 	}
