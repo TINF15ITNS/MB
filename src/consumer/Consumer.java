@@ -15,6 +15,7 @@ import java.util.List;
 
 import message.Message;
 import message.MessageFactory;
+import message.MessageType;
 import message.PayloadBroadcast;
 import message.PayloadDeregisterConsumer;
 import message.PayloadProducer;
@@ -65,6 +66,9 @@ public class Consumer implements ConsumerIF {
 			return false; // If there is no connection to the server, the consumer cannot be registered.
 		}
 
+		if (answer.getType() != MessageType.RegisterConsumer || answer.getPayload() instanceof PayloadRegisterConsumer) {
+			throw new RuntimeException("Wrong Payload");
+		}
 		PayloadRegisterConsumer answerPayload = (PayloadRegisterConsumer) answer.getPayload();
 		if (!answerPayload.getSuccess()) {
 			registered = false;
@@ -95,6 +99,10 @@ public class Consumer implements ConsumerIF {
 			answer = Util.sendAndGetMessage(MessageFactory.createProducerListMsg(), serverAddress, serverPort);
 		} catch (IOException e) {
 			return null;
+		}
+
+		if (answer.getType() != MessageType.getProducerList || answer.getPayload() instanceof PayloadProducerList) {
+			throw new RuntimeException("Wrong Payload");
 		}
 		PayloadProducerList answerPayload = (PayloadProducerList) answer.getPayload();
 		if (!answerPayload.getSuccess())
@@ -147,6 +155,9 @@ public class Consumer implements ConsumerIF {
 			return false;
 		}
 
+		if (answer.getType() != MessageType.DeregisterConsumer || answer.getPayload() instanceof PayloadDeregisterConsumer) {
+			throw new RuntimeException("Wrong Payload");
+		}
 		PayloadDeregisterConsumer answerPayload = (PayloadDeregisterConsumer) answer.getPayload();
 		if (!answerPayload.getSuccess())
 			return false;
@@ -185,7 +196,7 @@ public class Consumer implements ConsumerIF {
 
 	/**
 	 * 
-	 * The class is listening for messages from the server and prints them on the console
+	 * The class is listening for messages from the server and writes them into the Pipe
 	 *
 	 */
 	private class WaitForMessage implements Runnable {
@@ -213,7 +224,6 @@ public class Consumer implements ConsumerIF {
 		public boolean stopThread() {
 			if (isRunning) {
 				isRunning = false;
-
 				return true;
 			} else
 				return false;
@@ -230,12 +240,18 @@ public class Consumer implements ConsumerIF {
 
 					switch (m.getType()) {
 					case DeregisterProducer:
+						if (m.getType() != MessageType.DeregisterProducer || m.getPayload() instanceof PayloadProducer) {
+							throw new RuntimeException("Wrong Payload");
+						}
 						PayloadProducer pp = (PayloadProducer) m.getPayload();
 						pw.write("Der Producer " + pp.getName()
 								+ " hat den Dienst eingestellt. Sie können leider keine Push-Nachrichten mehr von ihm erhalten...");
 						subscriptions.remove(pp.getName());
 						break;
 					case Broadcast:
+						if (m.getType() != MessageType.Broadcast || m.getPayload() instanceof PayloadBroadcast) {
+							throw new RuntimeException("Wrong Payload");
+						}
 						PayloadBroadcast payload = (PayloadBroadcast) m.getPayload();
 						if (subscriptions.contains(payload.getSender())) {
 							pw.write("Sie haben eine neue Push-Mitteilung, " + payload.getSender() + " meldet: \n" + payload.getMessage());
@@ -243,7 +259,7 @@ public class Consumer implements ConsumerIF {
 						break;
 
 					default:
-						break;
+						throw new RuntimeException("Wrong MessageType");
 					}
 				} catch (IOException e) {
 					System.out.println("Fehler beim Bearbeiten der erhaltenen UDP-Message");
