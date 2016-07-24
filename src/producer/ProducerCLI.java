@@ -47,7 +47,13 @@ public class ProducerCLI {
 			System.out.println("Bitte wählen Sie durch Eingabe einer Zahl:");
 			if (!prod.isRegistered()) {
 				System.out.println("(1) Registrierung beim Server\n" + "(2) Beenden der CLI");
-				int input = scanner.nextInt();
+				int input;
+				try {
+					input = scanner.nextInt();
+				} catch (Exception e) {
+					continue;
+				}
+
 				scanner.nextLine(); // Absolutely necessary because nextInt() reads only one int and does not finish the line.
 				switch (input) {
 				// TODO: Implement confirmation routines and error messages for the user
@@ -68,7 +74,13 @@ public class ProducerCLI {
 				}
 			} else {
 				System.out.println("(1) Abmeldung vom Server\n" + "(2) Sende Nachricht\n" + "(3) Beenden der CLI");
-				int input = scanner.nextInt();
+
+				int input;
+				try {
+					input = scanner.nextInt();
+				} catch (Exception e) {
+					continue;
+				}
 				scanner.nextLine(); // Absolutely necessary because nextInt() reads only one int and does not finish the line.
 				switch (input) {
 				// TODO: Implement confirmation routines and error messages for the user

@@ -39,7 +39,13 @@ public class ConsumerCLI {
 			System.out.println("\nBitte wählen Sie durch Eingabe einer Zahl:");
 			if (!user.isRegistered()) {
 				System.out.print("(1) Registrierung beim Server\n" + "(2) Liste von Produzenten ansehen\n" + "(3) Beenden der CLI\n" + "Eingabe: ");
-				int input = scanner.nextInt();
+				int input;
+				try {
+					input = scanner.nextInt();
+				} catch (Exception e) {
+					continue;
+				}
+
 				scanner.nextLine(); // Absolutely necessary because nextInt() reads only one int and does not finish the line.
 				switch (input) {
 				case 1:
