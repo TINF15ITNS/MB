@@ -196,7 +196,9 @@ public class Consumer implements ConsumerIF {
 
 	@Override
 	public boolean stopReceiving() {
-		return messageWaiter.stopThread();
+		messageWaiter.stopThread();
+		udpSocket.close();
+		return true;
 	}
 
 	@Override
