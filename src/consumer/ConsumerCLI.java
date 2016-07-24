@@ -71,9 +71,12 @@ public class ConsumerCLI {
 					break;
 				}
 			} else {
-				System.out.println("(1) Abmeldung vom Server\n" + "(2) Liste von Produzenten ansehen\n" + "(3) Abonnieren von Produzenten\n"
-						+ "(4) Produzentenabo kündigen\n" + "(5) Abonnements anzeigen\n" + "(6) Erhaltene Nachrichten anzeigen\n" + "(7) Beenden der CLI\n"
-						+ "Eingabe: ");
+				System.out.print("(1) Abmeldung vom Server\n" + "(2) Liste von Produzenten ansehen\n" + "(3) Abonnieren von Produzenten\n"
+						+ "(4) Produzentenabo kündigen\n" + "(5) Abonnements anzeigen\n" + "(6) Erhaltene Nachrichten anzeigen");
+				if (user.hasNewMessages()) {
+					System.out.print("sind neue Nachrichten vorhanden");
+				}
+				System.out.println("\n" + "(7) Beenden der CLI\n" + "Eingabe: ");
 
 				int input = scanner.nextInt();
 				scanner.nextLine(); // Absolutely necessary because nextInt() reads only one int and does not finish the line.
@@ -141,7 +144,7 @@ public class ConsumerCLI {
 				}
 			}
 		}
-		
+
 		scanner.close();
 		user.stopReceiving();
 		user.unsubscribeFromProducers(user.getSubscriptions());
