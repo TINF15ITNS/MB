@@ -64,7 +64,8 @@ public class MessageServer implements MessageServerIF {
 			Socket clientSo = null;
 			while (true) {
 				clientSo = serverSo.accept();
-				System.out.println("Verbindung mit" + clientSo.getRemoteSocketAddress().toString() + " aufgebaut. ");
+				// System.out.println("Verbindung mit" + clientSo.getRemoteSocketAddress().toString() + " aufgebaut. ");
+				// System.out.println("TCP-Verbindungsanfrage");
 				Thread t = new Thread(new MessageHandler(clientSo, udpSocket));
 				t.start();
 			}
@@ -115,7 +116,6 @@ public class MessageServer implements MessageServerIF {
 					throw new RuntimeException("Invalid message type");
 
 				}
-				// System.out.println("Antworte nun");
 				out.writeObject(answer);
 				out.flush();
 
@@ -135,7 +135,8 @@ public class MessageServer implements MessageServerIF {
 		 * @return response-message
 		 */
 		private Message getProducerList(Message m) {
-			System.out.println("Sende Produzentenliste an " + s.getRemoteSocketAddress().toString());
+			// System.out.println("Sende Produzentenliste an " + s.getRemoteSocketAddress().toString());
+			System.out.println("Produzentenliste wurde angefordert");
 			return MessageFactory.createProducerListMsg(dataProducer, true);
 
 		}
@@ -150,6 +151,8 @@ public class MessageServer implements MessageServerIF {
 		private Message registerConsumer(Message m) {
 			numberOfCustomers++;
 			dataConsumer.add(new Integer(numberOfCustomers));
+			System.out.println("Neuanmeldung Consumer mit neuer ID: " + numberOfCustomers);
+			;
 			return MessageFactory.createRegisterConsumerMsg(numberOfCustomers, mcastadr, true);
 		}
 
@@ -168,6 +171,7 @@ public class MessageServer implements MessageServerIF {
 
 			if (!dataProducer.contains(pp.getName())) {
 				dataProducer.add(pp.getName());
+				System.out.println("Neuanmeldung Producer: " + pp.getName());
 				return MessageFactory.createRegisterProducerMsg(pp.getName(), true);
 			}
 			return MessageFactory.createRegisterProducerMsg(pp.getName(), false);
@@ -191,6 +195,7 @@ public class MessageServer implements MessageServerIF {
 				DatagramPacket dp = Util.getMessageAsDatagrammPacket(MessageFactory.createBroadcastMessage(pm.getSender(), pm.getMessage()), mcastadr,
 						serverPort);
 				sendMulticastMessage(dp);
+				System.out.println("Broadcastmessage von " + pm.getSender() + "erhalten und weitergeleitet");
 				return MessageFactory.createBroadcastMessage("Server", true);
 			}
 			return MessageFactory.createBroadcastMessage("Server", false);
@@ -210,6 +215,7 @@ public class MessageServer implements MessageServerIF {
 			PayloadDeregisterConsumer pdc = (PayloadDeregisterConsumer) m.getPayload();
 
 			if (dataConsumer.remove(pdc.getID())) {
+				System.out.println("Consumer abgemeldet mit ID: " + pdc.getID());
 				return MessageFactory.createDeregisterConsumerMsg(true);
 			} else {
 				return MessageFactory.createDeregisterConsumerMsg(false);
@@ -232,6 +238,7 @@ public class MessageServer implements MessageServerIF {
 			if (dataProducer.remove(pdp.getName())) {
 				DatagramPacket dp = Util.getMessageAsDatagrammPacket(MessageFactory.createDeregisterProducerMsg(pdp.getName()), mcastadr, serverPort);
 				sendMulticastMessage(dp);
+				System.out.println("Abmeldung Producer mit Namen " + pdp.getName());
 				return MessageFactory.createDeregisterProducerMsg(pdp.getName(), true);
 			} else {
 				return MessageFactory.createDeregisterProducerMsg(pdp.getName(), false);
