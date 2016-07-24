@@ -10,7 +10,7 @@ import java.io.Serializable;
  * @author Nikolai Seip, Sebastian Mattheis, Fabian Hinz
  *
  */
-public class PayloadProducer implements Payload, Serializable {
+public class PayloadProducer extends Payload implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -18,8 +18,6 @@ public class PayloadProducer implements Payload, Serializable {
 	 * name of the producer, who wants to register or deregister
 	 */
 	private final String name;
-
-	private boolean success = false;
 
 	public PayloadProducer(String name) {
 		this.name = name;
@@ -41,10 +39,5 @@ public class PayloadProducer implements Payload, Serializable {
 	 */
 	public String getName() {
 		return this.name;
-	}
-
-	@Override
-	public boolean getSuccess() {
-		return success;
 	}
 }
