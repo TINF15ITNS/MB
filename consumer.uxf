@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<diagram program="umlet" version="14.2.0">
+<diagram program="umlet" version="14.2">
   <zoom_level>10</zoom_level>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>10</x>
-      <y>40</y>
+      <x>240</x>
+      <y>140</y>
       <w>410</w>
       <h>210</h>
     </coordinates>
@@ -28,8 +28,8 @@ ConsumerIF
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>80</x>
-      <y>310</y>
+      <x>310</x>
+      <y>410</y>
       <w>240</w>
       <h>290</h>
     </coordinates>
@@ -62,8 +62,8 @@ innerclass}
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>190</x>
-      <y>240</y>
+      <x>420</x>
+      <y>340</y>
       <w>30</w>
       <h>90</h>
     </coordinates>
@@ -73,8 +73,8 @@ innerclass}
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>460</x>
-      <y>230</y>
+      <x>780</x>
+      <y>140</y>
       <w>230</w>
       <h>270</h>
     </coordinates>
@@ -88,6 +88,30 @@ innerclass}
 
 --
 + main(String[] args)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>640</x>
+      <y>220</y>
+      <w>160</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes/>
+    <additional_attributes>10.0;20.0;140.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>220</x>
+      <y>100</y>
+      <w>810</w>
+      <h>620</h>
+    </coordinates>
+    <panel_attributes>consumer
+--
+bg=orange</panel_attributes>
     <additional_attributes/>
   </element>
 </diagram>

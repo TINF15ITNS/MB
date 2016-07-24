@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<diagram program="umlet" version="14.2.0">
+<diagram program="umlet" version="14.2">
   <zoom_level>10</zoom_level>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>20</x>
-      <y>20</y>
+      <x>320</x>
+      <y>150</y>
       <w>410</w>
       <h>130</h>
     </coordinates>
@@ -21,8 +21,8 @@ MessageServerIF
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>200</x>
-      <y>140</y>
+      <x>500</x>
+      <y>270</y>
       <w>30</w>
       <h>90</h>
     </coordinates>
@@ -32,8 +32,8 @@ MessageServerIF
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>20</x>
-      <y>210</y>
+      <x>320</x>
+      <y>340</y>
       <w>380</w>
       <h>350</h>
     </coordinates>
@@ -68,8 +68,8 @@ innerclass}
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>480</x>
-      <y>190</y>
+      <x>820</x>
+      <y>150</y>
       <w>230</w>
       <h>190</h>
     </coordinates>
@@ -82,5 +82,29 @@ innerclass}
 --
 + main(String[] args)</panel_attributes>
     <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>300</x>
+      <y>110</y>
+      <w>770</w>
+      <h>600</h>
+    </coordinates>
+    <panel_attributes>messageServer
+--
+bg=orange</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>720</x>
+      <y>190</y>
+      <w>120</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes/>
+    <additional_attributes>10.0;20.0;100.0;20.0</additional_attributes>
   </element>
 </diagram>

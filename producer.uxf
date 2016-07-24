@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<diagram program="umlet" version="14.2.0">
+<diagram program="umlet" version="14.2">
   <zoom_level>10</zoom_level>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>480</x>
-      <y>190</y>
-      <w>230</w>
+      <x>900</x>
+      <y>180</y>
+      <w>150</w>
       <h>190</h>
     </coordinates>
-    <panel_attributes>ConsumerCLI
+    <panel_attributes>ProducerCLI
 --
 - prod: ProducerIF
 - scanner: Scanner
@@ -24,9 +24,9 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>90</x>
-      <y>210</y>
-      <w>240</w>
+      <x>470</x>
+      <y>370</y>
+      <w>260</w>
       <h>190</h>
     </coordinates>
     <panel_attributes>Producer
@@ -48,8 +48,8 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>20</x>
-      <y>20</y>
+      <x>400</x>
+      <y>180</y>
       <w>410</w>
       <h>130</h>
     </coordinates>
@@ -67,12 +67,36 @@ ProducerIF
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>200</x>
-      <y>140</y>
+      <x>580</x>
+      <y>300</y>
       <w>30</w>
       <h>90</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;10.0;70.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>800</x>
+      <y>230</y>
+      <w>120</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes/>
+    <additional_attributes>10.0;20.0;100.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>380</x>
+      <y>140</y>
+      <w>690</w>
+      <h>440</h>
+    </coordinates>
+    <panel_attributes>producer
+--
+bg=orange</panel_attributes>
+    <additional_attributes/>
   </element>
 </diagram>
