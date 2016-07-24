@@ -66,7 +66,6 @@ public class ProducerCLI {
 					}
 					break;
 				case 2:
-					System.out.println("Beenden...\n");
 					exit = true;
 					break;
 				default:
@@ -102,7 +101,6 @@ public class ProducerCLI {
 					}
 					break;
 				case 3:
-					System.out.println("Beenden...\n");
 					exit = true;
 					break;
 				default:
@@ -115,5 +113,6 @@ public class ProducerCLI {
 		if (prod.isRegistered())
 			prod.deregisterFromServer();
 		scanner.close();
+		System.out.println("Der Producer wurde beendet");
 	}
 }
