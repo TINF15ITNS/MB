@@ -75,8 +75,8 @@ public class MessageServer implements MessageServerIF {
 	}
 
 	private class MessageHandler implements Runnable {
-		Socket s;
-		MulticastSocket udpSocket;
+		private Socket s;
+		private MulticastSocket udpSocket;
 
 		public MessageHandler(Socket client, MulticastSocket udpSocket) {
 			this.s = client;
