@@ -4,8 +4,8 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>480</x>
-      <y>190</y>
+      <x>540</x>
+      <y>160</y>
       <w>230</w>
       <h>190</h>
     </coordinates>
@@ -26,8 +26,8 @@
     <coordinates>
       <x>90</x>
       <y>210</y>
-      <w>240</w>
-      <h>190</h>
+      <w>260</w>
+      <h>210</h>
     </coordinates>
     <panel_attributes>Producer
 --

@@ -9,7 +9,7 @@
       <w>410</w>
       <h>210</h>
     </coordinates>
-    <panel_attributes>&lt;&lt;interace&gt;&gt;
+    <panel_attributes>&lt;&lt;interface&gt;&gt;
 ConsumerIF
 --
 --
@@ -22,6 +22,7 @@ ConsumerIF
 + isRegistered(): boolean
 + getNewBroadcasts(): String
 + stopReceiving(): boolean
++ hasNewMessages(): boolean
 </panel_attributes>
     <additional_attributes/>
   </element>
@@ -31,7 +32,7 @@ ConsumerIF
       <x>80</x>
       <y>310</y>
       <w>240</w>
-      <h>290</h>
+      <h>320</h>
     </coordinates>
     <panel_attributes>Consumer
 --
@@ -42,6 +43,8 @@ ConsumerIF
 - subscriptions: HashSet&lt;String&gt;
 - producerList: HashSet&lt;String&gt; 
 - udpSocket: MulticastSocket 
+- pr: PipedReader
+- messageWaiter: WaitForMessage
 --
 &lt;&lt; constructor &gt;&gt;
 + Consumer(String address)
@@ -76,13 +79,12 @@ innerclass}
       <x>460</x>
       <y>230</y>
       <w>230</w>
-      <h>270</h>
+      <h>180</h>
     </coordinates>
     <panel_attributes>ConsumerCLI
 --
 - user: ConsumerIF 
 - scanner: Scanner
-
 
 
 
