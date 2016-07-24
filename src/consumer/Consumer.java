@@ -66,7 +66,7 @@ public class Consumer implements ConsumerIF {
 			return false; // If there is no connection to the server, the consumer cannot be registered.
 		}
 
-		if (answer.getType() != MessageType.RegisterConsumer || answer.getPayload() instanceof PayloadRegisterConsumer) {
+		if (answer.getType() != MessageType.RegisterConsumer || !(answer.getPayload() instanceof PayloadRegisterConsumer)) {
 			throw new RuntimeException("Wrong Payload");
 		}
 		PayloadRegisterConsumer answerPayload = (PayloadRegisterConsumer) answer.getPayload();
@@ -101,7 +101,7 @@ public class Consumer implements ConsumerIF {
 			return null;
 		}
 
-		if (answer.getType() != MessageType.getProducerList || answer.getPayload() instanceof PayloadProducerList) {
+		if (answer.getType() != MessageType.getProducerList || !(answer.getPayload() instanceof PayloadProducerList)) {
 			throw new RuntimeException("Wrong Payload");
 		}
 		PayloadProducerList answerPayload = (PayloadProducerList) answer.getPayload();
