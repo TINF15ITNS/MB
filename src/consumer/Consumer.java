@@ -155,7 +155,7 @@ public class Consumer implements ConsumerIF {
 			return false;
 		}
 
-		if (answer.getType() != MessageType.DeregisterConsumer || answer.getPayload() instanceof PayloadDeregisterConsumer) {
+		if (answer.getType() != MessageType.DeregisterConsumer || !(answer.getPayload() instanceof PayloadDeregisterConsumer)) {
 			throw new RuntimeException("Wrong Payload");
 		}
 		PayloadDeregisterConsumer answerPayload = (PayloadDeregisterConsumer) answer.getPayload();
@@ -241,7 +241,7 @@ public class Consumer implements ConsumerIF {
 
 					switch (m.getType()) {
 					case DeregisterProducer:
-						if (m.getType() != MessageType.DeregisterProducer || m.getPayload() instanceof PayloadProducer) {
+						if (m.getType() != MessageType.DeregisterProducer || !(m.getPayload() instanceof PayloadProducer)) {
 							throw new RuntimeException("Wrong Payload");
 						}
 						PayloadProducer pp = (PayloadProducer) m.getPayload();
@@ -253,7 +253,7 @@ public class Consumer implements ConsumerIF {
 						}
 						break;
 					case Broadcast:
-						if (m.getType() != MessageType.Broadcast || m.getPayload() instanceof PayloadBroadcast) {
+						if (m.getType() != MessageType.Broadcast || !(m.getPayload() instanceof PayloadBroadcast)) {
 							throw new RuntimeException("Wrong Payload");
 						}
 						PayloadBroadcast payload = (PayloadBroadcast) m.getPayload();
