@@ -3,10 +3,24 @@
  */
 package messageServer;
 
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.DatagramPacket;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.HashSet;
-import message.*;
+
+import message.Message;
+import message.MessageFactory;
+import message.MessageType;
+import message.PayloadBroadcast;
+import message.PayloadDeregisterConsumer;
+import message.PayloadProducer;
+import message.Util;
 
 /**
  * 
@@ -28,7 +42,7 @@ public class MessageServer implements MessageServerIF {
 		try {
 			mcastadr = InetAddress.getByName("225.225.225.225");
 		} catch (UnknownHostException e) {
-			// tritt nicht ein, da vorgegeben
+			throw new RuntimeException("Multicast-Adresse ist fehlerhaft");
 		}
 	}
 
@@ -234,8 +248,8 @@ public class MessageServer implements MessageServerIF {
 			try {
 				udpSocket.send(dp);
 			} catch (IOException e) {
-				System.out.println("IOFehler beim Senden der Multicast-Nachricht");
-				e.printStackTrace();
+				// TODO überprüfen: kann eigentlich nicht auftreten, da alle Adressen vorgegeben sind
+				throw new RuntimeException("Problem beim Senden der MulticastMessage");
 			}
 		}
 	}
