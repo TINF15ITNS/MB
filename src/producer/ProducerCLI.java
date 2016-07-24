@@ -27,6 +27,10 @@ public class ProducerCLI {
 			try {
 				System.out.println("Bitte geben Sie den Produzentennamen ein:");
 				String n = scanner.nextLine().trim();
+				if (n.contains(",")) {
+					System.out.println("Der Produzentenname darf kein Komma enthalten.");
+					continue;
+				}
 				System.out.print("Bitte geben Sie die Adresse des Servers ein (ohne Port): ");
 				String addr = scanner.nextLine();
 				prod = new Producer(n, addr);
