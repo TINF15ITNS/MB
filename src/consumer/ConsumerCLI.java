@@ -77,7 +77,13 @@ public class ConsumerCLI {
 				}
 				System.out.println("\n" + "(7) Beenden der CLI\n" + "Eingabe: ");
 
-				int input = scanner.nextInt();
+				int input;
+				try {
+					input = scanner.nextInt();
+				} catch (Exception e) {
+					continue;
+				}
+				
 				scanner.nextLine(); // Absolutely necessary because nextInt() reads only one int and does not finish the line.
 				switch (input) {
 				case 1:
@@ -128,7 +134,7 @@ public class ConsumerCLI {
 					}
 					System.out.println("Ihre Abos:");
 					for (String s : subscriptions) {
-						System.out.println("* " + s + "\n");
+						System.out.println("* " + s);
 					}
 					break;
 				case 6:
