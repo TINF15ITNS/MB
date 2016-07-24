@@ -51,9 +51,6 @@ public class MessageServer implements MessageServerIF {
 		return serverPort;
 	}
 
-	/**
-	 * waits for messages from producers or consumers
-	 */
 	@Override
 	public void respondOnMessages() {
 		try (ServerSocket serverSo = new ServerSocket(serverPort); MulticastSocket udpSocket = new MulticastSocket(serverPort);) {
@@ -63,8 +60,6 @@ public class MessageServer implements MessageServerIF {
 			Socket clientSo = null;
 			while (true) {
 				clientSo = serverSo.accept();
-				// System.out.println("Verbindung mit" + clientSo.getRemoteSocketAddress().toString() + " aufgebaut. ");
-				// System.out.println("TCP-Verbindungsanfrage");
 				Thread t = new Thread(new MessageHandler(clientSo, udpSocket));
 				t.start();
 			}

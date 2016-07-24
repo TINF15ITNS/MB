@@ -14,5 +14,9 @@ public interface MessageServerIF {
 	 */
 	public void respondOnMessages();
 
+	/**
+	 * 
+	 * @return the port this server is running on
+	 */
 	public int getServerPort();
 }
