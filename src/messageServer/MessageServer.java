@@ -76,41 +76,39 @@ public class MessageServer implements MessageServerIF {
 	}
 
 	private class MessageHandler implements Runnable {
-		private Socket s;
+		private Socket socket;
 		private MulticastSocket udpSocket;
 
 		public MessageHandler(Socket client, MulticastSocket udpSocket) {
-			this.s = client;
+			this.socket = client;
 			this.udpSocket = udpSocket;
 		}
 
 		@Override
 		public void run() {
-			try (Socket client = s;
-					ObjectOutputStream out = new ObjectOutputStream(client.getOutputStream());
-					ObjectInputStream in = new ObjectInputStream(client.getInputStream());) {
+			try (Socket client = socket; ObjectOutputStream out = new ObjectOutputStream(client.getOutputStream()); ObjectInputStream in = new ObjectInputStream(client.getInputStream());) {
 
-				Message m = (Message) in.readObject();
+				Message message = (Message) in.readObject();
 				Message answer = null;
 
-				switch (m.getType()) {
+				switch (message.getType()) {
 				case DeregisterConsumer:
-					answer = deregisterConsumer(m);
+					answer = deregisterConsumer(message);
 					break;
 				case DeregisterProducer:
-					answer = deregisterProducer(m);
+					answer = deregisterProducer(message);
 					break;
 				case Broadcast:
-					answer = receiveMessageFromProducer(m);
+					answer = receiveMessageFromProducer(message);
 					break;
 				case RegisterConsumer:
-					answer = registerConsumer(m);
+					answer = registerConsumer(message);
 					break;
 				case RegisterProducer:
-					answer = registerProducer(m);
+					answer = registerProducer(message);
 					break;
 				case getProducerList:
-					answer = getProducerList(m);
+					answer = getProducerList(message);
 					break;
 				default:
 					throw new RuntimeException("Invalid message type");
@@ -130,11 +128,11 @@ public class MessageServer implements MessageServerIF {
 		/**
 		 * In this method the MessageServer offers the available producers
 		 * 
-		 * @param m
+		 * @param message
 		 *            sent message
 		 * @return response-message
 		 */
-		private Message getProducerList(Message m) {
+		private Message getProducerList(Message message) {
 			// System.out.println("Sende Produzentenliste an " + s.getRemoteSocketAddress().toString());
 			System.out.println("Produzentenliste wurde angefordert");
 			return MessageFactory.createProducerListMsg(dataProducer, true);
@@ -144,11 +142,11 @@ public class MessageServer implements MessageServerIF {
 		/**
 		 * This Method registers the consumers.
 		 * 
-		 * @param m
+		 * @param message
 		 *            sent message
 		 * @return response-message
 		 */
-		private Message registerConsumer(Message m) {
+		private Message registerConsumer(Message message) {
 			numberOfCustomers++;
 			dataConsumer.add(new Integer(numberOfCustomers));
 			System.out.println("Neuanmeldung Consumer -> neue ID: " + numberOfCustomers);
@@ -159,105 +157,106 @@ public class MessageServer implements MessageServerIF {
 		/**
 		 * This method accepts the register-messages and saves the producer.
 		 * 
-		 * @param m
+		 * @param message
 		 *            sent message
 		 * @return response-message
 		 */
-		private Message registerProducer(Message m) {
-			if (m.getType() != MessageType.RegisterProducer || !(m.getPayload() instanceof PayloadProducer)) {
+		private Message registerProducer(Message message) {
+			if (message.getType() != MessageType.RegisterProducer || !(message.getPayload() instanceof PayloadProducer)) {
 				throw new RuntimeException("Wrong Payload or MessageType");
 			}
-			PayloadProducer pp = (PayloadProducer) m.getPayload();
+			PayloadProducer payload = (PayloadProducer) message.getPayload();
 
-			if (!dataProducer.contains(pp.getName())) {
-				dataProducer.add(pp.getName());
-				System.out.println("Neuanmeldung Producer: " + pp.getName());
-				return MessageFactory.createRegisterProducerMsg(pp.getName(), true);
+			if (!dataProducer.contains(payload.getName())) {
+				dataProducer.add(payload.getName());
+				System.out.println("Neuanmeldung Producer: " + payload.getName());
+				return MessageFactory.createRegisterProducerMsg(payload.getName(), true);
 			}
-			System.out.println("versuchte Neuanmeldung Producer mit schon vorhandenem Namen: " + pp.getName());
-			return MessageFactory.createRegisterProducerMsg(pp.getName(), false);
+			System.out.println("versuchte Neuanmeldung Producer mit schon vorhandenem Namen: " + payload.getName());
+			return MessageFactory.createRegisterProducerMsg(payload.getName(), false);
 		}
 
 		/**
 		 * This method forwards the messages of the producers to the consumers.
 		 * 
-		 * @param m
+		 * @param message
 		 *            sent message
 		 * @return response-message
 		 */
 
-		private Message receiveMessageFromProducer(Message m) {
-			if (m.getType() != MessageType.Broadcast || !(m.getPayload() instanceof PayloadBroadcast)) {
+		private Message receiveMessageFromProducer(Message message) {
+			if (message.getType() != MessageType.Broadcast || !(message.getPayload() instanceof PayloadBroadcast)) {
 				throw new RuntimeException("Wrong Payload or MessageType");
 			}
-			PayloadBroadcast pm = (PayloadBroadcast) m.getPayload();
+			PayloadBroadcast payload = (PayloadBroadcast) message.getPayload();
 
-			if (dataProducer.contains(pm.getSender())) {
-				DatagramPacket dp = Util.getMessageAsDatagrammPacket(MessageFactory.createBroadcastMessage(pm.getSender(), pm.getMessage()), mcastadr,
-						serverPort);
+			if (dataProducer.contains(payload.getSender())) {
+				DatagramPacket dp = Util.getMessageAsDatagrammPacket(MessageFactory.createBroadcastMessage(payload.getSender(), payload.getMessage()), mcastadr, serverPort);
 				sendMulticastMessage(dp);
-				System.out.println("Broadcastmessage von " + pm.getSender() + " erhalten und weitergeleitet");
+				System.out.println("Broadcastmessage von " + payload.getSender() + " erhalten und weitergeleitet");
 				return MessageFactory.createBroadcastMessage("Server", true);
 			}
-			System.out.println("Broadcastmessage von noch nicht registriertem Producer " + pm.getSender() + " erhalten -> nicht weitergeleitet");
+			System.out.println("Broadcastmessage von noch nicht registriertem Producer " + payload.getSender() + " erhalten -> nicht weitergeleitet");
 			return MessageFactory.createBroadcastMessage("Server", false);
 		}
 
 		/**
 		 * Removes the Consumer from the list of subscriptions on the Server
 		 * 
-		 * @param m
+		 * @param message
 		 *            sent message
 		 * @return response-message
 		 */
-		private Message deregisterConsumer(Message m) {
-			if (m.getType() != MessageType.DeregisterConsumer || !(m.getPayload() instanceof PayloadDeregisterConsumer)) {
+		private Message deregisterConsumer(Message message) {
+			if (message.getType() != MessageType.DeregisterConsumer || !(message.getPayload() instanceof PayloadDeregisterConsumer)) {
 				throw new RuntimeException("Wrong Payload or MessageType");
 			}
-			PayloadDeregisterConsumer pdc = (PayloadDeregisterConsumer) m.getPayload();
+			PayloadDeregisterConsumer payload = (PayloadDeregisterConsumer) message.getPayload();
 
-			if (dataConsumer.remove(pdc.getID())) {
-				System.out.println("Consumer abgemeldet mit ID: " + pdc.getID());
+			if (dataConsumer.remove(payload.getID())) {
+				System.out.println("Consumer abgemeldet mit ID: " + payload.getID());
 				return MessageFactory.createDeregisterConsumerMsg(true);
 			} else {
-				System.out.println("Versuchte Abmeldung von Consumer mit der ID: " + pdc.getID() + " obwohl noch nicht registriert");
+				System.out.println("Versuchte Abmeldung von Consumer mit der ID: " + payload.getID() + " obwohl noch nicht registriert");
 				return MessageFactory.createDeregisterConsumerMsg(false);
 			}
 		}
 
 		/**
-		 * removes the producer, who sent the message, from the list of producers
+		 * removes the producer, who sent the message, from the list of
+		 * producers
 		 * 
-		 * @param m
+		 * @param message
 		 *            sent message
-		 * @return response-message, Payload-attribute success is true, if the operation was successful
+		 * @return response-message, Payload-attribute success is true, if the
+		 *         operation was successful
 		 */
-		private Message deregisterProducer(Message m) {
-			if (m.getType() != MessageType.DeregisterProducer || !(m.getPayload() instanceof PayloadProducer)) {
+		private Message deregisterProducer(Message message) {
+			if (message.getType() != MessageType.DeregisterProducer || !(message.getPayload() instanceof PayloadProducer)) {
 				throw new RuntimeException("Wrong Payload or MessageType");
 			}
-			PayloadProducer pdp = (PayloadProducer) m.getPayload();
+			PayloadProducer payload = (PayloadProducer) message.getPayload();
 
-			if (dataProducer.remove(pdp.getName())) {
-				DatagramPacket dp = Util.getMessageAsDatagrammPacket(MessageFactory.createDeregisterProducerMsg(pdp.getName()), mcastadr, serverPort);
-				sendMulticastMessage(dp);
-				System.out.println("Abmeldung Producer mit Namen " + pdp.getName());
-				return MessageFactory.createDeregisterProducerMsg(pdp.getName(), true);
+			if (dataProducer.remove(payload.getName())) {
+				DatagramPacket datagramPacket = Util.getMessageAsDatagrammPacket(MessageFactory.createDeregisterProducerMsg(payload.getName()), mcastadr, serverPort);
+				sendMulticastMessage(datagramPacket);
+				System.out.println("Abmeldung Producer mit Namen " + payload.getName());
+				return MessageFactory.createDeregisterProducerMsg(payload.getName(), true);
 			} else {
-				System.out.println("Versuchte Abmeldung von Producer mit Namen " + pdp.getName() + " obwohl nocht nicht registriert");
-				return MessageFactory.createDeregisterProducerMsg(pdp.getName(), false);
+				System.out.println("Versuchte Abmeldung von Producer mit Namen " + payload.getName() + " obwohl nocht nicht registriert");
+				return MessageFactory.createDeregisterProducerMsg(payload.getName(), false);
 			}
 		}
 
 		/**
 		 * forwards the message to the consumers
 		 * 
-		 * @param dp
+		 * @param datagramPacket
 		 *            the message-object as DatagramPacket
 		 */
-		private void sendMulticastMessage(DatagramPacket dp) {
+		private void sendMulticastMessage(DatagramPacket datagramPacket) {
 			try {
-				udpSocket.send(dp);
+				udpSocket.send(datagramPacket);
 			} catch (IOException e) {
 				// TODO überprüfen: kann eigentlich nicht auftreten, da alle Adressen vorgegeben sind
 				throw new RuntimeException("Problem beim Senden der MulticastMessage");

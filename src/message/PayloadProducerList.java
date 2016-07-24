@@ -12,7 +12,7 @@ import java.util.HashSet;
  *
  */
 public class PayloadProducerList implements Payload, Serializable {
-	
+
 	private static final long serialVersionUID = 1L;
 
 	private boolean success = false;
@@ -21,12 +21,12 @@ public class PayloadProducerList implements Payload, Serializable {
 	public PayloadProducerList(HashSet<String> producers) {
 		this.producers = producers;
 	}
-	
+
 	public PayloadProducerList(HashSet<String> producers, boolean success) {
 		this.producers = producers;
 		this.success = success;
 	}
-	
+
 	public PayloadProducerList(boolean success) {
 		this.success = success;
 		this.producers = null;

@@ -28,34 +28,34 @@ public class Util {
 	 *            port of the recipient
 	 * @return a DatagramPacket
 	 */
-	public static DatagramPacket getMessageAsDatagrammPacket(Message m, InetAddress iadr, int port) {
-		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		try (ObjectOutputStream objOut = new ObjectOutputStream(bout);) {
-			objOut.writeObject(m);
+	public static DatagramPacket getMessageAsDatagrammPacket(Message message, InetAddress iadr, int port) {
+		ByteArrayOutputStream byteArrOutStream = new ByteArrayOutputStream();
+		try (ObjectOutputStream objOut = new ObjectOutputStream(byteArrOutStream);) {
+			objOut.writeObject(message);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		byte[] buf = bout.toByteArray();
-		DatagramPacket dp = new DatagramPacket(buf, buf.length, iadr, port);
-		dp.setData(buf);
-		return dp;
+		byte[] buffer = byteArrOutStream.toByteArray();
+		DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length, iadr, port);
+		datagramPacket.setData(buffer);
+		return datagramPacket;
 	}
 
 	/**
 	 * wraps the data out of the DatagramPacket to a Message-Object
 	 * 
-	 * @param dp
+	 * @param datagramPacket
 	 *            the DatagramPacket
 	 * @return message-object
 	 */
-	public static Message getMessageOutOfDatagramPacket(DatagramPacket dp) {
-		byte[] buf = dp.getData();
-		ByteArrayInputStream bin = new ByteArrayInputStream(buf); // von Datagram
+	public static Message getMessageOutOfDatagramPacket(DatagramPacket datagramPacket) {
+		byte[] buf = datagramPacket.getData();
+		ByteArrayInputStream byteArrInStream = new ByteArrayInputStream(buf); // von Datagram
 
-		Message m = null;
-		try (ObjectInputStream objIn = new ObjectInputStream(bin);) {
-			m = (Message) objIn.readObject();
+		Message message = null;
+		try (ObjectInputStream objInStream = new ObjectInputStream(byteArrInStream);) {
+			message = (Message) objInStream.readObject();
 		} catch (ClassNotFoundException e) {
 			System.out.println("Beim Lesen des Objektes ist ein fehler aufgetreten");
 			e.printStackTrace(); // TODO remove/replace
@@ -63,11 +63,12 @@ public class Util {
 			System.out.println("IOFehler beim ermitteln der Message ausm DatagramPacket");
 			e.printStackTrace(); // TODO remove/replace
 		}
-		return m;
+		return message;
 	}
 
 	/**
-	 * A method that opens a TCP connection with a server, sends a message, waits for an answer and closes the connection
+	 * A method that opens a TCP connection with a server, sends a message,
+	 * waits for an answer and closes the connection
 	 * 
 	 * @param message
 	 *            The message that is supposed to be sent
@@ -79,9 +80,7 @@ public class Util {
 	 * @throws IOException
 	 */
 	public static Message sendAndGetMessage(Message message, InetAddress address, int serverPort) throws IOException {
-		try (Socket server = new Socket(address, serverPort);
-				ObjectOutputStream out = new ObjectOutputStream(server.getOutputStream());
-				ObjectInputStream in = new ObjectInputStream(server.getInputStream());) {
+		try (Socket server = new Socket(address, serverPort); ObjectOutputStream out = new ObjectOutputStream(server.getOutputStream()); ObjectInputStream in = new ObjectInputStream(server.getInputStream());) {
 
 			out.writeObject(message);
 			out.flush();
@@ -93,7 +92,8 @@ public class Util {
 	}
 
 	/**
-	 * Checks if it is possible to establish a TCP connection to a server with specified address and port
+	 * Checks if it is possible to establish a TCP connection to a server with
+	 * specified address and port
 	 * 
 	 * @param address
 	 *            The address of the target server

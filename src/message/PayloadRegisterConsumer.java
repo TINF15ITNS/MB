@@ -19,8 +19,9 @@ public class PayloadRegisterConsumer implements Payload, Serializable {
 	private boolean success = false;
 
 	/**
-	 * The consumer requests an id from the server. At the request-message the ID-attribut of consumer hasn't been set yet. But with the response-Message the
-	 * server informs the consumer about his ID.
+	 * The consumer requests an id from the server. At the request-message the
+	 * ID-attribut of consumer hasn't been set yet. But with the
+	 * response-Message the server informs the consumer about his ID.
 	 */
 	private final int id;
 

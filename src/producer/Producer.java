@@ -25,8 +25,8 @@ public class Producer implements ProducerIF {
 			throw new IOException("There is no server at the given address");
 		HashSet<String> producers = getProducers();
 		if (producers != null) {
-			for (String n : producers) {
-				if (n.equalsIgnoreCase(name))
+			for (String producerName : producers) {
+				if (producerName.equalsIgnoreCase(name))
 					throw new IllegalArgumentException("This producer name is already taken");
 			}
 			this.name = name;
@@ -86,9 +86,9 @@ public class Producer implements ProducerIF {
 		if (answer.getType() != MessageType.Broadcast || !(answer.getPayload() instanceof PayloadBroadcast)) {
 			throw new RuntimeException("Wrong Payload or MessageType");
 		}
-		PayloadBroadcast pm = (PayloadBroadcast) answer.getPayload();
+		PayloadBroadcast payload = (PayloadBroadcast) answer.getPayload();
 
-		if (!pm.getSuccess()) {
+		if (!payload.getSuccess()) {
 			return false;
 		}
 		return true;

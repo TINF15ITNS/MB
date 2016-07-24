@@ -13,23 +13,22 @@ import java.io.Serializable;
 public class PayloadBroadcast implements Payload, Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private final String sender;
 	private final String message;
 	private boolean success = false;
-	
-	
+
 	public PayloadBroadcast(String sender, String message) {
 		this.sender = sender;
 		this.message = message;
 	}
-	
+
 	public PayloadBroadcast(String sender, String message, boolean success) {
 		this.sender = sender;
 		this.message = message;
 		this.success = success;
 	}
-	
+
 	public PayloadBroadcast(boolean success) {
 		this.sender = null;
 		this.message = null;
