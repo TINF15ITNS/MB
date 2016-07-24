@@ -176,7 +176,7 @@ public class ConsumerCLI {
 				case 6: // Show recieved messages
 					String newBroadcasts = user.getNewBroadcasts(); // All new broadcasts are in a single string
 					if (!newBroadcasts.equals("")) {
-						System.out.println("Sie haben foglende neue Nachrichten: ");
+						System.out.println("Sie haben folgende neue Nachrichten: ");
 						System.out.println(newBroadcasts);
 					} else {
 						System.out.println("\nSie haben keine neuen Nachrichten");
