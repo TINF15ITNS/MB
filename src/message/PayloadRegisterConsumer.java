@@ -12,9 +12,11 @@ import java.net.InetAddress;
  * 
  */
 
-public class PayloadRegisterConsumer extends Payload implements Serializable {
+public class PayloadRegisterConsumer implements Payload, Serializable {
 
 	private static final long serialVersionUID = 1L;
+
+	private boolean success = false;
 
 	/**
 	 * The consumer requests an id from the server. At the request-message the ID-attribut of consumer hasn't been set yet. But with the response-Message the
@@ -51,5 +53,10 @@ public class PayloadRegisterConsumer extends Payload implements Serializable {
 	 */
 	public InetAddress getMulticastAddress() {
 		return multicastAddress;
+	}
+
+	@Override
+	public boolean getSuccess() {
+		return success;
 	}
 }

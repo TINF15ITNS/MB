@@ -10,9 +10,11 @@ import java.io.Serializable;
  * @author Nikolai Seip, Sebastian Mattheis, Fabian Hinz
  *
  */
-public class PayloadDeregisterConsumer extends Payload implements Serializable {
+public class PayloadDeregisterConsumer implements Payload, Serializable {
 
 	private static final long serialVersionUID = 1L;
+
+	private boolean success = false;
 
 	/**
 	 * ID of the sender of this message
@@ -38,5 +40,10 @@ public class PayloadDeregisterConsumer extends Payload implements Serializable {
 	 */
 	public int getID() {
 		return id;
+	}
+
+	@Override
+	public boolean getSuccess() {
+		return success;
 	}
 }

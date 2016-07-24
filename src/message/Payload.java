@@ -1,11 +1,15 @@
+/**
+ * 
+ */
 package message;
 
-public abstract class Payload {
-
-	protected boolean success = false;
-
-	public boolean getSuccess() {
-		return success;
-	}
-
+/**
+ * 
+ * @author Nikolai Seip, Sebastian Mattheis, Fabian Hinz
+ *
+ */
+public interface Payload {
+	
+	public boolean getSuccess();
+	
 }
