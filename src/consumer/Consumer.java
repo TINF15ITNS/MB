@@ -251,7 +251,7 @@ public class Consumer implements ConsumerIF {
 						PayloadBroadcast payload = (PayloadBroadcast) m.getPayload();
 
 						if (subscriptions.contains(payload.getSender())) {
-							pw.write("Sie haben eine neue Push-Mitteilung, " + payload.getSender() + " meldet: \n" + payload.getMessage() + "\n");
+							pw.write("\nSie haben eine neue Push-Mitteilung, " + payload.getSender() + " meldet: \n" + payload.getMessage() + "\n");
 						}
 						break;
 

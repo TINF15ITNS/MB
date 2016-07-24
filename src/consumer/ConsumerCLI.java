@@ -140,7 +140,7 @@ public class ConsumerCLI {
 						System.out.println("Keine Abbonements vorhanden.");
 						break;
 					}
-					System.out.println("Ihre Abos:");
+					System.out.println("\nIhre Abos:");
 					for (String s : subscriptions) {
 						System.out.println("* " + s);
 					}
@@ -148,16 +148,16 @@ public class ConsumerCLI {
 				case 6:
 					String ausgabe = user.getNewBroadcasts();
 					if (!ausgabe.equals("")) {
-						System.out.println(ausgabe + "\n\n");
+						System.out.println(ausgabe);
 					} else {
-						System.out.println("Sie haben keine neuen Nachrichten");
+						System.out.println("\nSie haben keine neuen Nachrichten");
 					}
 					break;
 				case 7:
 					exit = true;
 					break;
 				default:
-					System.out.println("Bitte wählen Sie eine der gegebenen Optionen.");
+					System.out.println("\nBitte wählen Sie eine der gegebenen Optionen.");
 					break;
 				}
 			}

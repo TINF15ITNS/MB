@@ -195,7 +195,7 @@ public class MessageServer implements MessageServerIF {
 				DatagramPacket dp = Util.getMessageAsDatagrammPacket(MessageFactory.createBroadcastMessage(pm.getSender(), pm.getMessage()), mcastadr,
 						serverPort);
 				sendMulticastMessage(dp);
-				System.out.println("Broadcastmessage von " + pm.getSender() + "erhalten und weitergeleitet");
+				System.out.println("Broadcastmessage von " + pm.getSender() + " erhalten und weitergeleitet");
 				return MessageFactory.createBroadcastMessage("Server", true);
 			}
 			return MessageFactory.createBroadcastMessage("Server", false);
