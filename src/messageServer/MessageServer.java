@@ -32,14 +32,14 @@ public class MessageServer implements MessageServerIF {
 	private static int numberOfCustomers = 0;
 	HashSet<Integer> dataConsumer;
 	HashSet<String> dataProducer;
-	InetAddress multicastadr;
+	InetAddress mcastadr;
 
 	public MessageServer(int serverPort) {
 		dataConsumer = new HashSet<>();
 		dataProducer = new HashSet<>();
 		this.serverPort = serverPort;
 		try {
-			multicastadr = InetAddress.getByName("225.225.225.225");
+			mcastadr = InetAddress.getByName("225.225.225.225");
 		} catch (UnknownHostException e) {
 			// tritt nicht ein, da vorgegeben
 		}
@@ -149,7 +149,7 @@ public class MessageServer implements MessageServerIF {
 		private Message registerConsumer(Message m) {
 			numberOfCustomers++;
 			dataConsumer.add(new Integer(numberOfCustomers));
-			return MessageFactory.createRegisterConsumerMsg(numberOfCustomers, multicastadr, true);
+			return MessageFactory.createRegisterConsumerMsg(numberOfCustomers, mcastadr, true);
 		}
 
 		/**
@@ -180,7 +180,7 @@ public class MessageServer implements MessageServerIF {
 			PayloadBroadcast pm = (PayloadBroadcast) m.getPayload();
 			// schauen, ob der Absender sich beim Server auch angemeldet hat
 			if (dataProducer.contains(pm.getSender())) {
-				DatagramPacket dp = Util.getMessageAsDatagrammPacket(MessageFactory.createBroadcastMessage(pm.getSender(), pm.getMessage()), multicastadr,
+				DatagramPacket dp = Util.getMessageAsDatagrammPacket(MessageFactory.createBroadcastMessage(pm.getSender(), pm.getMessage()), mcastadr,
 						serverPort);
 				sendMulticastMessage(dp);
 				return MessageFactory.createBroadcastMessage("Server", true);
@@ -215,7 +215,7 @@ public class MessageServer implements MessageServerIF {
 		private Message deregisterProducer(Message m) {
 			PayloadProducer pdp = (PayloadProducer) m.getPayload();
 			if (dataProducer.remove(pdp.getName())) {
-				DatagramPacket dp = Util.getMessageAsDatagrammPacket(MessageFactory.createDeregisterProducerMsg(pdp.getName()), multicastadr, serverPort);
+				DatagramPacket dp = Util.getMessageAsDatagrammPacket(MessageFactory.createDeregisterProducerMsg(pdp.getName()), mcastadr, serverPort);
 				sendMulticastMessage(dp);
 				return MessageFactory.createDeregisterProducerMsg(pdp.getName(), true);
 			} else {
