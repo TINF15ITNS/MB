@@ -3,7 +3,7 @@
  */
 package message;
 
-import java.io.*;
+import java.io.Serializable;
 
 /**
  * 
@@ -23,10 +23,7 @@ public class Message implements Serializable {
 	 */
 	private final MessageType type;
 
-	/*
-	 * public Message(MessageType type, int senderID, String payload) { this.type = type; this.senderID = senderID; this.payload = payload; }
-	 */
-	public Message(MessageType type, Payload payload) {
+	protected Message(MessageType type, Payload payload) {
 		this.type = type;
 		this.payload = payload;
 	}
