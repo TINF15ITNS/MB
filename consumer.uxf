@@ -7,7 +7,7 @@
       <x>10</x>
       <y>40</y>
       <w>410</w>
-      <h>170</h>
+      <h>210</h>
     </coordinates>
     <panel_attributes>&lt;&lt;interace&gt;&gt;
 ConsumerIF
@@ -19,6 +19,9 @@ ConsumerIF
 + getSubscriptions(): String[] 
 + unsubscribeFromProducers(String[] producers): String[] 
 + deregisterFromServer(): boolean
++ isRegistered(): boolean
++ getNewBroadcasts(): String
++ stopReceiving(): boolean
 </panel_attributes>
     <additional_attributes/>
   </element>
@@ -26,13 +29,13 @@ ConsumerIF
     <id>UMLClass</id>
     <coordinates>
       <x>80</x>
-      <y>280</y>
+      <y>310</y>
       <w>240</w>
-      <h>270</h>
+      <h>290</h>
     </coordinates>
     <panel_attributes>Consumer
 --
-- serverPort: static int
+- serverPort: int
 - consumerID: int 
 - mcastadr: InetAddress
 - serverAddress: InetAddress 
@@ -49,7 +52,8 @@ WaitForMessage
 --
 - udps: MulticastSocket
 --
-+ run: void
++ run(): void
++ stopThread(): boolean
 innerclass}
 
 </panel_attributes>
@@ -59,12 +63,12 @@ innerclass}
     <id>Relation</id>
     <coordinates>
       <x>190</x>
-      <y>200</y>
+      <y>240</y>
       <w>30</w>
-      <h>100</h>
+      <h>90</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>10.0;10.0;10.0;80.0</additional_attributes>
+    <additional_attributes>10.0;10.0;10.0;70.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
@@ -77,7 +81,7 @@ innerclass}
     <panel_attributes>ConsumerCLI
 --
 - user: ConsumerIF 
-
+- scanner: Scanner
 
 
 
