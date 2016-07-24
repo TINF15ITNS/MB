@@ -151,7 +151,7 @@ public class MessageServer implements MessageServerIF {
 		private Message registerConsumer(Message m) {
 			numberOfCustomers++;
 			dataConsumer.add(new Integer(numberOfCustomers));
-			System.out.println("Neuanmeldung Consumer mit neuer ID: " + numberOfCustomers);
+			System.out.println("Neuanmeldung Consumer -> neue ID: " + numberOfCustomers);
 			;
 			return MessageFactory.createRegisterConsumerMsg(numberOfCustomers, mcastadr, true);
 		}
@@ -174,6 +174,7 @@ public class MessageServer implements MessageServerIF {
 				System.out.println("Neuanmeldung Producer: " + pp.getName());
 				return MessageFactory.createRegisterProducerMsg(pp.getName(), true);
 			}
+			System.out.println("versuchte Neuanmeldung Producer mit schon vorhandenem Namen: " + pp.getName());
 			return MessageFactory.createRegisterProducerMsg(pp.getName(), false);
 		}
 
@@ -198,6 +199,7 @@ public class MessageServer implements MessageServerIF {
 				System.out.println("Broadcastmessage von " + pm.getSender() + "erhalten und weitergeleitet");
 				return MessageFactory.createBroadcastMessage("Server", true);
 			}
+			System.out.println("Broadcastmessage von noch nicht registriertem Producer " + pm.getSender() + " erhalten -> nicht weitergeleitet");
 			return MessageFactory.createBroadcastMessage("Server", false);
 		}
 
@@ -218,6 +220,7 @@ public class MessageServer implements MessageServerIF {
 				System.out.println("Consumer abgemeldet mit ID: " + pdc.getID());
 				return MessageFactory.createDeregisterConsumerMsg(true);
 			} else {
+				System.out.println("Versuchte Abmeldung von Consumer mit der ID: " + pdc.getID() + " obwohl noch nicht registriert");
 				return MessageFactory.createDeregisterConsumerMsg(false);
 			}
 		}
@@ -241,6 +244,7 @@ public class MessageServer implements MessageServerIF {
 				System.out.println("Abmeldung Producer mit Namen " + pdp.getName());
 				return MessageFactory.createDeregisterProducerMsg(pdp.getName(), true);
 			} else {
+				System.out.println("Versuchte Abmeldung von Producer mit Namen " + pdp.getName() + " obwohl nocht nicht registriert");
 				return MessageFactory.createDeregisterProducerMsg(pdp.getName(), false);
 			}
 		}
