@@ -35,7 +35,7 @@ MessageServerIF
       <x>20</x>
       <y>210</y>
       <w>380</w>
-      <h>350</h>
+      <h>390</h>
     </coordinates>
     <panel_attributes>MessageServer
 --
@@ -45,8 +45,12 @@ MessageServerIF
 - dataProducer: HashSet&lt;String&gt;
 - mcastadr: InetAddress
 --
+&lt;&lt; constructor &gt;&gt;
++ MessageServer(int serverPort)
+&lt;&lt; method &gt;&gt;
 
 --
+
 {innerclass
 MessageHandler
 --

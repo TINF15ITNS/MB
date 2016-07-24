@@ -12,6 +12,9 @@
     <panel_attributes>Message
 
 --
+&lt;&lt; constructor &gt;&gt;
+# Message(MessageType type, Payload payload)	
+&lt;&lt; method &gt;&gt;
 - payload: Payload
 - type: MessageType
 
