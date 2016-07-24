@@ -64,8 +64,7 @@ public class MessageServer implements MessageServerIF {
 				t.start();
 			}
 		} catch (IOException e) {
-			System.out.println("IOFehler beim Erzeugen des ServerSockets oder des MulticastSockets");
-			e.printStackTrace();
+			throw new RuntimeException("IOFehler beim Erzeugen des ServerSockets oder des MulticastSockets");
 		}
 	}
 
