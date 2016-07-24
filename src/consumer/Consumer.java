@@ -184,8 +184,9 @@ public class Consumer implements ConsumerIF {
 				s.append((char) pr.read());
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// TODO überprüfen: tritt ein, wenn Pipe gebrochen/beendet, aber diese Methode kann nicht mehr aufgrufen werden, wenn PipedWriter = anderer Thread
+			// geschlossen ist
+			throw new RuntimeException("reading Pipe throws IOException");
 		}
 		return s.toString();
 	}
@@ -211,9 +212,8 @@ public class Consumer implements ConsumerIF {
 			try {
 				pw.connect(pr);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				// kann nicht auftreten
-				e.printStackTrace();
+				// TODO überprüfen: kann nicht auftreten, da PipedReader nicht schon verheiratet sein kann
+				throw new RuntimeException("Pipe is alredy connected");
 			}
 		}
 
