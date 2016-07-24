@@ -2,7 +2,7 @@ package producer;
 
 public interface ProducerIF {
 	/**
-	 * sends a message to the server with the producer name, to be registered
+	 * sends a message to the server with the producer name, to be registered and checks if the name isn't used yet
 	 * 
 	 * @return a boolean indicating success or failure of the method
 	 */
