@@ -4,15 +4,9 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-<<<<<<< HEAD
-      <x>540</x>
-      <y>160</y>
-      <w>230</w>
-=======
       <x>900</x>
       <y>180</y>
       <w>150</w>
->>>>>>> branch 'master' of https://github.com/TINF15ITNS/MB.git
       <h>190</h>
     </coordinates>
     <panel_attributes>ProducerCLI
@@ -30,17 +24,12 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-<<<<<<< HEAD
-      <x>90</x>
-      <y>210</y>
-      <w>260</w>
-      <h>210</h>
-=======
+
       <x>470</x>
       <y>370</y>
       <w>260</w>
       <h>190</h>
->>>>>>> branch 'master' of https://github.com/TINF15ITNS/MB.git
+
     </coordinates>
     <panel_attributes>Producer
 --
