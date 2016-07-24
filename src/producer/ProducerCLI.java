@@ -51,6 +51,7 @@ public class ProducerCLI {
 				try {
 					input = scanner.nextInt();
 				} catch (Exception e) {
+					scanner.nextLine();
 					continue;
 				}
 
@@ -79,6 +80,7 @@ public class ProducerCLI {
 				try {
 					input = scanner.nextInt();
 				} catch (Exception e) {
+					scanner.nextLine();
 					continue;
 				}
 				scanner.nextLine(); // Absolutely necessary because nextInt() reads only one int and does not finish the line.
