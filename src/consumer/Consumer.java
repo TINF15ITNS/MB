@@ -245,15 +245,19 @@ public class Consumer implements ConsumerIF {
 							throw new RuntimeException("Wrong Payload");
 						}
 						PayloadProducer pp = (PayloadProducer) m.getPayload();
-						pw.write("Der Producer " + pp.getName()
-								+ " hat den Dienst eingestellt. Sie können leider keine Push-Nachrichten mehr von ihm erhalten...");
-						subscriptions.remove(pp.getName());
+
+						if (subscriptions.contains(pp.getName())) {
+							pw.write("Der Producer " + pp.getName()
+									+ " hat den Dienst eingestellt. Sie können leider keine Push-Nachrichten mehr von ihm erhalten...");
+							subscriptions.remove(pp.getName());
+						}
 						break;
 					case Broadcast:
 						if (m.getType() != MessageType.Broadcast || m.getPayload() instanceof PayloadBroadcast) {
 							throw new RuntimeException("Wrong Payload");
 						}
 						PayloadBroadcast payload = (PayloadBroadcast) m.getPayload();
+
 						if (subscriptions.contains(payload.getSender())) {
 							pw.write("Sie haben eine neue Push-Mitteilung, " + payload.getSender() + " meldet: \n" + payload.getMessage());
 						}
